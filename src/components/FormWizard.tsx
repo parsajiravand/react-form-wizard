@@ -1,6 +1,8 @@
 import React, { useState, ReactNode } from "react";
 import WizardTab from "./WizardTab";
 import WizardButton from "./WizardButton";
+import "../index.css";
+
 interface TabContentProps {
   title: string;
   icon: string;

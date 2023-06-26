@@ -1,16 +1,15 @@
 import React from "react";
-import FormWizard from "./components/FormWizard";
-import "./App.css";
-import "./index.css";
+
+import FormWizard from "../dist/react-form-wizard-component.es.js";
 
 const App: React.FC = () => {
   const handleComplete = () => {
     console.log("Form completed!");
     // Handle form completion logic here
   };
-  const title = () => {
-    return <h1>test2 </h1>;
-  };
+  // const title = () => {
+  //   return <h1>test2 </h1>;
+  // };
   const tabChanged = ({
     prevIndex,
     nextIndex,
@@ -28,8 +27,6 @@ const App: React.FC = () => {
       <FormWizard
         shape="circle"
         color="#e74c3c"
-        stepSize={"sm"}
-        layout="vertical"
         onComplete={handleComplete}
         onTabChange={tabChanged}
       >

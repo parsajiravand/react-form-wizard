@@ -1,9 +1,24 @@
 {
-  "name": "react-form-wizard",
-  "private": true,
-  "description": "A react form wizard component with validation and progress bar ", 
-  "version": "0.0.0",
+  "name": "react-form-wizard-component",
+  "private": false,
+  "license": "MIT",
+  "author": "Parsa Jiravand",
+  "description": "A react form wizard component with validation and progress bar with no external depenendcies which simplifies tab wizard management.",
+  "version": "0.0.1",
   "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/react-form-wizard-component.umd.js",
+  "module": "./dist/react-form-wizard-component.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/react-form-wizard-component.es.js",
+      "require": "./dist/react-form-wizard-component.umd.js"
+    },
+    "./dist/style.css": "./dist/style.css"
+  },
+  "types": "./dist/types/index.d.ts",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -24,6 +39,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
     "typescript": "^5.0.2",
-    "vite": "^4.3.9"
+    "vite": "^4.3.9",
+    "vite-plugin-banner": "^0.7.0"
   }
 }
