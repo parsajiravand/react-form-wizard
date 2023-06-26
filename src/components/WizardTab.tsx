@@ -7,10 +7,11 @@ interface WizardTabProps {
   color?: string;
   isActive?: boolean;
   index?: number;
+  onClick?: () => void;
 }
 
 const WizardTab: React.FC<WizardTabProps> = (props: WizardTabProps) => {
-  const { title, icon, route, shape, color, isActive, index } = props;
+  const { title, icon, route, shape, color, isActive, index, onClick } = props;
   const stepClasses = isActive ? "active" : "";
   const cursorStyle = shape === "square" ? "default" : "";
 
@@ -20,6 +21,7 @@ const WizardTab: React.FC<WizardTabProps> = (props: WizardTabProps) => {
         href={route}
         className={isActive ? "active" : ""}
         style={{ cursor: cursorStyle }}
+        onClick={onClick}
       >
         <div
           className={`wizard-icon-circle md ${isActive ? "checked" : ""} ${
@@ -44,7 +46,7 @@ const WizardTab: React.FC<WizardTabProps> = (props: WizardTabProps) => {
             }}
           >
             <span className="wizard-icon">
-                <i className={icon}></i>
+              <i className={icon}></i>
             </span>
           </div>
         </div>

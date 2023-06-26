@@ -13,7 +13,7 @@ const App: React.FC = () => {
     <div>
       <h1>React Form Wizard Example</h1>
       <FormWizard onComplete={handleComplete} shape="circle" color="#e74c3c">
-        <FormWizard.TabContent title="Personal details"  icon="ti-user">
+        <FormWizard.TabContent title="Personal details"   icon="ti-user">
           <h1>test</h1>
         </FormWizard.TabContent>
         <FormWizard.TabContent title="Additional Info"  icon="ti-settings">

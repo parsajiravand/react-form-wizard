@@ -40,7 +40,19 @@ const FormWizard: React.FC<FormWizardProps> & {
       const { title, icon, route } = step.props;
       const isActive = index <= currentStep;
 
-      return WizardTab({ title, icon, route, shape, color, isActive, index });
+      return (
+        <WizardTab
+          key={index}
+          title={title}
+          icon={icon}
+          route={route}
+          shape="circle"
+          color="#e74c3c"
+          isActive={isActive}
+          index={index}
+          onClick={() => setCurrentStep(index)}
+        />
+      );
     });
   };
 
