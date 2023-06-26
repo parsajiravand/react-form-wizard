@@ -40,6 +40,10 @@ const App: React.FC = () => {
           {/* Add your form inputs and components for the last step */}
         </FormWizard.TabContent>
       </FormWizard>
+      {/* add style */}
+      <style>{`
+        @import url("https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/themify-icons.css");
+      `}</style>
     </div>
   );
 };
