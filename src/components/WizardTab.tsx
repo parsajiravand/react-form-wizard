@@ -43,7 +43,9 @@ const WizardTab: React.FC<WizardTabProps> = (props: WizardTabProps) => {
               backgroundColor: isActive ? color : "",
             }}
           >
-            <span className="wizard-icon">{icon}</span>
+            <span className="wizard-icon">
+                <i className={icon}></i>
+            </span>
           </div>
         </div>
         <span
