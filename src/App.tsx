@@ -11,6 +11,16 @@ const App: React.FC = () => {
   const title = () => {
     return <h1>test2 </h1>;
   };
+  const tabChanged = ({
+    prevIndex,
+    nextIndex,
+  }: {
+    prevIndex: number;
+    nextIndex: number;
+  }) => {
+    console.log("prevIndex", prevIndex);
+    console.log("nextIndex", nextIndex);
+  };
 
   return (
     <div>
@@ -19,6 +29,7 @@ const App: React.FC = () => {
         onComplete={handleComplete}
         shape="circle"
         color="#e74c3c"
+        onTabChange={tabChanged}
       >
         <FormWizard.TabContent title="Personal details" icon="ti-user">
           <h1>test</h1>

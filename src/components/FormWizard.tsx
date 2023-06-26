@@ -18,6 +18,7 @@ interface FormWizardProps {
   nextButtonText?: string;
   backButtonText?: string;
   finishButtonText?: string;
+  onTabChange?: (e: object) => void;
 }
 
 const FormWizard: React.FC<FormWizardProps> & {
@@ -32,12 +33,20 @@ const FormWizard: React.FC<FormWizardProps> & {
   nextButtonText = "Next",
   backButtonText = "Back",
   finishButtonText = "Finish",
+  onTabChange,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const steps = React.Children.toArray(
     children
   ) as React.ReactElement<TabContentProps>[];
-  console.log(title);
+
+  // emit tab change event prevIndex, nextIndex
+  if (typeof onTabChange === "function") {
+    onTabChange({
+      prevIndex: currentStep as number,
+      nextIndex: (currentStep + 1) as number,
+    });
+  }
 
   const handleNext = () => {
     setCurrentStep(currentStep + 1);
