@@ -26,9 +26,10 @@ const App: React.FC = () => {
     <div>
       <h1>React Form Wizard Example</h1>
       <FormWizard
-        onComplete={handleComplete}
         shape="circle"
         color="#e74c3c"
+        stepSize={"lg"}
+        onComplete={handleComplete}
         onTabChange={tabChanged}
       >
         <FormWizard.TabContent title="Personal details" icon="ti-user">

@@ -11,21 +11,21 @@ interface TabContentProps {
 interface FormWizardProps {
   title?: string | ReactNode;
   subtitle?: string;
-  onComplete: () => void;
   shape?: string;
   color?: string;
   children: ReactNode;
   nextButtonText?: string;
   backButtonText?: string;
   finishButtonText?: string;
-  onTabChange?: (e: object) => void;
+  stepSize?: "xs" | "sm" | "md" | "lg";
+  onComplete?: () => void;
+  onTabChange?: (e: { prevIndex: number; nextIndex: number }) => void;
 }
 
 const FormWizard: React.FC<FormWizardProps> & {
   TabContent: React.FC<TabContentProps>;
 } = ({
   title,
-  onComplete,
   shape = "",
   color = "#e74c3c",
   children,
@@ -33,6 +33,8 @@ const FormWizard: React.FC<FormWizardProps> & {
   nextButtonText = "Next",
   backButtonText = "Back",
   finishButtonText = "Finish",
+  stepSize = "md",
+  onComplete,
   onTabChange,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -91,7 +93,7 @@ const FormWizard: React.FC<FormWizardProps> & {
   };
 
   return (
-    <div className="vue-form-wizard">
+    <div className={`vue-form-wizard ${stepSize}`}>
       <div className="wizard-header">
         {/* if title is element render other wise render string props */}
         {typeof title === "string" ? (
@@ -108,7 +110,7 @@ const FormWizard: React.FC<FormWizardProps> & {
           <div className="wizard-progress-bar" style={progressBarStyle}></div>
         </div>
         <ul
-          className={`form-wizard-steps  wizard-nav wizard-nav-pills ${shape}`}
+          className={`form-wizard-steps  wizard-nav wizard-nav-pills ${shape} ${stepSize}`}
           style={{ borderColor: color }}
         >
           {renderTabs()}
