@@ -9,6 +9,8 @@ interface TabContentProps {
 }
 
 interface FormWizardProps {
+  title?: string | ReactNode;
+  subtitle?: string;
   onComplete: () => void;
   shape?: string;
   color?: string;
@@ -17,11 +19,19 @@ interface FormWizardProps {
 
 const FormWizard: React.FC<FormWizardProps> & {
   TabContent: React.FC<TabContentProps>;
-} = ({ onComplete, shape = "", color = "#e74c3c", children }) => {
+} = ({
+  title,
+  onComplete,
+  shape = "",
+  color = "#e74c3c",
+  children,
+  subtitle = "",
+}) => {
   const [currentStep, setCurrentStep] = useState(0);
   const steps = React.Children.toArray(
     children
   ) as React.ReactElement<TabContentProps>[];
+  console.log(title);
 
   const handleNext = () => {
     setCurrentStep(currentStep + 1);
@@ -67,6 +77,17 @@ const FormWizard: React.FC<FormWizardProps> & {
 
   return (
     <div className="vue-form-wizard">
+      <div className="wizard-header">
+        {/* if title is element render other wise render string props */}
+        {typeof title === "string" ? (
+          <>
+            <h4 className="wizard-title">{title}</h4>
+            <p className="category">{subtitle}</p>
+          </>
+        ) : (
+          title
+        )}
+      </div>
       <div className="wizard-navigation">
         <div className="wizard-progress-with-circle">
           <div className="wizard-progress-bar" style={progressBarStyle}></div>
