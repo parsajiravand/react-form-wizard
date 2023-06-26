@@ -18,6 +18,7 @@ interface FormWizardProps {
   backButtonText?: string;
   finishButtonText?: string;
   stepSize?: "xs" | "sm" | "md" | "lg";
+  layout?: "horizontal" | "vertical";
   onComplete?: () => void;
   onTabChange?: (e: { prevIndex: number; nextIndex: number }) => void;
 }
@@ -34,6 +35,7 @@ const FormWizard: React.FC<FormWizardProps> & {
   backButtonText = "Back",
   finishButtonText = "Finish",
   stepSize = "md",
+  layout = "horizontal",
   onComplete,
   onTabChange,
 }) => {
@@ -59,7 +61,7 @@ const FormWizard: React.FC<FormWizardProps> & {
   };
 
   const handleSubmit = () => {
-    onComplete();
+    if (typeof onComplete === "function") onComplete();
   };
 
   const renderTabs = () => {
@@ -91,9 +93,10 @@ const FormWizard: React.FC<FormWizardProps> & {
     width: `${((currentStep + 1) / steps.length) * 100}%`,
     color: color,
   };
+  const isVertical = layout === "vertical" ? "vertical" : "horizontal";
 
   return (
-    <div className={`vue-form-wizard ${stepSize}`}>
+    <div className={`vue-form-wizard ${stepSize} ${isVertical}`}>
       <div className="wizard-header">
         {/* if title is element render other wise render string props */}
         {typeof title === "string" ? (
@@ -115,24 +118,19 @@ const FormWizard: React.FC<FormWizardProps> & {
         >
           {renderTabs()}
         </ul>
-      </div>
-      <div>
         <div className="wizard-tab-content">{renderContent()}</div>
-        <div className="wizard-card-footer clearfix">
-          {currentStep > 0 && (
-            <WizardButton onClick={handlePrevious}>
-              {backButtonText}
-            </WizardButton>
-          )}
-          {currentStep < steps.length - 1 && (
-            <WizardButton onClick={handleNext}>{nextButtonText}</WizardButton>
-          )}
-          {currentStep === steps.length - 1 && (
-            <WizardButton onClick={handleSubmit}>
-              {finishButtonText}
-            </WizardButton>
-          )}
-        </div>
+      </div>
+
+      <div className="wizard-card-footer clearfix">
+        {currentStep > 0 && (
+          <WizardButton onClick={handlePrevious}>{backButtonText}</WizardButton>
+        )}
+        {currentStep < steps.length - 1 && (
+          <WizardButton onClick={handleNext}>{nextButtonText}</WizardButton>
+        )}
+        {currentStep === steps.length - 1 && (
+          <WizardButton onClick={handleSubmit}>{finishButtonText}</WizardButton>
+        )}
       </div>
     </div>
   );

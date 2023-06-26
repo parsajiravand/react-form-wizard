@@ -28,7 +28,8 @@ const App: React.FC = () => {
       <FormWizard
         shape="circle"
         color="#e74c3c"
-        stepSize={"lg"}
+        stepSize={"sm"}
+        layout="vertical"
         onComplete={handleComplete}
         onTabChange={tabChanged}
       >
@@ -37,12 +38,6 @@ const App: React.FC = () => {
         </FormWizard.TabContent>
         <FormWizard.TabContent title="Additional Info" icon="ti-settings">
           {/* Add your form inputs and components for the second step */}
-        </FormWizard.TabContent>
-        <FormWizard.TabContent title="Last step" icon="ti-check">
-          {/* Add your form inputs and components for the last step */}
-        </FormWizard.TabContent>
-        <FormWizard.TabContent title="Last step" icon="ti-check">
-          {/* Add your form inputs and components for the last step */}
         </FormWizard.TabContent>
         <FormWizard.TabContent title="Last step" icon="ti-check">
           {/* Add your form inputs and components for the last step */}
