@@ -15,6 +15,9 @@ interface FormWizardProps {
   shape?: string;
   color?: string;
   children: ReactNode;
+  nextButtonText?: string;
+  backButtonText?: string;
+  finishButtonText?: string;
 }
 
 const FormWizard: React.FC<FormWizardProps> & {
@@ -26,6 +29,9 @@ const FormWizard: React.FC<FormWizardProps> & {
   color = "#e74c3c",
   children,
   subtitle = "",
+  nextButtonText = "Next",
+  backButtonText = "Back",
+  finishButtonText = "Finish",
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const steps = React.Children.toArray(
@@ -103,13 +109,17 @@ const FormWizard: React.FC<FormWizardProps> & {
         <div className="wizard-tab-content">{renderContent()}</div>
         <div className="wizard-card-footer clearfix">
           {currentStep > 0 && (
-            <WizardButton onClick={handlePrevious}>Previous</WizardButton>
+            <WizardButton onClick={handlePrevious}>
+              {backButtonText}
+            </WizardButton>
           )}
           {currentStep < steps.length - 1 && (
-            <WizardButton onClick={handleNext}>Next</WizardButton>
+            <WizardButton onClick={handleNext}>{nextButtonText}</WizardButton>
           )}
           {currentStep === steps.length - 1 && (
-            <WizardButton onClick={handleSubmit}>Submit</WizardButton>
+            <WizardButton onClick={handleSubmit}>
+              {finishButtonText}
+            </WizardButton>
           )}
         </div>
       </div>
