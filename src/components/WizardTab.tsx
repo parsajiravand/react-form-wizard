@@ -2,7 +2,6 @@ import React from "react";
 interface WizardTabProps {
   title: string;
   icon: string;
-  route?: string;
   shape?: string;
   color?: string;
   isActive?: boolean;
@@ -11,14 +10,13 @@ interface WizardTabProps {
 }
 
 const WizardTab: React.FC<WizardTabProps> = (props: WizardTabProps) => {
-  const { title, icon, route, shape, color, isActive, index, onClick } = props;
+  const { title, icon, shape, color, isActive, index, onClick } = props;
   const stepClasses = isActive ? "active" : "";
   const cursorStyle = shape === "square" ? "default" : "";
 
   return (
     <li key={index} className={stepClasses}>
       <a
-        href={route}
         className={isActive ? "active" : ""}
         style={{ cursor: cursorStyle }}
         onClick={onClick}

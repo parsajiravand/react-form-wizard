@@ -68,7 +68,7 @@ const FormWizard: React.FC<FormWizardProps> & {
 
   const renderTabs = () => {
     return steps.map((step, index) => {
-      const { title, icon, route } = step.props;
+      const { title, icon } = step.props;
       const isActive = index <= currentStep;
 
       return (
@@ -76,7 +76,6 @@ const FormWizard: React.FC<FormWizardProps> & {
           key={index}
           title={title}
           icon={icon}
-          route={route}
           shape="circle"
           color="#e74c3c"
           isActive={isActive}
