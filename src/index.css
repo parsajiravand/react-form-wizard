@@ -15,6 +15,7 @@
   font-size: 14px;
   line-height: 1.428571429;
   border-radius: 4px;
+  color: white;
 }
 .vue-form-wizard .wizard-btn.disabled,
 .vue-form-wizard .wizard-btn[disabled],
@@ -270,6 +271,7 @@ fieldset[disabled] .vue-form-wizard .wizard-btn {
 .vue-form-wizard .wizard-tab-content {
   min-height: 100px;
   padding: 30px 20px 10px;
+  text-align: center;
 }
 .vue-form-wizard .wizard-header {
   padding: 15px;

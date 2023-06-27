@@ -95,6 +95,11 @@ const FormWizard: React.FC<FormWizardProps> & {
     width: `${((currentStep + 1) / steps.length) * 100}%`,
     color: color,
   };
+  const fillButtonStyle = {
+    backgroundColor: color,
+    borderColor: color,
+    borderRadius: "4px",
+  };
   const isVertical = layout === "vertical" ? "vertical" : "horizontal";
 
   return (
@@ -123,15 +128,25 @@ const FormWizard: React.FC<FormWizardProps> & {
         <div className="wizard-tab-content">{renderContent()}</div>
       </div>
 
-      <div className="wizard-card-footer clearfix">
+      <div className="wizard-card-footer clearfix" >
         {currentStep > 0 && (
-          <WizardButton onClick={handlePrevious}>{backButtonText}</WizardButton>
+          <div className="wizard-footer-left" style={fillButtonStyle}>
+            <WizardButton onClick={handlePrevious}>
+              {backButtonText}
+            </WizardButton>
+          </div>
         )}
         {currentStep < steps.length - 1 && (
-          <WizardButton onClick={handleNext}>{nextButtonText}</WizardButton>
+          <div className="wizard-footer-right" style={fillButtonStyle}>
+            <WizardButton onClick={handleNext}>{nextButtonText}</WizardButton>
+          </div>
         )}
         {currentStep === steps.length - 1 && (
-          <WizardButton onClick={handleSubmit}>{finishButtonText}</WizardButton>
+          <div className="wizard-footer-right" style={fillButtonStyle}>
+            <WizardButton onClick={handleSubmit}>
+              {finishButtonText}
+            </WizardButton>
+          </div>
         )}
       </div>
     </div>

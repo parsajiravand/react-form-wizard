@@ -1,6 +1,6 @@
 import React from "react";
 
-import FormWizard from "../dist/react-form-wizard-component.es.js";
+import FormWizard from "./components/FormWizard";
 
 const App: React.FC = () => {
   const handleComplete = () => {
