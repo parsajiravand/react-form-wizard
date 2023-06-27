@@ -53,6 +53,13 @@ const FormWizard: React.FC<FormWizardProps> & {
       nextIndex: (currentStep + 1) as number,
     });
   }
+  // add checked option if tab active or actived before
+  const handelNavigate = (index: number) => {
+    if (index <= currentStep) {
+      setCurrentStep(index);
+    }
+  };
+  
 
   const handleNext = () => {
     setCurrentStep(currentStep + 1);
@@ -80,7 +87,7 @@ const FormWizard: React.FC<FormWizardProps> & {
           color="#e74c3c"
           isActive={isActive}
           index={index}
-          onClick={() => setCurrentStep(index)}
+          onClick={() => handelNavigate(index)}
         />
       );
     });

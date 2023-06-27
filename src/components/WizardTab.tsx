@@ -5,6 +5,7 @@ interface WizardTabProps {
   shape?: string;
   color?: string;
   isActive?: boolean;
+
   index?: number;
   onClick?: () => void;
 }
