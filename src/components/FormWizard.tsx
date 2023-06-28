@@ -21,6 +21,8 @@ interface FormWizardProps {
   finishButtonText?: string;
   stepSize?: "xs" | "sm" | "md" | "lg";
   layout?: "horizontal" | "vertical";
+
+  startIndex?: number;
   onComplete?: () => void;
   onTabChange?: (e: { prevIndex: number; nextIndex: number }) => void;
 }
@@ -38,13 +40,19 @@ const FormWizard: React.FC<FormWizardProps> & {
   finishButtonText = "Finish",
   stepSize = "md",
   layout = "horizontal",
+  startIndex = 0,
   onComplete,
   onTabChange,
 }) => {
-  const [currentStep, setCurrentStep] = useState(0);
   const steps = React.Children.toArray(
     children
   ) as React.ReactElement<TabContentProps>[];
+  // startIndex should be greater than or equal to 0 or less than steps.length
+  if(startIndex < 0 || startIndex > steps.length) {
+    startIndex = 0
+    console.error("startIndex should be greater than or equal to 0 or less than steps.length")
+  }
+  const [currentStep, setCurrentStep] = useState(startIndex);
 
   // emit tab change event prevIndex, nextIndex
   if (typeof onTabChange === "function") {
@@ -59,7 +67,10 @@ const FormWizard: React.FC<FormWizardProps> & {
       setCurrentStep(index);
     }
   };
-  
+  // handeling startIndex prop
+  // if (startIndex > 0 && startIndex < steps.length) {
+  //   setCurrentStep(startIndex);
+  // }
 
   const handleNext = () => {
     setCurrentStep(currentStep + 1);
@@ -134,7 +145,7 @@ const FormWizard: React.FC<FormWizardProps> & {
         <div className="wizard-tab-content">{renderContent()}</div>
       </div>
 
-      <div className="wizard-card-footer clearfix" >
+      <div className="wizard-card-footer clearfix">
         {currentStep > 0 && (
           <div className="wizard-footer-left" style={fillButtonStyle}>
             <WizardButton onClick={handlePrevious}>
