@@ -93,8 +93,8 @@ const FormWizard: React.FC<FormWizardProps> & {
           key={index}
           title={title}
           icon={icon}
-          shape="circle"
-          color="#e74c3c"
+          shape={shape}
+          color={color}
           isActive={isActive}
           index={index}
           onClick={() => handelNavigate(index)}

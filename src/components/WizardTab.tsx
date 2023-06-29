@@ -67,6 +67,7 @@ const WizardTab: React.FC<WizardTabProps> = (props: WizardTabProps) => {
           className={`stepTitle ${isActive ? "active" : ""}`}
           style={{
             color: isChecked ? color : "",
+            marginTop:'8px'
           }}
         >
           {title}
