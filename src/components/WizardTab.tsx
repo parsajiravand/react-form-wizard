@@ -9,8 +9,15 @@ interface WizardTabProps {
   onClick?: () => void;
 }
 
-const WizardTab: React.FC<WizardTabProps> = (props: WizardTabProps) => {
-  const { title, icon, shape, color, isActive, index, onClick } = props;
+const WizardTab: React.FC<WizardTabProps> = ({
+  title,
+  icon,
+  shape,
+  color = "#2196f3",
+  isActive,
+  index,
+  onClick,
+}: WizardTabProps) => {
   const stepClasses = isActive ? "active" : "";
   const cursorStyle = shape === "square" ? "default" : "";
   const [isChecked, setIsChecked] = React.useState(false);
@@ -67,7 +74,7 @@ const WizardTab: React.FC<WizardTabProps> = (props: WizardTabProps) => {
           className={`stepTitle ${isActive ? "active" : ""}`}
           style={{
             color: isChecked ? color : "",
-            marginTop:'8px'
+            marginTop: "8px",
           }}
         >
           {title}

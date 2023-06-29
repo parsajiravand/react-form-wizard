@@ -26,7 +26,7 @@ const App: React.FC = () => {
       <h1>React Form Wizard Example</h1>
       <FormWizard
         shape="square"
-        color="#e74c3c"
+        color="#2196f3"
         onComplete={handleComplete}
         onTabChange={tabChanged}
       >

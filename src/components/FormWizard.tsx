@@ -32,7 +32,7 @@ const FormWizard: React.FC<FormWizardProps> & {
 } = ({
   title,
   shape = "",
-  color = "#e74c3c",
+  color = "#2196f3",
   children,
   subtitle = "",
   nextButtonText = "Next",
@@ -119,7 +119,7 @@ const FormWizard: React.FC<FormWizardProps> & {
   const isVertical = layout === "vertical" ? "vertical" : "horizontal";
 
   return (
-    <div className={`vue-form-wizard ${stepSize} ${isVertical}`}>
+    <div className={`react-form-wizard ${stepSize} ${isVertical}`}>
       <div className="wizard-header">
         {/* if title is element render other wise render string props */}
         {typeof title === "string" ? (
