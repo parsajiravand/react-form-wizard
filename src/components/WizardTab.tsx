@@ -4,8 +4,7 @@ interface WizardTabProps {
   icon: string;
   shape?: string;
   color?: string;
-  isActive?: boolean;
-
+  isActive: boolean;
   index?: number;
   onClick?: () => void;
 }
@@ -14,6 +13,21 @@ const WizardTab: React.FC<WizardTabProps> = (props: WizardTabProps) => {
   const { title, icon, shape, color, isActive, index, onClick } = props;
   const stepClasses = isActive ? "active" : "";
   const cursorStyle = shape === "square" ? "default" : "";
+  const [isChecked, setIsChecked] = React.useState(false);
+  React.useEffect(() => {
+    if (isActive) {
+      setIsChecked(true);
+    }
+  }, [isActive]);
+
+  const iconStyle = () => {
+    if (isActive && isChecked) {
+      return { color: "white" };
+    }
+    if (isChecked) {
+      return { color: color };
+    }
+  };
 
   return (
     <li key={index} className={stepClasses}>
@@ -23,7 +37,7 @@ const WizardTab: React.FC<WizardTabProps> = (props: WizardTabProps) => {
         onClick={onClick}
       >
         <div
-          className={`wizard-icon-circle md ${isActive ? "checked" : ""} ${
+          className={`wizard-icon-circle md ${isChecked ? "checked" : ""} ${
             shape === "square" ? "square_shape" : ""
           }`}
           role="tab"
@@ -33,7 +47,7 @@ const WizardTab: React.FC<WizardTabProps> = (props: WizardTabProps) => {
           aria-disabled={isActive}
           aria-selected={isActive}
           style={{
-            borderColor: isActive ? color : "",
+            borderColor: isChecked ? color : "",
           }}
         >
           <div
@@ -45,14 +59,14 @@ const WizardTab: React.FC<WizardTabProps> = (props: WizardTabProps) => {
             }}
           >
             <span className="wizard-icon">
-              <i className={icon}></i>
+              <i className={icon} style={iconStyle()}></i>
             </span>
           </div>
         </div>
         <span
           className={`stepTitle ${isActive ? "active" : ""}`}
           style={{
-            color: isActive ? color : "",
+            color: isChecked ? color : "",
           }}
         >
           {title}

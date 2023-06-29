@@ -48,9 +48,11 @@ const FormWizard: React.FC<FormWizardProps> & {
     children
   ) as React.ReactElement<TabContentProps>[];
   // startIndex should be greater than or equal to 0 or less than steps.length
-  if(startIndex < 0 || startIndex > steps.length) {
-    startIndex = 0
-    console.error("startIndex should be greater than or equal to 0 or less than steps.length")
+  if (startIndex < 0 || startIndex > steps.length) {
+    startIndex = 0;
+    console.error(
+      "startIndex should be greater than or equal to 0 or less than steps.length"
+    );
   }
   const [currentStep, setCurrentStep] = useState(startIndex);
 
@@ -67,13 +69,10 @@ const FormWizard: React.FC<FormWizardProps> & {
       setCurrentStep(index);
     }
   };
-  // handeling startIndex prop
-  // if (startIndex > 0 && startIndex < steps.length) {
-  //   setCurrentStep(startIndex);
-  // }
 
   const handleNext = () => {
     setCurrentStep(currentStep + 1);
+
   };
 
   const handlePrevious = () => {
@@ -87,7 +86,7 @@ const FormWizard: React.FC<FormWizardProps> & {
   const renderTabs = () => {
     return steps.map((step, index) => {
       const { title, icon } = step.props;
-      const isActive = index <= currentStep;
+      const isActive = index === currentStep;
 
       return (
         <WizardTab
