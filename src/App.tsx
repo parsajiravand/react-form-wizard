@@ -27,6 +27,7 @@ const App: React.FC = () => {
       <FormWizard
         shape="square"
         color="#2196f3"
+        startIndex={2}
         onComplete={handleComplete}
         onTabChange={tabChanged}
       >

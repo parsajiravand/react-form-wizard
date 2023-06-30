@@ -1,4 +1,4 @@
-import React, { useState, ReactNode } from "react";
+import React, { useState, ReactNode, useEffect } from "react";
 import WizardTab from "./WizardTab";
 import WizardButton from "./WizardButton";
 import "../index.css";
@@ -26,7 +26,9 @@ interface FormWizardProps {
   onComplete?: () => void;
   onTabChange?: (e: { prevIndex: number; nextIndex: number }) => void;
 }
-
+interface WizardTabRef {
+  current?: { setChecked: (value: boolean) => void };
+}
 const FormWizard: React.FC<FormWizardProps> & {
   TabContent: React.FC<TabContentProps>;
 } = ({
@@ -47,6 +49,10 @@ const FormWizard: React.FC<FormWizardProps> & {
   const steps = React.Children.toArray(
     children
   ) as React.ReactElement<TabContentProps>[];
+  // set type for useRef
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const wizardTabRef = steps.map(() => React.useRef<WizardTabRef[]>(null));
+
   // startIndex should be greater than or equal to 0 or less than steps.length
   if (startIndex < 0 || startIndex > steps.length) {
     startIndex = 0;
@@ -54,7 +60,18 @@ const FormWizard: React.FC<FormWizardProps> & {
       "startIndex should be greater than or equal to 0 or less than steps.length"
     );
   }
+
   const [currentStep, setCurrentStep] = useState(startIndex);
+
+  useEffect(() => {
+    // set setChecked before all index to true
+    if (currentStep > 0) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      wizardTabRef.forEach((tab:any) => {
+        tab?.current?.setChecked(true);
+      });
+    }
+  }, [currentStep, wizardTabRef]);
 
   // emit tab change event prevIndex, nextIndex
   if (typeof onTabChange === "function") {
@@ -69,10 +86,8 @@ const FormWizard: React.FC<FormWizardProps> & {
       setCurrentStep(index);
     }
   };
-
   const handleNext = () => {
     setCurrentStep(currentStep + 1);
-
   };
 
   const handlePrevious = () => {
@@ -91,6 +106,7 @@ const FormWizard: React.FC<FormWizardProps> & {
       return (
         <WizardTab
           key={index}
+          ref={wizardTabRef[index]}
           title={title}
           icon={icon}
           shape={shape}
