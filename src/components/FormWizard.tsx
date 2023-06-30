@@ -21,7 +21,6 @@ interface FormWizardProps {
   finishButtonText?: string;
   stepSize?: "xs" | "sm" | "md" | "lg";
   layout?: "horizontal" | "vertical";
-
   startIndex?: number;
   onComplete?: () => void;
   onTabChange?: (e: { prevIndex: number; nextIndex: number }) => void;
@@ -67,7 +66,8 @@ const FormWizard: React.FC<FormWizardProps> & {
     // set setChecked before all index to true
     if (currentStep > 0) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      wizardTabRef.forEach((tab:any) => {
+      wizardTabRef.forEach((tab:any,index) => {
+        if(startIndex >= index) 
         tab?.current?.setChecked(true);
       });
     }
