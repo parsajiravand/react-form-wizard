@@ -1,3 +1,5 @@
+import { Ref } from "react";
+
 export interface WizardTabProps {
   title: string;
   icon: string;
@@ -5,6 +7,8 @@ export interface WizardTabProps {
   color?: string;
   isActive: boolean;
   index?: number;
-  ref: any;
+  ref: Ref<{
+    setChecked: (value: boolean) => void;
+  }>;
   onClick?: () => void;
 }

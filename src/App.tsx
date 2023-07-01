@@ -1,12 +1,24 @@
 import React from "react";
 
 import FormWizard from "./components/FormWizard";
+import { FormWizardMethods, FormWizardProps } from "./types/FormWizard";
 
 const App: React.FC = () => {
+  const formWizardRef = React.createRef<FormWizardProps & FormWizardMethods>();
+  console.log("formWizardRef", formWizardRef);
   const handleComplete = () => {
     console.log("Form completed!");
     // Handle form completion logic here
   };
+  const handelNext = () => {
+    console.log("nextTab");
+    formWizardRef.current?.nextTab();
+  };
+  const handelPrev = () => {
+    console.log("prevTab");
+    formWizardRef.current?.prevTab();
+  };
+
   // const title = () => {
   //   return <h1>test2 </h1>;
   // };
@@ -24,7 +36,10 @@ const App: React.FC = () => {
   return (
     <div>
       <h1>React Form Wizard Example</h1>
+      <button onClick={handelNext}>nextTab</button>
+      <button onClick={handelPrev}>prevTab</button>
       <FormWizard
+        ref={formWizardRef as unknown as FormWizardProps["ref"]}
         shape="square"
         color="#2196f3"
         onComplete={handleComplete}
