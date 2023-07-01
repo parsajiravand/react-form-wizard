@@ -61,7 +61,7 @@ const FormWizard: React.FC<FormWizardProps> & {
         });
       },
       goToTab: (index: number) => {
-        handelNavigate(index);
+        handelNavigate(index, true);
         // checked tab
         wizardTabRef.forEach((tab: any, i) => {
           if (index >= i) tab?.current?.setChecked(true);
@@ -98,8 +98,14 @@ const FormWizard: React.FC<FormWizardProps> & {
       });
     }
     // add checked option if tab active or actived before
-    const handelNavigate = (index: number) => {
-      setCurrentStep(index);
+    const handelNavigate = (index: number, navigateMode = false) => {
+      if (navigateMode) {
+        setCurrentStep(index);
+        return;
+      }
+      if (index <= currentStep) {
+        setCurrentStep(index);
+      }
     };
     const handleNext = () => {
       if (currentStep === steps.length - 1) return;
