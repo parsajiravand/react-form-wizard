@@ -1,33 +1,10 @@
-import React, { useState, ReactNode, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import WizardTab from "./WizardTab";
 import WizardButton from "./WizardButton";
 import "../index.css";
+import { FormWizardProps, TabContentProps, WizardTabRef } from "../types/FormWizard";
 
-interface TabContentProps {
-  title: string;
-  icon: string;
-  route?: string;
-  children: ReactNode;
-}
 
-interface FormWizardProps {
-  title?: string | ReactNode;
-  subtitle?: string;
-  shape?: string;
-  color?: string;
-  children: ReactNode;
-  nextButtonText?: string;
-  backButtonText?: string;
-  finishButtonText?: string;
-  stepSize?: "xs" | "sm" | "md" | "lg";
-  layout?: "horizontal" | "vertical";
-  startIndex?: number;
-  onComplete?: () => void;
-  onTabChange?: (e: { prevIndex: number; nextIndex: number }) => void;
-}
-interface WizardTabRef {
-  current?: { setChecked: (value: boolean) => void };
-}
 const FormWizard: React.FC<FormWizardProps> & {
   TabContent: React.FC<TabContentProps>;
 } = ({

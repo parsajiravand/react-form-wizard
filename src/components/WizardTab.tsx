@@ -1,14 +1,5 @@
 import React from "react";
-interface WizardTabProps {
-  title: string;
-  icon: string;
-  shape?: string;
-  color?: string;
-  isActive: boolean;
-  index?: number;
-  ref: any;
-  onClick?: () => void;
-}
+import { WizardTabProps } from "../types/WizardTab";
 
 const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
   (

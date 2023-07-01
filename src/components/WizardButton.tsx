@@ -1,9 +1,6 @@
 import React from "react";
+import { WizardButtonProps } from "../types/WizardButton";
 
-interface WizardButtonProps {
-  onClick: () => void;
-  children: React.ReactNode;
-}
 
 const WizardButton: React.FC<WizardButtonProps> = ({ onClick, children }) => {
   return (
