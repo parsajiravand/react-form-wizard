@@ -18,6 +18,18 @@ const App: React.FC = () => {
     console.log("prevTab");
     formWizardRef.current?.prevTab();
   };
+  const handelReset = () => {
+    console.log("reset");
+    formWizardRef.current?.reset();
+  };
+  const handelActiveAll = () => {
+    console.log("activeAll");
+    formWizardRef.current?.activeAll();
+  };
+  const handelChangeTab = () => {
+    console.log("changeTab");
+    formWizardRef.current?.goToTab(2);
+  };
 
   // const title = () => {
   //   return <h1>test2 </h1>;
@@ -38,8 +50,12 @@ const App: React.FC = () => {
       <h1>React Form Wizard Example</h1>
       <button onClick={handelNext}>nextTab</button>
       <button onClick={handelPrev}>prevTab</button>
+      <button onClick={handelReset}>reset</button>
+      <button onClick={handelActiveAll}>activeAll</button>
+      <button onClick={handelChangeTab}>changeTab</button>
+
       <FormWizard
-        ref={formWizardRef as unknown as FormWizardProps["ref"]}
+        ref={formWizardRef}
         shape="square"
         color="#2196f3"
         onComplete={handleComplete}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useImperativeHandle } from "react";
 import WizardTab from "./WizardTab";
 import WizardButton from "./WizardButton";
@@ -8,7 +9,6 @@ import {
   WizardTabRef,
 } from "../types/FormWizard";
 import { WizardTabProps } from "../types/WizardTab";
-
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -33,6 +33,13 @@ const FormWizard: React.FC<FormWizardProps> & {
     }: FormWizardProps,
     ref
   ) => {
+    const steps = React.Children.toArray(
+      children
+    ) as React.ReactElement<TabContentProps>[];
+
+    // set type for useRef
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const wizardTabRef = steps.map(() => React.useRef<WizardTabRef[]>(null));
     // set type for useRef
     useImperativeHandle(ref, () => ({
       nextTab: () => {
@@ -41,13 +48,27 @@ const FormWizard: React.FC<FormWizardProps> & {
       prevTab: () => {
         handlePrevious();
       },
+      reset: () => {
+        setCurrentStep(startIndex);
+        wizardTabRef.forEach((tab: any, index) => {
+          if (startIndex >= index) tab?.current?.setChecked(true);
+          else tab?.current?.setChecked(false);
+        });
+      },
+      activeAll: () => {
+        wizardTabRef.forEach((tab: any) => {
+          tab?.current?.setChecked(true);
+        });
+      },
+      goToTab: (index: number) => {
+        handelNavigate(index);
+        // checked tab
+        wizardTabRef.forEach((tab: any, i) => {
+          if (index >= i) tab?.current?.setChecked(true);
+          else tab?.current?.setChecked(false);
+        });
+      },
     }));
-    const steps = React.Children.toArray(
-      children
-    ) as React.ReactElement<TabContentProps>[];
-    // set type for useRef
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const wizardTabRef = steps.map(() => React.useRef<WizardTabRef[]>(null));
 
     // startIndex should be greater than or equal to 0 or less than steps.length
     if (startIndex < 0 || startIndex > steps.length) {
@@ -78,17 +99,15 @@ const FormWizard: React.FC<FormWizardProps> & {
     }
     // add checked option if tab active or actived before
     const handelNavigate = (index: number) => {
-      if (index <= currentStep) {
-        setCurrentStep(index);
-      }
+      setCurrentStep(index);
     };
     const handleNext = () => {
-      if(currentStep === steps.length - 1) return;
+      if (currentStep === steps.length - 1) return;
       setCurrentStep(currentStep + 1);
     };
 
     const handlePrevious = () => {
-      if(currentStep === 0) return;
+      if (currentStep === 0) return;
       setCurrentStep(currentStep - 1);
     };
 

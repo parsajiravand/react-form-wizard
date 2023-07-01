@@ -26,6 +26,9 @@ export interface FormWizardProps {
 export interface FormWizardMethods {
   nextTab: () => void;
   prevTab: () => void;
+  reset: () => void;
+  activeAll: () => void;
+  goToTab: (index: number) => void;
 }
 export interface WizardTabRef {
   current?: { setChecked: (value: boolean) => void };
