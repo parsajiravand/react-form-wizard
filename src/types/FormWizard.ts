@@ -5,6 +5,7 @@ export interface TabContentProps {
   icon: string;
   route?: string;
   children: ReactNode;
+  isValid: boolean;
 }
 
 export interface FormWizardProps {
