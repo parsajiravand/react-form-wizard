@@ -47,7 +47,7 @@ const App: React.FC = () => {
 
   return (
     <div>
-      <h1>React Form Wizard Example</h1>
+      <h1>React Form Wizard Example With Custom Ref</h1>
       <button onClick={handelNext}>nextTab</button>
       <button onClick={handelPrev}>prevTab</button>
       <button onClick={handelReset}>reset</button>
