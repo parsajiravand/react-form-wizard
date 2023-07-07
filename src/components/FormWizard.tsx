@@ -9,7 +9,6 @@ import {
   WizardTabRef,
 } from "../types/FormWizard";
 import { WizardTabProps } from "../types/WizardTab";
-import { useValidTabContent } from "./helper";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -124,18 +123,19 @@ const FormWizard: React.FC<FormWizardProps> & {
 
     const renderTabs = () => {
       return steps.map((step, index) => {
-        const { title, icon, isValid = true } = step.props;
+        const { title, icon, isValid = true, validationError } = step.props;
         const isActive = index === currentStep;
 
         // eslint-disable-next-line react-hooks/rules-of-hooks
         useEffect(() => {
           if (isActive && !isValid) {
             setCurrentStep(index - 1);
-            
-            alert("Please fill all required fields");
-            wizardTabRef[index]?.current?.setChecked(false);
+            console.log("Please fill all required fields");
+            wizardTabRef[index]?.current?.setChecked(false) as WizardTabRef;
+
+            if (typeof validationError === "function") validationError();
           }
-        }, [isActive, isValid, index]);
+        }, [isActive, isValid, index, validationError]);
 
         return (
           <WizardTab
@@ -221,12 +221,7 @@ const FormWizard: React.FC<FormWizardProps> & {
 );
 
 FormWizard.TabContent = ({ children, isValid }) => {
-  return (
-    <>
-      {isValid && children}
-      {!isValid && <div className="wizard-tab-content">erorr</div>}
-    </>
-  );
+  return <>{isValid && children}</>;
 };
 
 export default FormWizard;

@@ -71,7 +71,8 @@ const App: React.FC = () => {
         <FormWizard.TabContent
           title="Additional Info"
           icon="ti-settings"
-          isValid={false}
+          isValid={true}
+          validationError={() => alert("validationError because isValid false")}
         >
           {/* Add your form inputs and components for the second step */}
           <h1>test 2222</h1>
