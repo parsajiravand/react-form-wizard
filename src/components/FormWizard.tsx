@@ -130,9 +130,9 @@ const FormWizard: React.FC<FormWizardProps> & {
         useEffect(() => {
           if (isActive && !isValid) {
             setCurrentStep(index - 1);
-            console.log("Please fill all required fields");
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-ignore
             wizardTabRef[index]?.current?.setChecked(false) as WizardTabRef;
-
             if (typeof validationError === "function") validationError();
           }
         }, [isActive, isValid, index, validationError]);
