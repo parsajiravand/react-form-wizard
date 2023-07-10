@@ -220,7 +220,7 @@ const FormWizard: React.FC<FormWizardProps> & {
   }
 );
 
-FormWizard.TabContent = ({ children, isValid }) => {
+FormWizard.TabContent = ({ children, isValid = true }) => {
   return <>{isValid && children}</>;
 };
 

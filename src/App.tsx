@@ -71,7 +71,7 @@ const App: React.FC = () => {
         <FormWizard.TabContent
           title="Additional Info"
           icon="ti-settings"
-          isValid={true}
+          isValid={false}
           validationError={() => alert("validationError because isValid false")}
         >
           {/* Add your form inputs and components for the second step */}
@@ -79,6 +79,8 @@ const App: React.FC = () => {
         </FormWizard.TabContent>
         <FormWizard.TabContent title="Last step" icon="ti-check">
           {/* Add your form inputs and components for the last step */}
+          <h1>test 3333</h1>
+
         </FormWizard.TabContent>
         <FormWizard.TabContent title="Last step" icon="ti-check">
           {/* Add your form inputs and components for the last step */}
