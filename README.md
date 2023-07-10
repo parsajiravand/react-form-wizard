@@ -127,6 +127,8 @@ The `FormWizard.TabContent` component is used to define each tab's content and a
 - `title` (required): The title of the tab.
 - `icon` (required): The icon for the tab.
 - `children` (required): The content of the tab.
+- `isValid` (optional): A boolean value indicating whether the tab is valid or not.
+- `validationError` (optional): The validation error message to be displayed when the tab is not valid.
 
 Refer to the component's source code or documentation for additional props and details.
 

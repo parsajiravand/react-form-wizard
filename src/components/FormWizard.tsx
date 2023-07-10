@@ -123,8 +123,19 @@ const FormWizard: React.FC<FormWizardProps> & {
 
     const renderTabs = () => {
       return steps.map((step, index) => {
-        const { title, icon } = step.props;
+        const { title, icon, isValid = true, validationError } = step.props;
         const isActive = index === currentStep;
+
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useEffect(() => {
+          if (isActive && !isValid) {
+            setCurrentStep(index - 1);
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-ignore
+            wizardTabRef[index]?.current?.setChecked(false) as WizardTabRef;
+            if (typeof validationError === "function") validationError();
+          }
+        }, [isActive, isValid, index, validationError]);
 
         return (
           <WizardTab
@@ -209,8 +220,8 @@ const FormWizard: React.FC<FormWizardProps> & {
   }
 );
 
-FormWizard.TabContent = ({ children }) => {
-  return <>{children}</>;
+FormWizard.TabContent = ({ children, isValid }) => {
+  return <>{isValid && children}</>;
 };
 
 export default FormWizard;

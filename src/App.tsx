@@ -61,11 +61,21 @@ const App: React.FC = () => {
         onComplete={handleComplete}
         onTabChange={tabChanged}
       >
-        <FormWizard.TabContent title="Personal details" icon="ti-user">
+        <FormWizard.TabContent
+          title="Personal details"
+          icon="ti-user"
+          isValid={true}
+        >
           <h1>test</h1>
         </FormWizard.TabContent>
-        <FormWizard.TabContent title="Additional Info" icon="ti-settings">
+        <FormWizard.TabContent
+          title="Additional Info"
+          icon="ti-settings"
+          isValid={true}
+          validationError={() => alert("validationError because isValid false")}
+        >
           {/* Add your form inputs and components for the second step */}
+          <h1>test 2222</h1>
         </FormWizard.TabContent>
         <FormWizard.TabContent title="Last step" icon="ti-check">
           {/* Add your form inputs and components for the last step */}
