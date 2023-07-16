@@ -18,6 +18,7 @@ export interface FormWizardProps {
   children: ReactNode;
   nextButtonText?: string;
   backButtonText?: string;
+  backButtonTemplate?: ReactNode;
   finishButtonText?: string;
   stepSize?: "xs" | "sm" | "md" | "lg";
   layout?: "horizontal" | "vertical";

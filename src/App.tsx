@@ -44,6 +44,9 @@ const App: React.FC = () => {
     console.log("prevIndex", prevIndex);
     console.log("nextIndex", nextIndex);
   };
+  const backTemplate = () => {
+    return  <button>back</button>;
+  };
 
   return (
     <div>
@@ -60,6 +63,7 @@ const App: React.FC = () => {
         color="#2196f3"
         onComplete={handleComplete}
         onTabChange={tabChanged}
+        backButtonTemplate={backTemplate()}
       >
         <FormWizard.TabContent
           title="Personal details"
@@ -80,7 +84,6 @@ const App: React.FC = () => {
         <FormWizard.TabContent title="Last step" icon="ti-check">
           {/* Add your form inputs and components for the last step */}
           <h1>test 3333</h1>
-
         </FormWizard.TabContent>
         <FormWizard.TabContent title="Last step" icon="ti-check">
           {/* Add your form inputs and components for the last step */}

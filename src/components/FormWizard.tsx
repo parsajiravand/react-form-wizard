@@ -24,6 +24,7 @@ const FormWizard: React.FC<FormWizardProps> & {
       subtitle = "",
       nextButtonText = "Next",
       backButtonText = "Back",
+      backButtonTemplate,
       finishButtonText = "Finish",
       stepSize = "md",
       layout = "horizontal",
@@ -196,11 +197,17 @@ const FormWizard: React.FC<FormWizardProps> & {
 
         <div className="wizard-card-footer clearfix">
           {currentStep > 0 && (
-            <div className="wizard-footer-left" style={fillButtonStyle}>
-              <WizardButton onClick={handlePrevious}>
-                {backButtonText}
-              </WizardButton>
-            </div>
+            <>
+              {backButtonTemplate ? (
+                backButtonTemplate
+              ) : (
+                <div className="wizard-footer-left" style={fillButtonStyle}>
+                  <WizardButton onClick={handlePrevious}>
+                    {backButtonText}
+                  </WizardButton>
+                </div>
+              )}
+            </>
           )}
           {currentStep < steps.length - 1 && (
             <div className="wizard-footer-right" style={fillButtonStyle}>
