@@ -44,8 +44,8 @@ const App: React.FC = () => {
     console.log("prevIndex", prevIndex);
     console.log("nextIndex", nextIndex);
   };
-  const backTemplate = () => {
-    return  <button>back</button>;
+  const backTemplate = (handlePrevious: () => void) => {
+    return <button onClick={handlePrevious}>back</button>;
   };
 
   return (
@@ -63,7 +63,7 @@ const App: React.FC = () => {
         color="#2196f3"
         onComplete={handleComplete}
         onTabChange={tabChanged}
-        backButtonTemplate={backTemplate()}
+        backButtonTemplate={backTemplate}
       >
         <FormWizard.TabContent
           title="Personal details"
@@ -75,7 +75,7 @@ const App: React.FC = () => {
         <FormWizard.TabContent
           title="Additional Info"
           icon="ti-settings"
-          isValid={false}
+          isValid={true}
           validationError={() => alert("validationError because isValid false")}
         >
           {/* Add your form inputs and components for the second step */}

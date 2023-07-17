@@ -199,7 +199,7 @@ const FormWizard: React.FC<FormWizardProps> & {
           {currentStep > 0 && (
             <>
               {backButtonTemplate ? (
-                backButtonTemplate
+                backButtonTemplate(handlePrevious)
               ) : (
                 <div className="wizard-footer-left" style={fillButtonStyle}>
                   <WizardButton onClick={handlePrevious}>
