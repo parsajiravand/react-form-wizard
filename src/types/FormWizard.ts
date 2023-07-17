@@ -17,9 +17,11 @@ export interface FormWizardProps {
   color?: string;
   children: ReactNode;
   nextButtonText?: string;
+  nextButtonTemplate?: (arg0: () => void) => void;
   backButtonText?: string;
-  backButtonTemplate?: (arg0: () => void) => void | ReactNode;
+  backButtonTemplate?: (arg0: () => void) => void;
   finishButtonText?: string;
+  finishButtonTemplate?: (arg0: () => void) => void;
   stepSize?: "xs" | "sm" | "md" | "lg";
   layout?: "horizontal" | "vertical";
   startIndex?: number;

@@ -23,9 +23,11 @@ const FormWizard: React.FC<FormWizardProps> & {
       children,
       subtitle = "",
       nextButtonText = "Next",
+      nextButtonTemplate,
       backButtonText = "Back",
       backButtonTemplate,
       finishButtonText = "Finish",
+      finishButtonTemplate,
       stepSize = "md",
       layout = "horizontal",
       startIndex = 0,
@@ -210,16 +212,30 @@ const FormWizard: React.FC<FormWizardProps> & {
             </>
           )}
           {currentStep < steps.length - 1 && (
-            <div className="wizard-footer-right" style={fillButtonStyle}>
-              <WizardButton onClick={handleNext}>{nextButtonText}</WizardButton>
-            </div>
+            <>
+              {nextButtonTemplate ? (
+                nextButtonTemplate(handleNext)
+              ) : (
+                <div className="wizard-footer-right" style={fillButtonStyle}>
+                  <WizardButton onClick={handleNext}>
+                    {nextButtonText}
+                  </WizardButton>
+                </div>
+              )}
+            </>
           )}
           {currentStep === steps.length - 1 && (
-            <div className="wizard-footer-right" style={fillButtonStyle}>
-              <WizardButton onClick={handleSubmit}>
-                {finishButtonText}
-              </WizardButton>
-            </div>
+            <>
+              {finishButtonTemplate ? (
+                finishButtonTemplate(handleSubmit)
+              ) : (
+                <div className="wizard-footer-right" style={fillButtonStyle}>
+                  <WizardButton onClick={handleSubmit}>
+                    {finishButtonText}
+                  </WizardButton>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

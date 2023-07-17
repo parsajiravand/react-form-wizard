@@ -64,6 +64,12 @@ const App: React.FC = () => {
         onComplete={handleComplete}
         onTabChange={tabChanged}
         backButtonTemplate={backTemplate}
+        nextButtonTemplate={(handleNext) => (
+          <button onClick={handleNext}>next</button>
+        )}
+        finishButtonTemplate={(handleComplete) => (
+          <button onClick={handleComplete}>finish</button>
+        )}
       >
         <FormWizard.TabContent
           title="Personal details"
