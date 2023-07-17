@@ -1,97 +1,118 @@
 import React from "react";
 
 import FormWizard from "./components/FormWizard";
-import { FormWizardMethods, FormWizardProps } from "./types/FormWizard";
-
 const App: React.FC = () => {
-  const formWizardRef = React.createRef<FormWizardProps & FormWizardMethods>();
-  console.log("formWizardRef", formWizardRef);
   const handleComplete = () => {
     console.log("Form completed!");
     // Handle form completion logic here
   };
-  const handelNext = () => {
-    console.log("nextTab");
-    formWizardRef.current?.nextTab();
-  };
-  const handelPrev = () => {
-    console.log("prevTab");
-    formWizardRef.current?.prevTab();
-  };
-  const handelReset = () => {
-    console.log("reset");
-    formWizardRef.current?.reset();
-  };
-  const handelActiveAll = () => {
-    console.log("activeAll");
-    formWizardRef.current?.activeAll();
-  };
-  const handelChangeTab = () => {
-    console.log("changeTab");
-    formWizardRef.current?.goToTab(2);
-  };
 
-  // const title = () => {
-  //   return <h1>test2 </h1>;
-  // };
-  const tabChanged = ({
-    prevIndex,
-    nextIndex,
-  }: {
-    prevIndex: number;
-    nextIndex: number;
-  }) => {
-    console.log("prevIndex", prevIndex);
-    console.log("nextIndex", nextIndex);
+  const backTemplate = (handlePrevious: () => void) => {
+    return (
+      <button className="base-button" onClick={handlePrevious}>
+        back
+      </button>
+    );
   };
 
   return (
     <div>
-      <h1>React Form Wizard Example With Custom Ref</h1>
-      <button onClick={handelNext}>nextTab</button>
-      <button onClick={handelPrev}>prevTab</button>
-      <button onClick={handelReset}>reset</button>
-      <button onClick={handelActiveAll}>activeAll</button>
-      <button onClick={handelChangeTab}>changeTab</button>
+      <h1>React Form Wizard Example Footer Buttons</h1>
 
       <FormWizard
-        ref={formWizardRef}
-        shape="square"
+        shape="circle"
         color="#2196f3"
         onComplete={handleComplete}
-        onTabChange={tabChanged}
+        backButtonTemplate={backTemplate}
+        nextButtonTemplate={(handleNext) => (
+          <button className="base-button" onClick={handleNext}>
+            next
+          </button>
+        )}
+        finishButtonTemplate={(handleComplete) => (
+          <button className="finish-button" onClick={handleComplete}>
+            finish
+          </button>
+        )}
       >
-        <FormWizard.TabContent
-          title="Personal details"
-          icon="ti-user"
-          isValid={true}
-        >
-          <h1>test</h1>
+        <FormWizard.TabContent title="Personal details" icon="ti-user">
+          <h3>First Tab</h3>
+          <p>Some content for the first tab</p>
         </FormWizard.TabContent>
-        <FormWizard.TabContent
-          title="Additional Info"
-          icon="ti-settings"
-          isValid={false}
-          validationError={() => alert("validationError because isValid false")}
-        >
-          {/* Add your form inputs and components for the second step */}
-          <h1>test 2222</h1>
+        <FormWizard.TabContent title="Additional Info" icon="ti-settings">
+          <h3>Second Tab</h3>
+          <p>Some content for the second tab</p>
         </FormWizard.TabContent>
         <FormWizard.TabContent title="Last step" icon="ti-check">
-          {/* Add your form inputs and components for the last step */}
-          <h1>test 3333</h1>
-
-        </FormWizard.TabContent>
-        <FormWizard.TabContent title="Last step" icon="ti-check">
-          {/* Add your form inputs and components for the last step */}
-        </FormWizard.TabContent>
-        <FormWizard.TabContent title="Last step" icon="ti-check">
-          {/* Add your form inputs and components for the last step */}
+          <h3>Third Tab</h3>
+          <p>Some content for the third tab</p>
         </FormWizard.TabContent>
       </FormWizard>
       {/* add style */}
       <style>{`
         @import url("https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/themify-icons.css");
+        .wizard-card-footer{
+          display: flex;
+          justify-content: center;
+          margin-top: 50px;
+        }
+        .base-button {
+          background-color: blue;
+          border: none;
+          color: white;
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          cursor: pointer;
+          margin-right: 10px;
+          margin-left: 10px;
+          border-radius: 50px;
+          box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+          transition: background-color 0.3s ease;
+          }
+          
+          .base-button:hover {
+          background-color: navy;
+          }
+          
+          .base-button:focus {
+          outline: none;
+          }
+          
+          .base-button:active {
+          transform: translateY(2px);
+          }
+
+        .finish-button{
+          background-color: green;
+          border: none;
+          color: white;
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          cursor: pointer;
+          margin-right: 10px;
+          margin-left: 10px;
+          border-radius: 50px;
+          box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+          transition: background-color 0.3s ease;
+        }
+        .finish-button:hover {
+          background-color: darkgreen;
+          }
+        
+        .finish-button:focus {
+          outline: none;
+         }
+          
+        .finish-button:active {
+          transform: translateY(2px);
+         }
+
       `}</style>
     </div>
   );
