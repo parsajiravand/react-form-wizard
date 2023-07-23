@@ -23,7 +23,6 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
       }
     }, [isActive]);
 
-
     const iconStyle = () => {
       if (isActive && isChecked) {
         return { color: "white" };
@@ -68,7 +67,12 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
               }}
             >
               <span className="wizard-icon">
-                <i className={icon} style={iconStyle()}></i>
+                {/* check if icon type string other wise render react node */}
+                {typeof icon === "string" ? (
+                  <i className={icon} style={iconStyle()}></i>
+                ) : (
+                  icon
+                )}
               </span>
             </div>
           </div>
