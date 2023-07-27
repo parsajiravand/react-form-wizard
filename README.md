@@ -105,32 +105,6 @@ function App() {
 export default App;
 ```
 
-## Props
-
-The `FormWizard` component accepts the following props:
-
-- `title` (optional): The title of the form wizard. It can be a string or a ReactNode.
-- `subtitle` (optional): The subtitle or description of the form wizard.
-- `shape` (optional): The shape of the wizard tabs (e.g., "circle", "square").
-- `color` (optional): The color of the wizard tabs and progress bar.
-- `children` (required): The content of the form wizard, including the form tabs and their content.
-- `nextButtonText` (optional): The text for the "Next" button.
-- `backButtonText` (optional): The text for the "Back" button.
-- `finishButtonText` (optional): The text for the "Finish" button.
-- `stepSize` (optional): The size of the steps (e.g., "xs", "sm", "md", "lg").
-- `layout` (optional): The layout of the form wizard (e.g., "horizontal", "vertical").
-- `onComplete` (optional): A callback function to be called when the form wizard is completed.
-- `onTabChange` (optional): A callback function to be called when the active tab is changed.
-
-The `FormWizard.TabContent` component is used to define each tab's content and accepts the following props:
-
-- `title` (required): The title of the tab.
-- `icon` (required): The icon for the tab.
-- `children` (required): The content of the tab.
-- `isValid` (optional): A boolean value indicating whether the tab is valid or not.
-- `validationError` (optional): The validation error message to be displayed when the tab is not valid.
-
-Refer to the component's source code or documentation for additional props and details.
 
 ## Examples
 

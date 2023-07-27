@@ -1,8 +1,8 @@
 import { ReactNode, Ref } from "react";
 
 export interface TabContentProps {
-  title: string;
-  icon: string;
+  title?: string;
+  icon?: string | ReactNode;
   route?: string;
   children: ReactNode;
   isValid?: boolean;

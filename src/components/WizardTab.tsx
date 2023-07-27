@@ -23,7 +23,6 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
       }
     }, [isActive]);
 
-
     const iconStyle = () => {
       if (isActive && isChecked) {
         return { color: "white" };
@@ -37,6 +36,14 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
         setIsChecked(value);
       },
     }));
+    // check if icon type string other wise render react node
+    const handelIcon = () => {
+      if (!icon) return <span style={iconStyle()}>{index + 1}</span>;
+      if (typeof icon === "string") {
+        return <i className={icon} style={iconStyle()}></i>;
+      }
+      return icon;
+    };
 
     return (
       <li key={index} className={stepClasses}>
@@ -68,7 +75,8 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
               }}
             >
               <span className="wizard-icon">
-                <i className={icon} style={iconStyle()}></i>
+                {/* check if icon type string other wise render react node */}
+                {handelIcon()}
               </span>
             </div>
           </div>

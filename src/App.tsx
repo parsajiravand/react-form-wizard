@@ -14,6 +14,22 @@ const App: React.FC = () => {
       </button>
     );
   };
+  const customSvgIcon = (
+    /* user svg icon */
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      fill="red"
+      viewBox="0 0 24 24"
+    >
+      <path d="M0 0h24v24H0z" fill="none" />
+      <path
+        fill="red"
+        d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4z"
+      />
+    </svg>
+  );
 
   return (
     <div>
@@ -35,11 +51,11 @@ const App: React.FC = () => {
           </button>
         )}
       >
-        <FormWizard.TabContent title="Personal details" icon="ti-user">
+        <FormWizard.TabContent title="Personal details" icon={customSvgIcon}>
           <h3>First Tab</h3>
           <p>Some content for the first tab</p>
         </FormWizard.TabContent>
-        <FormWizard.TabContent title="Additional Info" icon="ti-settings">
+        <FormWizard.TabContent title="Additional Info">
           <h3>Second Tab</h3>
           <p>Some content for the second tab</p>
         </FormWizard.TabContent>

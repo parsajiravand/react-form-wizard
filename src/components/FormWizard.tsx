@@ -144,8 +144,8 @@ const FormWizard: React.FC<FormWizardProps> & {
           <WizardTab
             key={index}
             ref={wizardTabRef[index] as unknown as WizardTabProps["ref"]}
-            title={title}
-            icon={icon}
+            title={title as string}
+            icon={icon as string}
             shape={shape}
             color={color}
             isActive={isActive}
