@@ -51,11 +51,11 @@ const App: React.FC = () => {
           </button>
         )}
       >
-        <FormWizard.TabContent title="Personal details">
+        <FormWizard.TabContent title="Personal details" icon={customSvgIcon}>
           <h3>First Tab</h3>
           <p>Some content for the first tab</p>
         </FormWizard.TabContent>
-        <FormWizard.TabContent title="Additional Info" >
+        <FormWizard.TabContent title="Additional Info">
           <h3>Second Tab</h3>
           <p>Some content for the second tab</p>
         </FormWizard.TabContent>

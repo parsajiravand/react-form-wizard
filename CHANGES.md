@@ -19,3 +19,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fix
 
+## [0.1.7]
+### Added
+- Add Custom Icon option
+- Add index + 1 when icon is not set
+
+### Changed
+- Title and Icon are now optional
+
+
+### Deprecated 
+
+### Removed
+
+### Fix
+- Fix bug with custom icon and without icon error
+
+
