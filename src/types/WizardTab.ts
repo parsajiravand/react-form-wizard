@@ -6,7 +6,7 @@ export interface WizardTabProps {
   shape?: string;
   color?: string;
   isActive: boolean;
-  index?: number;
+  index: number;
   ref: Ref<{
     setChecked: (value: boolean) => void;
   }>;
