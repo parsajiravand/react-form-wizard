@@ -1,137 +1,97 @@
 import React from "react";
+import FormWizard from "react-form-wizard-component";
+import "./index.css";
 
-import FormWizard from "./components/FormWizard";
-const App: React.FC = () => {
+export default function validateTab() {
+  const [firstTabInput, setFirstTabInput] = React.useState("");
   const handleComplete = () => {
     console.log("Form completed!");
     // Handle form completion logic here
   };
-
-  const backTemplate = (handlePrevious: () => void) => {
-    return (
-      <button className="base-button" onClick={handlePrevious}>
-        back
-      </button>
-    );
+  // check validate tab
+  const checkValidateTab = () => {
+    console.log(firstTabInput);
+    if (firstTabInput === "") {
+      return false;
+    }
+    return true;
   };
-  const customSvgIcon = (
-    /* user svg icon */
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      fill="red"
-      viewBox="0 0 24 24"
-    >
-      <path d="M0 0h24v24H0z" fill="none" />
-      <path
-        fill="red"
-        d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4z"
-      />
-    </svg>
-  );
+  // error messages
+  const errorMessages = () => {
+    // you can add alert or console.log or any thing you want
+    alert("Please fill in the required field");
+  };
+  // check validate tab
+  const checkValidateTab2 = () => {
+    console.log(firstTabInput);
+    if (firstTabInput === "") {
+      return false;
+    }
+    return true;
+  };
+  // error messages
+  const errorMessages2 = () => {
+    // you can add alert or console.log or any thing you want
+    console.log("test");
+  };
 
   return (
-    <div>
-      <h1>React Form Wizard Example Footer Buttons</h1>
-
-      <FormWizard
-        shape="circle"
-        color="#2196f3"
-        onComplete={handleComplete}
-        backButtonTemplate={backTemplate}
-        nextButtonTemplate={(handleNext) => (
-          <button className="base-button" onClick={handleNext}>
-            next
-          </button>
-        )}
-        finishButtonTemplate={(handleComplete) => (
-          <button className="finish-button" onClick={handleComplete}>
-            finish
-          </button>
-        )}
-      >
-        <FormWizard.TabContent title="Personal details" icon={customSvgIcon}>
+    <>
+      <FormWizard onComplete={handleComplete}>
+        <FormWizard.TabContent title="Personal details" icon="ti-user">
           <h3>First Tab</h3>
           <p>Some content for the first tab</p>
+          <label>
+            Required Field
+            <span
+              style={{ color: "red", fontSize: "20px", fontWeight: "bold" }}
+            >
+              *
+            </span>
+          </label>
+          <br />
+          <input
+            className="form-control"
+            type="text"
+            value={firstTabInput}
+            onChange={(e) => setFirstTabInput(e.target.value)}
+          />
         </FormWizard.TabContent>
-        <FormWizard.TabContent title="Additional Info">
+        {/* Tabs should be validated */}
+        <FormWizard.TabContent
+          title="Additional Info"
+          icon="ti-settings"
+          isValid={checkValidateTab()}
+          validationError={errorMessages}
+        >
           <h3>Second Tab</h3>
           <p>Some content for the second tab</p>
         </FormWizard.TabContent>
-        <FormWizard.TabContent title="Last step" icon="ti-check">
-          <h3>Third Tab</h3>
-          <p>Some content for the third tab</p>
+        <FormWizard.TabContent
+          title="Last step"
+          icon="ti-check"
+          isValid={checkValidateTab2()}
+          validationError={errorMessages2}
+        >
+          <h3>Last Tab</h3>
+          <p>Some content for the last tab</p>
         </FormWizard.TabContent>
       </FormWizard>
       {/* add style */}
       <style>{`
         @import url("https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/themify-icons.css");
-        .wizard-card-footer{
-          display: flex;
-          justify-content: center;
-          margin-top: 50px;
+        .form-control {
+            height: 36px;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #495057;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
         }
-        .base-button {
-          background-color: blue;
-          border: none;
-          color: white;
-          padding: 15px 32px;
-          text-align: center;
-          text-decoration: none;
-          display: inline-block;
-          font-size: 16px;
-          cursor: pointer;
-          margin-right: 10px;
-          margin-left: 10px;
-          border-radius: 50px;
-          box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-          transition: background-color 0.3s ease;
-          }
-          
-          .base-button:hover {
-          background-color: navy;
-          }
-          
-          .base-button:focus {
-          outline: none;
-          }
-          
-          .base-button:active {
-          transform: translateY(2px);
-          }
-
-        .finish-button{
-          background-color: green;
-          border: none;
-          color: white;
-          padding: 15px 32px;
-          text-align: center;
-          text-decoration: none;
-          display: inline-block;
-          font-size: 16px;
-          cursor: pointer;
-          margin-right: 10px;
-          margin-left: 10px;
-          border-radius: 50px;
-          box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-          transition: background-color 0.3s ease;
-        }
-        .finish-button:hover {
-          background-color: darkgreen;
-          }
-        
-        .finish-button:focus {
-          outline: none;
-         }
-          
-        .finish-button:active {
-          transform: translateY(2px);
-         }
 
       `}</style>
-    </div>
+    </>
   );
-};
-
-export default App;
+}

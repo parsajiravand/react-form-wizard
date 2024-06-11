@@ -5,7 +5,7 @@
   "homepage": "https://github.com/parsajiravand/react-form-wizard",
   "repository": "https://github.com/parsajiravand/react-form-wizard",
   "description": "A react form wizard component with validation and progress bar with no external depenendcies which simplifies tab wizard management.",
-  "version": "0.1.7",
+  "version": "0.2.3",
   "type": "module",
   "files": [
     "dist"
@@ -15,21 +15,22 @@
   "exports": {
     ".": {
       "import": "./dist/react-form-wizard-component.es.js",
-      "require": "./dist/react-form-wizard-component.umd.js"
+      "require": "./dist/react-form-wizard-component.umd.js",
+      "types": "./dist/types/main.d.ts"
     },
     "./dist/style.css": "./dist/style.css"
   },
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/types/main.d.ts",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": " vite build && tsc",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
-  "dependencies": {},
+  "dependencies": {
+    "react-form-wizard-component": "^0.1.9"
+  },
   "devDependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
@@ -38,6 +39,8 @@
     "eslint": "^8.38.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "typescript": "^5.0.2",
     "vite": "^4.3.9",
     "vite-plugin-banner": "^0.7.0"
