@@ -25,6 +25,7 @@ export interface FormWizardProps {
   stepSize?: "xs" | "sm" | "md" | "lg";
   layout?: "horizontal" | "vertical";
   startIndex?: number;
+  disableBackOnClickStep?: boolean;
   onComplete?: () => void;
   onTabChange?: (e: { prevIndex: number; nextIndex: number }) => void;
 }

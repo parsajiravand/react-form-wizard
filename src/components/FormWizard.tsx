@@ -31,6 +31,7 @@ const FormWizard: React.FC<FormWizardProps> & {
       stepSize = "md",
       layout = "horizontal",
       startIndex = 0,
+      disableBackOnClickStep = false,
       onComplete,
       onTabChange,
     }: FormWizardProps,
@@ -150,7 +151,9 @@ const FormWizard: React.FC<FormWizardProps> & {
             color={color}
             isActive={isActive}
             index={index}
-            onClick={() => handelNavigate(index)}
+            onClick={() =>
+              !disableBackOnClickStep ? handelNavigate(index) : null
+            }
           />
         );
       });
