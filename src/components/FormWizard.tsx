@@ -32,6 +32,8 @@ const FormWizard: React.FC<FormWizardProps> & {
       layout = "horizontal",
       startIndex = 0,
       disableBackOnClickStep = false,
+      showProggressBar = true,
+      inlineStep = false,
       onComplete,
       onTabChange,
     }: FormWizardProps,
@@ -93,6 +95,8 @@ const FormWizard: React.FC<FormWizardProps> & {
         });
       }
     }, [currentStep, startIndex, wizardTabRef]);
+    // if inline step hide proggress bar
+    if (inlineStep) showProggressBar = false;
 
     // emit tab change event prevIndex, nextIndex
     if (typeof onTabChange === "function") {
@@ -151,6 +155,7 @@ const FormWizard: React.FC<FormWizardProps> & {
             color={color}
             isActive={isActive}
             index={index}
+            inlineStep={inlineStep}
             onClick={() =>
               !disableBackOnClickStep ? handelNavigate(index) : null
             }
@@ -188,9 +193,14 @@ const FormWizard: React.FC<FormWizardProps> & {
           )}
         </div>
         <div className="wizard-navigation">
-          <div className="wizard-progress-with-circle">
-            <div className="wizard-progress-bar" style={progressBarStyle}></div>
-          </div>
+          {showProggressBar && (
+            <div className="wizard-progress-with-circle">
+              <div
+                className="wizard-progress-bar"
+                style={progressBarStyle}
+              ></div>
+            </div>
+          )}
           <ul
             className={`form-wizard-steps  wizard-nav wizard-nav-pills ${shape} ${stepSize}`}
             style={{ borderColor: color }}

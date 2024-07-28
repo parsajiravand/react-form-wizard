@@ -7,6 +7,7 @@ export interface WizardTabProps {
   color?: string;
   isActive: boolean;
   index: number;
+  inlineStep?: boolean;
   ref: Ref<{
     setChecked: (value: boolean) => void;
   }>;

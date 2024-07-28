@@ -26,6 +26,8 @@ export interface FormWizardProps {
   layout?: "horizontal" | "vertical";
   startIndex?: number;
   disableBackOnClickStep?: boolean;
+  showProggressBar?: boolean;
+  inlineStep?: boolean;
   onComplete?: () => void;
   onTabChange?: (e: { prevIndex: number; nextIndex: number }) => void;
 }

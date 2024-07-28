@@ -10,6 +10,7 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
       color = "#2196f3",
       isActive,
       index,
+      inlineStep = true,
       onClick,
     }: WizardTabProps,
     ref
@@ -46,9 +47,11 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
     };
 
     return (
-      <li key={index} className={stepClasses}>
+      <li key={index} className={`${stepClasses}`}>
         <a
-          className={isActive ? "active" : ""}
+          className={`${isActive ? "active" : ""} ${
+            inlineStep ? "inline-step" : ""
+          }`}
           style={{ cursor: cursorStyle }}
           onClick={onClick}
         >
@@ -84,7 +87,8 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
             className={`stepTitle ${isActive ? "active" : ""}`}
             style={{
               color: isChecked ? color : "",
-              marginTop: "8px",
+              marginTop: inlineStep ? "" : "8px",
+              padding: inlineStep ? "0 10px" : "0",
             }}
           >
             {title}

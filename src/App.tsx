@@ -1,9 +1,9 @@
 import React from "react";
-import FormWizard from "react-form-wizard-component";
+import FormWizard from "./components/FormWizard";
 import "./index.css";
 
 export default function validateTab() {
-  const [firstTabInput, setFirstTabInput] = React.useState("");
+  const [firstTabInput, setFirstTabInput] = React.useState("test");
   const handleComplete = () => {
     console.log("Form completed!");
     // Handle form completion logic here
@@ -37,7 +37,9 @@ export default function validateTab() {
 
   return (
     <>
-      <FormWizard onComplete={handleComplete}>
+      <FormWizard 
+      inlineStep={true}
+      onComplete={handleComplete}>
         <FormWizard.TabContent title="Personal details" icon="ti-user">
           <h3>First Tab</h3>
           <p>Some content for the first tab</p>
@@ -76,6 +78,7 @@ export default function validateTab() {
           <h3>Last Tab</h3>
           <p>Some content for the last tab</p>
         </FormWizard.TabContent>
+
       </FormWizard>
       {/* add style */}
       <style>{`

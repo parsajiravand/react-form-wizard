@@ -1,6 +1,4 @@
-
-
- .react-form-wizard .wizard-btn {
+.react-form-wizard .wizard-btn {
   display: inline-block;
   margin-bottom: 0;
   font-weight: 400;
@@ -349,4 +347,12 @@ fieldset[disabled] .react-form-wizard .wizard-btn {
 }
 .react-form-wizard.vertical .wizard-card-footer {
   padding-top: 30px;
+}
+
+/* New Style v1> */
+.inline-step {
+  display: flex;
+  flex-direction: row !important;
+  justify-content: center;
+  align-items: center;
 }
