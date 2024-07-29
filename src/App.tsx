@@ -56,7 +56,11 @@ export default function validateTab() {
         }}
         onComplete={handleComplete}
       >
-        <FormWizard.TabContent title="Personal details" showErrorColor={!checkValidateTab()}>
+        <FormWizard.TabContent
+          title="Personal details"
+          showErrorOnTab={!checkValidateTab()}
+          showErrorOnTabColor="red"
+        >
           <h3>First Tab</h3>
           <p>Some content for the first tab</p>
           <label>

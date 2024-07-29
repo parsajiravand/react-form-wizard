@@ -18,7 +18,8 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
       darkIconColor,
       removeTabBackground,
       removeTabBackgroundTransparentColor,
-      hasError,
+      showErrorOnTab,
+      showErrorOnTabColor = "red",
       onClick,
     }: WizardTabProps,
     ref
@@ -34,8 +35,14 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
 
     const progressStyle = () => {
       const style = {
-        border: "2px solid " + (darkColor ? darkColor : color),
+        border: "2px solid " + color,
       };
+      if (darkColor) {
+        style.border = "2px solid " + darkColor;
+      }
+      if (showErrorOnTab) {
+        style.border = "2px solid " + showErrorOnTabColor;
+      }
       if (layout === "vertical") {
         return {
           ...style,
@@ -62,12 +69,13 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
       }
     };
     const checkBackgroundCondition = () => {
-      if (hasError) {
-        return "red";
+      if (showErrorOnTab && isChecked && index <= currentStep) {
+        return showErrorOnTabColor;
       }
       if (isChecked && !removeTabBackground) {
         return darkColor ? darkColor : color;
       }
+
       return "";
     };
 
@@ -118,7 +126,6 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
             aria-disabled={isActive}
             aria-selected={isActive}
             style={{
-              borderColor: isChecked ? (darkColor ? darkColor : color) : "",
               backgroundColor: removeTabBackground
                 ? "transparent"
                 : isChecked
@@ -157,7 +164,14 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
           <span
             className={`stepTitle ${isActive ? "active" : ""}`}
             style={{
-              color: isChecked ? (darkColor ? darkColor : color) : "",
+              color:
+                showErrorOnTab && isChecked && index <= currentStep
+                  ? showErrorOnTabColor
+                  : isChecked
+                  ? darkColor
+                    ? darkColor
+                    : color
+                  : "",
               marginTop: inlineStep ? "" : "8px",
               padding: inlineStep ? "0 10px" : "0",
             }}

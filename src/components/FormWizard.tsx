@@ -162,7 +162,8 @@ const FormWizard: React.FC<FormWizardProps> & {
           icon,
           isValid = true,
           validationError,
-          showErrorColor,
+          showErrorOnTab,
+          showErrorOnTabColor = "red",
         } = step.props;
         const isActive = index === currentStep;
 
@@ -205,7 +206,8 @@ const FormWizard: React.FC<FormWizardProps> & {
             removeTabBackgroundTransparentColor={
               removeTabBackgroundTransparentColor
             }
-            hasError={showErrorColor}
+            showErrorOnTab={showErrorOnTab}
+            showErrorOnTabColor={showErrorOnTabColor}
             onClick={() =>
               !disableBackOnClickStep ? handelNavigate(index) : null
             }
@@ -248,7 +250,9 @@ const FormWizard: React.FC<FormWizardProps> & {
     const isInline = inlineStep ? "inline" : "";
 
     return (
-      <div className={`react-form-wizard ${stepSize} ${isVertical} ${isInline} `}>
+      <div
+        className={`react-form-wizard ${stepSize} ${isVertical} ${isInline} `}
+      >
         <div className="wizard-header">
           {/* if title is element render other wise render string props */}
           {typeof title === "string" ? (
