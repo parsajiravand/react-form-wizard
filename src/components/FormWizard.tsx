@@ -34,6 +34,8 @@ const FormWizard: React.FC<FormWizardProps> & {
       disableBackOnClickStep = false,
       showProggressBar = true,
       inlineStep = false,
+      darkMode = false,
+      customDarkModeColor = {}, //disable titles and subtitle color , background color and border color,buttons
       onComplete,
       onTabChange,
     }: FormWizardProps,
@@ -75,6 +77,26 @@ const FormWizard: React.FC<FormWizardProps> & {
         });
       },
     }));
+    /* START:Starter Component Checks */
+    //check browser in dark mode or light mode
+    console.log(
+      "Browser in dark mode or light mode",
+      window.matchMedia("(prefers-color-scheme: dark)")
+    );
+    const [prefersDarkMode, setPrefersDarkMode] = useState(false);
+    // useEffect(() => {
+    //   if (
+    //     window.matchMedia &&
+    //     window.matchMedia("(prefers-color-scheme: dark)").matches
+    //   ) {
+    //     setPrefersDarkMode(true);
+    //   }
+    // }, []);
+    useEffect(() => {
+      if (darkMode) {
+        setPrefersDarkMode(true);
+      }
+    }, [darkMode]);
 
     // startIndex should be greater than or equal to 0 or less than steps.length
     if (startIndex < 0 || startIndex > steps.length) {
@@ -105,6 +127,8 @@ const FormWizard: React.FC<FormWizardProps> & {
         nextIndex: (currentStep + 1) as number,
       });
     }
+    /* END:Starter Component Checks */
+
     // add checked option if tab active or actived before
     const handelNavigate = (index: number, navigateMode = false) => {
       if (navigateMode) {
@@ -156,6 +180,16 @@ const FormWizard: React.FC<FormWizardProps> & {
             isActive={isActive}
             index={index}
             inlineStep={inlineStep}
+            darkColor={
+              prefersDarkMode && customDarkModeColor.tab
+                ? customDarkModeColor.tab
+                : ""
+            }
+            darkIconColor={
+              prefersDarkMode && customDarkModeColor.tabIconColor
+                ? customDarkModeColor.tabIconColor
+                : ""
+            }
             onClick={() =>
               !disableBackOnClickStep ? handelNavigate(index) : null
             }
@@ -168,25 +202,61 @@ const FormWizard: React.FC<FormWizardProps> & {
       return steps[currentStep];
     };
     const progressBarStyle = {
-      backgroundColor: color,
+      backgroundColor:
+        prefersDarkMode && customDarkModeColor?.border
+          ? customDarkModeColor?.border
+          : color,
+
       width: `${((currentStep + 1) / steps.length) * 100}%`,
-      color: color,
+      color:
+        prefersDarkMode && customDarkModeColor?.border
+          ? customDarkModeColor?.border
+          : color,
     };
     const fillButtonStyle = {
-      backgroundColor: color,
-      borderColor: color,
+      backgroundColor:
+        prefersDarkMode && customDarkModeColor?.buttons
+          ? customDarkModeColor?.buttons
+          : color,
+      borderColor:
+        prefersDarkMode && customDarkModeColor?.buttons
+          ? customDarkModeColor?.buttons
+          : color,
+      color:
+        prefersDarkMode && customDarkModeColor?.buttonsText
+          ? customDarkModeColor?.buttonsText + " !important"
+          : "unset",
       borderRadius: "4px",
     };
     const isVertical = layout === "vertical" ? "vertical" : "horizontal";
 
     return (
-      <div className={`react-form-wizard ${stepSize} ${isVertical}`}>
+      <div className={`react-form-wizard ${stepSize} ${isVertical} `}>
         <div className="wizard-header">
           {/* if title is element render other wise render string props */}
           {typeof title === "string" ? (
             <>
-              <h4 className="wizard-title">{title}</h4>
-              <p className="category">{subtitle}</p>
+              <h4
+                style={
+                  prefersDarkMode && customDarkModeColor.title
+                    ? { color: customDarkModeColor.title }
+                    : {}
+                }
+                className={`wizard-title`}
+              >
+                {customDarkModeColor.title}
+                {title}
+              </h4>
+              <p
+                style={
+                  prefersDarkMode && customDarkModeColor.subtitle
+                    ? { color: customDarkModeColor.subtitle }
+                    : {}
+                }
+                className={`category`}
+              >
+                {subtitle}
+              </p>
             </>
           ) : (
             title
@@ -196,7 +266,7 @@ const FormWizard: React.FC<FormWizardProps> & {
           {showProggressBar && (
             <div className="wizard-progress-with-circle">
               <div
-                className="wizard-progress-bar"
+                className={`wizard-progress-bar`}
                 style={progressBarStyle}
               ></div>
             </div>
@@ -217,7 +287,14 @@ const FormWizard: React.FC<FormWizardProps> & {
                 backButtonTemplate(handlePrevious)
               ) : (
                 <div className="wizard-footer-left" style={fillButtonStyle}>
-                  <WizardButton onClick={handlePrevious}>
+                  <WizardButton
+                    darkTextColor={
+                      prefersDarkMode && customDarkModeColor?.buttonsText
+                        ? customDarkModeColor?.buttonsText
+                        : ""
+                    }
+                    onClick={handlePrevious}
+                  >
                     {backButtonText}
                   </WizardButton>
                 </div>
@@ -230,7 +307,14 @@ const FormWizard: React.FC<FormWizardProps> & {
                 nextButtonTemplate(handleNext)
               ) : (
                 <div className="wizard-footer-right" style={fillButtonStyle}>
-                  <WizardButton onClick={handleNext}>
+                  <WizardButton
+                    darkTextColor={
+                      prefersDarkMode && customDarkModeColor?.buttonsText
+                        ? customDarkModeColor?.buttonsText
+                        : ""
+                    }
+                    onClick={handleNext}
+                  >
                     {nextButtonText}
                   </WizardButton>
                 </div>
@@ -243,7 +327,14 @@ const FormWizard: React.FC<FormWizardProps> & {
                 finishButtonTemplate(handleSubmit)
               ) : (
                 <div className="wizard-footer-right" style={fillButtonStyle}>
-                  <WizardButton onClick={handleSubmit}>
+                  <WizardButton
+                    darkTextColor={
+                      prefersDarkMode && customDarkModeColor?.finishButton
+                        ? customDarkModeColor?.finishButton
+                        : ""
+                    }
+                    onClick={handleSubmit}
+                  >
                     {finishButtonText}
                   </WizardButton>
                 </div>

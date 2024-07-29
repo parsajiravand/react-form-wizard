@@ -8,6 +8,8 @@ export interface WizardTabProps {
   isActive: boolean;
   index: number;
   inlineStep?: boolean;
+  darkColor?: string;
+  darkIconColor?: string;
   ref: Ref<{
     setChecked: (value: boolean) => void;
   }>;

@@ -28,6 +28,17 @@ export interface FormWizardProps {
   disableBackOnClickStep?: boolean;
   showProggressBar?: boolean;
   inlineStep?: boolean;
+  darkMode?: boolean;
+  customDarkModeColor?: {
+    title?: string;
+    subtitle?: string;
+    border?: string;
+    tab?: string;
+    tabIconColor?: string;
+    buttons?: string;
+    buttonsText?: string;
+    finishButton?: string;
+  };
   onComplete?: () => void;
   onTabChange?: (e: { prevIndex: number; nextIndex: number }) => void;
 }

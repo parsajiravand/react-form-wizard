@@ -11,6 +11,8 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
       isActive,
       index,
       inlineStep = true,
+      darkColor,
+      darkIconColor,
       onClick,
     }: WizardTabProps,
     ref
@@ -25,9 +27,17 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
     }, [isActive]);
 
     const iconStyle = () => {
+      if (isActive && darkIconColor) {
+        return { color: darkIconColor ? darkIconColor : color };
+      }
       if (isActive && isChecked) {
         return { color: "white" };
       }
+
+      if (isChecked && darkIconColor) {
+        return { color: darkIconColor ? darkIconColor : color };
+      }
+
       if (isChecked) {
         return { color: color };
       }
@@ -66,7 +76,7 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
             aria-disabled={isActive}
             aria-selected={isActive}
             style={{
-              borderColor: isChecked ? color : "",
+              borderColor: isChecked ? (darkColor ? darkColor : color) : "",
             }}
           >
             <div
@@ -74,7 +84,11 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
                 shape === "square" ? "square_shape" : ""
               }`}
               style={{
-                backgroundColor: isActive ? color : "",
+                backgroundColor: isActive
+                  ? darkColor
+                    ? darkColor
+                    : color
+                  : "",
               }}
             >
               <span className="wizard-icon">
@@ -86,7 +100,7 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
           <span
             className={`stepTitle ${isActive ? "active" : ""}`}
             style={{
-              color: isChecked ? color : "",
+              color: isChecked ? (darkColor ? darkColor : color) : "",
               marginTop: inlineStep ? "" : "8px",
               padding: inlineStep ? "0 10px" : "0",
             }}

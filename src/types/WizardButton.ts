@@ -1,5 +1,5 @@
 export interface WizardButtonProps {
-    onClick: () => void;
-    children: React.ReactNode;
-  }
-  
+  darkTextColor?: string;
+  onClick: () => void;
+  children: React.ReactNode;
+}

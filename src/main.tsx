@@ -9,7 +9,7 @@ export { default as TabContent } from "./components/WizardTab";
 export { default as WizardButton } from "./components/WizardButton";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
+  
     <App />
-  </React.StrictMode>
+
 );
