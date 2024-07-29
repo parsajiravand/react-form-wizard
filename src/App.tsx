@@ -40,6 +40,7 @@ export default function validateTab() {
     <>
       <FormWizard
         inlineStep={false}
+        layout="vertical"
         title="Form Wizard"
         subtitle="Step by step form wizard"
         darkMode={false}
@@ -55,7 +56,7 @@ export default function validateTab() {
         }}
         onComplete={handleComplete}
       >
-        <FormWizard.TabContent title="Personal details" >
+        <FormWizard.TabContent title="Personal details" showErrorColor={!checkValidateTab()}>
           <h3>First Tab</h3>
           <p>Some content for the first tab</p>
           <label>

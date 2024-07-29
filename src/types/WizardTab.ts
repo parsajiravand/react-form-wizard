@@ -7,11 +7,15 @@ export interface WizardTabProps {
   color?: string;
   isActive: boolean;
   index: number;
+  currentStep: number;
+  showProggressBar?: boolean;
+  layout?: string;
   inlineStep?: boolean;
   darkColor?: string;
   darkIconColor?: string;
   removeTabBackground?: boolean;
   removeTabBackgroundTransparentColor?: string;
+  hasError?: boolean;
   ref: Ref<{
     setChecked: (value: boolean) => void;
   }>;

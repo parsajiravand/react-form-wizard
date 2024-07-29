@@ -6,6 +6,7 @@ export interface TabContentProps {
   route?: string;
   children: ReactNode;
   isValid?: boolean;
+  showErrorColor?: boolean;
   validationError?: () => void | ReactNode;
 }
 

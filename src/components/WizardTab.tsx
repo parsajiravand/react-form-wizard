@@ -10,11 +10,15 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
       color = "#2196f3",
       isActive,
       index,
+      currentStep,
+      showProggressBar,
+      layout,
       inlineStep = false,
       darkColor,
       darkIconColor,
       removeTabBackground,
       removeTabBackgroundTransparentColor,
+      hasError,
       onClick,
     }: WizardTabProps,
     ref
@@ -28,6 +32,19 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
       }
     }, [isActive]);
 
+    const progressStyle = () => {
+      const style = {
+        border: "2px solid " + (darkColor ? darkColor : color),
+      };
+      if (layout === "vertical") {
+        return {
+          ...style,
+          rotate: "90deg",
+          animation: "slideInVertical 0.3s forwards",
+        };
+      }
+      return style;
+    };
     const iconStyle = () => {
       if (isActive && darkIconColor) {
         return { color: darkIconColor ? darkIconColor : color };
@@ -44,6 +61,16 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
         return { color: "white" };
       }
     };
+    const checkBackgroundCondition = () => {
+      if (hasError) {
+        return "red";
+      }
+      if (isChecked && !removeTabBackground) {
+        return darkColor ? darkColor : color;
+      }
+      return "";
+    };
+
     React.useImperativeHandle(ref, () => ({
       setChecked: (value: boolean) => {
         setIsChecked(value);
@@ -59,7 +86,20 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
     };
 
     return (
-      <li key={index} className={`${stepClasses}`}>
+      <li
+        key={index}
+        className={`${stepClasses}`}
+        style={{
+          position: "relative",
+        }}
+      >
+        {showProggressBar && isChecked && index <= currentStep && (
+          <div
+            className="smooth-border-left-to-right"
+            style={progressStyle()}
+          ></div>
+        )}
+
         <a
           className={`${isActive ? "active" : ""} ${
             inlineStep ? "inline-step" : ""
@@ -94,12 +134,7 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
                 shape === "square" ? "square_shape" : ""
               }`}
               style={{
-                backgroundColor:
-                  isChecked && !removeTabBackground
-                    ? darkColor
-                      ? darkColor
-                      : color
-                    : "",
+                backgroundColor: checkBackgroundCondition(),
               }}
             >
               <span

@@ -278,7 +278,6 @@ fieldset[disabled] .react-form-wizard .wizard-btn {
   text-align: center;
 }
 .react-form-wizard .wizard-title {
-  
   font-weight: 300;
   margin: 0;
   text-align: center;
@@ -341,6 +340,12 @@ fieldset[disabled] .react-form-wizard .wizard-btn {
 .react-form-wizard.vertical .wizard-nav-pills {
   flex-direction: column;
 }
+.react-form-wizard.vertical.inline .wizard-nav-pills {
+  align-items: start;
+}
+.react-form-wizard.vertical .wizard-nav-pills li:not(:first-child) {
+  padding-top: 20px;
+}
 .react-form-wizard.vertical .wizard-navigation {
   display: flex;
   flex-direction: row;
@@ -355,4 +360,28 @@ fieldset[disabled] .react-form-wizard .wizard-btn {
   flex-direction: row !important;
   justify-content: center;
   align-items: center;
+}
+
+@keyframes slideIn {
+  from {
+    left: -25%;
+  }
+  to {
+    left: 0;
+  }
+}
+@keyframes slideInVertical {
+  from {
+    top: -25%;
+  }
+  to {
+    top: 0;
+  }
+}
+
+.smooth-border-left-to-right {
+  animation: slideIn 0.3s forwards; /* Adjust the duration as needed */
+  position: absolute;
+  width: 100%;
+  top: 39%;
 }

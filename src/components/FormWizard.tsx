@@ -157,7 +157,13 @@ const FormWizard: React.FC<FormWizardProps> & {
 
     const renderTabs = () => {
       return steps.map((step, index) => {
-        const { title, icon, isValid = true, validationError } = step.props;
+        const {
+          title,
+          icon,
+          isValid = true,
+          validationError,
+          showErrorColor,
+        } = step.props;
         const isActive = index === currentStep;
 
         // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -181,6 +187,9 @@ const FormWizard: React.FC<FormWizardProps> & {
             color={color}
             isActive={isActive}
             index={index}
+            currentStep={currentStep}
+            layout={layout}
+            showProggressBar={showProggressBar}
             inlineStep={inlineStep}
             darkColor={
               prefersDarkMode && customDarkModeColor.tab
@@ -196,6 +205,7 @@ const FormWizard: React.FC<FormWizardProps> & {
             removeTabBackgroundTransparentColor={
               removeTabBackgroundTransparentColor
             }
+            hasError={showErrorColor}
             onClick={() =>
               !disableBackOnClickStep ? handelNavigate(index) : null
             }
@@ -207,18 +217,18 @@ const FormWizard: React.FC<FormWizardProps> & {
     const renderContent = () => {
       return steps[currentStep];
     };
-    const progressBarStyle = {
-      backgroundColor:
-        prefersDarkMode && customDarkModeColor?.border
-          ? customDarkModeColor?.border
-          : color,
+    // const progressBarStyle = {
+    //   backgroundColor:
+    //     prefersDarkMode && customDarkModeColor?.border
+    //       ? customDarkModeColor?.border
+    //       : color,
 
-      width: `${((currentStep + 1) / steps.length) * 100}%`,
-      color:
-        prefersDarkMode && customDarkModeColor?.border
-          ? customDarkModeColor?.border
-          : color,
-    };
+    //   width: `${((currentStep + 1) / steps.length) * 100}%`,
+    //   color:
+    //     prefersDarkMode && customDarkModeColor?.border
+    //       ? customDarkModeColor?.border
+    //       : color,
+    // };
     const fillButtonStyle = {
       backgroundColor:
         prefersDarkMode && customDarkModeColor?.buttons
@@ -235,9 +245,10 @@ const FormWizard: React.FC<FormWizardProps> & {
       borderRadius: "4px",
     };
     const isVertical = layout === "vertical" ? "vertical" : "horizontal";
+    const isInline = inlineStep ? "inline" : "";
 
     return (
-      <div className={`react-form-wizard ${stepSize} ${isVertical} `}>
+      <div className={`react-form-wizard ${stepSize} ${isVertical} ${isInline} `}>
         <div className="wizard-header">
           {/* if title is element render other wise render string props */}
           {typeof title === "string" ? (
@@ -269,14 +280,14 @@ const FormWizard: React.FC<FormWizardProps> & {
           )}
         </div>
         <div className="wizard-navigation">
-          {showProggressBar && (
+          {/* {showProggressBar && (
             <div className="wizard-progress-with-circle">
               <div
                 className={`wizard-progress-bar`}
                 style={progressBarStyle}
               ></div>
             </div>
-          )}
+          )} */}
           <ul
             className={`form-wizard-steps  wizard-nav wizard-nav-pills ${shape} ${stepSize}`}
             style={{ borderColor: color }}
