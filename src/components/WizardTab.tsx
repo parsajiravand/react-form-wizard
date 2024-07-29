@@ -10,9 +10,11 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
       color = "#2196f3",
       isActive,
       index,
-      inlineStep = true,
+      inlineStep = false,
       darkColor,
       darkIconColor,
+      removeTabBackground,
+      removeTabBackgroundTransparentColor,
       onClick,
     }: WizardTabProps,
     ref
@@ -39,7 +41,7 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
       }
 
       if (isChecked) {
-        return { color: color };
+        return { color: "white" };
       }
     };
     React.useImperativeHandle(ref, () => ({
@@ -77,6 +79,14 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
             aria-selected={isActive}
             style={{
               borderColor: isChecked ? (darkColor ? darkColor : color) : "",
+              backgroundColor: removeTabBackground
+                ? "transparent"
+                : isChecked
+                ? darkColor
+                  ? darkColor
+                  : color
+                : "",
+              border: removeTabBackground ? "unset" : "",
             }}
           >
             <div
@@ -84,14 +94,26 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
                 shape === "square" ? "square_shape" : ""
               }`}
               style={{
-                backgroundColor: isActive
-                  ? darkColor
+                backgroundColor:
+                  isChecked && !removeTabBackground
                     ? darkColor
-                    : color
-                  : "",
+                      ? darkColor
+                      : color
+                    : "",
               }}
             >
-              <span className="wizard-icon">
+              <span
+                className="wizard-icon"
+                style={
+                  removeTabBackground
+                    ? {
+                        backgroundColor:
+                          removeTabBackgroundTransparentColor || "white",
+                        padding: "10px",
+                      }
+                    : {}
+                }
+              >
                 {/* check if icon type string other wise render react node */}
                 {handelIcon()}
               </span>

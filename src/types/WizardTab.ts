@@ -10,6 +10,8 @@ export interface WizardTabProps {
   inlineStep?: boolean;
   darkColor?: string;
   darkIconColor?: string;
+  removeTabBackground?: boolean;
+  removeTabBackgroundTransparentColor?: string;
   ref: Ref<{
     setChecked: (value: boolean) => void;
   }>;

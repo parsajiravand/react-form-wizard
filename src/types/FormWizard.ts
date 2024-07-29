@@ -39,6 +39,8 @@ export interface FormWizardProps {
     buttonsText?: string;
     finishButton?: string;
   };
+  removeTabBackground?: boolean;
+  removeTabBackgroundTransparentColor?: string;
   onComplete?: () => void;
   onTabChange?: (e: { prevIndex: number; nextIndex: number }) => void;
 }

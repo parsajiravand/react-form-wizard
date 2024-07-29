@@ -36,6 +36,8 @@ const FormWizard: React.FC<FormWizardProps> & {
       inlineStep = false,
       darkMode = false,
       customDarkModeColor = {}, //disable titles and subtitle color , background color and border color,buttons
+      removeTabBackground = false,
+      removeTabBackgroundTransparentColor = "darkBlue",
       onComplete,
       onTabChange,
     }: FormWizardProps,
@@ -189,6 +191,10 @@ const FormWizard: React.FC<FormWizardProps> & {
               prefersDarkMode && customDarkModeColor.tabIconColor
                 ? customDarkModeColor.tabIconColor
                 : ""
+            }
+            removeTabBackground={removeTabBackground}
+            removeTabBackgroundTransparentColor={
+              removeTabBackgroundTransparentColor
             }
             onClick={() =>
               !disableBackOnClickStep ? handelNavigate(index) : null

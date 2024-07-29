@@ -42,7 +42,7 @@ export default function validateTab() {
         inlineStep={false}
         title="Form Wizard"
         subtitle="Step by step form wizard"
-        darkMode={true}
+        darkMode={false}
         customDarkModeColor={{
           title: "white",
           subtitle: "white",
@@ -55,7 +55,7 @@ export default function validateTab() {
         }}
         onComplete={handleComplete}
       >
-        <FormWizard.TabContent title="Personal details" icon="ti-user">
+        <FormWizard.TabContent title="Personal details" >
           <h3>First Tab</h3>
           <p>Some content for the first tab</p>
           <label>
