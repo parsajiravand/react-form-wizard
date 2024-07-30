@@ -36,8 +36,8 @@ const FormWizard: React.FC<FormWizardProps> & {
       inlineStep = false,
       darkMode = false,
       customDarkModeColor = {}, //disable titles and subtitle color , background color and border color,buttons
-      removeTabBackground = false,
-      removeTabBackgroundTransparentColor = "",
+      removeBackgroundTab = false,
+      removeBackgroundTabTransparentColor = "",
       onComplete,
       onTabChange,
     }: FormWizardProps,
@@ -197,9 +197,9 @@ const FormWizard: React.FC<FormWizardProps> & {
                 ? customDarkModeColor.tabIconColor
                 : ""
             }
-            removeTabBackground={removeTabBackground}
-            removeTabBackgroundTransparentColor={
-              removeTabBackgroundTransparentColor
+            removeBackgroundTab={removeBackgroundTab}
+            removeBackgroundTabTransparentColor={
+              removeBackgroundTabTransparentColor
             }
             showErrorOnTab={showErrorOnTab}
             showErrorOnTabColor={showErrorOnTabColor}

@@ -13,8 +13,8 @@ export interface WizardTabProps {
   inlineStep?: boolean;
   darkColor?: string;
   darkIconColor?: string;
-  removeTabBackground?: boolean;
-  removeTabBackgroundTransparentColor?: string;
+  removeBackgroundTab?: boolean;
+  removeBackgroundTabTransparentColor?: string;
   showErrorOnTab?: boolean;
   showErrorOnTabColor?: string;
   ref: Ref<{

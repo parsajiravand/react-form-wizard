@@ -45,6 +45,7 @@ export default function validateTab() {
         title="Form Wizard"
         subtitle="Step by step form wizard"
         darkMode={true}
+        removeBackgroundTab={true}
         customDarkModeColor={{
           title: "white",//simple color
           subtitle: "white",
