@@ -16,8 +16,8 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
       inlineStep = false,
       darkColor,
       darkIconColor,
-      removeTabBackground,
-      removeTabBackgroundTransparentColor,
+      removeBackgroundTab,
+      removeBackgroundTabTransparentColor,
       showErrorOnTab,
       showErrorOnTabColor = "red",
       onClick,
@@ -72,7 +72,7 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
       if (showErrorOnTab && isChecked && index <= currentStep) {
         return showErrorOnTabColor;
       }
-      if (isChecked && !removeTabBackground) {
+      if (isChecked && !removeBackgroundTab) {
         return darkColor ? darkColor : color;
       }
 
@@ -126,14 +126,14 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
             aria-disabled={isActive}
             aria-selected={isActive}
             style={{
-              backgroundColor: removeTabBackground
+              backgroundColor: removeBackgroundTab
                 ? "transparent"
                 : isChecked
                 ? darkColor
                   ? darkColor
                   : color
                 : "",
-              border: removeTabBackground ? "unset" : "",
+              border: removeBackgroundTab ? "unset" : "",
             }}
           >
             <div
@@ -147,10 +147,10 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
               <span
                 className="wizard-icon"
                 style={
-                  removeTabBackground
+                  removeBackgroundTab
                     ? {
                         backgroundColor:
-                          removeTabBackgroundTransparentColor || "white",
+                          removeBackgroundTabTransparentColor || "white",
                         padding: "10px",
                       }
                     : {}

@@ -36,8 +36,8 @@ const FormWizard: React.FC<FormWizardProps> & {
       inlineStep = false,
       darkMode = false,
       customDarkModeColor = {}, //disable titles and subtitle color , background color and border color,buttons
-      removeTabBackground = false,
-      removeTabBackgroundTransparentColor = "darkBlue",
+      removeBackgroundTab = false,
+      removeBackgroundTabTransparentColor = "",
       onComplete,
       onTabChange,
     }: FormWizardProps,
@@ -79,12 +79,7 @@ const FormWizard: React.FC<FormWizardProps> & {
         });
       },
     }));
-    /* START:Starter Component Checks */
     //check browser in dark mode or light mode
-    console.log(
-      "Browser in dark mode or light mode",
-      window.matchMedia("(prefers-color-scheme: dark)")
-    );
     const [prefersDarkMode, setPrefersDarkMode] = useState(false);
     // useEffect(() => {
     //   if (
@@ -202,9 +197,9 @@ const FormWizard: React.FC<FormWizardProps> & {
                 ? customDarkModeColor.tabIconColor
                 : ""
             }
-            removeTabBackground={removeTabBackground}
-            removeTabBackgroundTransparentColor={
-              removeTabBackgroundTransparentColor
+            removeBackgroundTab={removeBackgroundTab}
+            removeBackgroundTabTransparentColor={
+              removeBackgroundTabTransparentColor
             }
             showErrorOnTab={showErrorOnTab}
             showErrorOnTabColor={showErrorOnTabColor}
@@ -265,7 +260,6 @@ const FormWizard: React.FC<FormWizardProps> & {
                 }
                 className={`wizard-title`}
               >
-                {customDarkModeColor.title}
                 {title}
               </h4>
               <p
@@ -314,6 +308,11 @@ const FormWizard: React.FC<FormWizardProps> & {
                         ? customDarkModeColor?.buttonsText
                         : ""
                     }
+                    darkButtonColor={
+                      prefersDarkMode && customDarkModeColor?.buttons
+                        ? customDarkModeColor?.buttons
+                        : ""
+                    }
                     onClick={handlePrevious}
                   >
                     {backButtonText}
@@ -334,6 +333,11 @@ const FormWizard: React.FC<FormWizardProps> & {
                         ? customDarkModeColor?.buttonsText
                         : ""
                     }
+                    darkButtonColor={
+                      prefersDarkMode && customDarkModeColor?.buttons
+                        ? customDarkModeColor?.buttons
+                        : ""
+                    }
                     onClick={handleNext}
                   >
                     {nextButtonText}
@@ -350,6 +354,11 @@ const FormWizard: React.FC<FormWizardProps> & {
                 <div className="wizard-footer-right" style={fillButtonStyle}>
                   <WizardButton
                     darkTextColor={
+                      prefersDarkMode && customDarkModeColor?.finishButtonText
+                        ? customDarkModeColor?.finishButtonText
+                        : ""
+                    }
+                    darkButtonColor={
                       prefersDarkMode && customDarkModeColor?.finishButton
                         ? customDarkModeColor?.finishButton
                         : ""
