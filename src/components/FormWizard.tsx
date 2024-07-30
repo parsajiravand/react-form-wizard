@@ -37,7 +37,7 @@ const FormWizard: React.FC<FormWizardProps> & {
       darkMode = false,
       customDarkModeColor = {}, //disable titles and subtitle color , background color and border color,buttons
       removeTabBackground = false,
-      removeTabBackgroundTransparentColor = "darkBlue",
+      removeTabBackgroundTransparentColor = "",
       onComplete,
       onTabChange,
     }: FormWizardProps,
@@ -79,12 +79,7 @@ const FormWizard: React.FC<FormWizardProps> & {
         });
       },
     }));
-    /* START:Starter Component Checks */
     //check browser in dark mode or light mode
-    console.log(
-      "Browser in dark mode or light mode",
-      window.matchMedia("(prefers-color-scheme: dark)")
-    );
     const [prefersDarkMode, setPrefersDarkMode] = useState(false);
     // useEffect(() => {
     //   if (
@@ -265,7 +260,6 @@ const FormWizard: React.FC<FormWizardProps> & {
                 }
                 className={`wizard-title`}
               >
-                {customDarkModeColor.title}
                 {title}
               </h4>
               <p

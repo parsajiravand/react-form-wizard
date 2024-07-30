@@ -1,6 +1,7 @@
 import React from "react";
-import FormWizard from "./components/FormWizard";
-import "./index.css";
+import FormWizard from "react-form-wizard-component"
+import "react-form-wizard-component/dist/style.css";
+
 import "./App.css";
 
 export default function validateTab() {
@@ -40,7 +41,7 @@ export default function validateTab() {
     <>
       <FormWizard
         inlineStep={false}
-        layout="vertical"
+        layout="horizontal"
         title="Form Wizard"
         subtitle="Step by step form wizard"
         darkMode={false}
