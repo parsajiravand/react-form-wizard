@@ -1,5 +1,5 @@
 import React from "react";
-import FormWizard from "react-form-wizard-component"
+import FormWizard from "./components/FormWizard";
 import "react-form-wizard-component/dist/style.css";
 
 import "./App.css";
@@ -44,16 +44,16 @@ export default function validateTab() {
         layout="horizontal"
         title="Form Wizard"
         subtitle="Step by step form wizard"
-        darkMode={false}
+        darkMode={true}
         customDarkModeColor={{
-          title: "white",
+          title: "white",//simple color
           subtitle: "white",
-          border: "white",
-          tab: "white",
-          tabIconColor: "blue",
-          buttons: "white",
-          buttonsText: "blue",
+          tab: "#fff",//hex color
+          tabIconColor: "rgb(42, 74, 247)", //rgb color
+          buttons: "black",
+          buttonsText: "white",
           finishButton: "green",
+          finishButtonText: "white",
         }}
         onComplete={handleComplete}
       >

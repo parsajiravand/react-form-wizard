@@ -3,6 +3,7 @@ import { WizardButtonProps } from "../types/WizardButton";
 
 const WizardButton: React.FC<WizardButtonProps> = ({
   darkTextColor,
+  darkButtonColor,
   onClick,
   children,
 }) => {
@@ -10,7 +11,10 @@ const WizardButton: React.FC<WizardButtonProps> = ({
     <button
       className="wizard-btn"
       type="button"
-      style={{ color: darkTextColor }}
+      style={{
+        color: darkTextColor,
+        backgroundColor: darkButtonColor,
+      }}
       onClick={onClick}
     >
       {children}

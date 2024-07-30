@@ -308,6 +308,11 @@ const FormWizard: React.FC<FormWizardProps> & {
                         ? customDarkModeColor?.buttonsText
                         : ""
                     }
+                    darkButtonColor={
+                      prefersDarkMode && customDarkModeColor?.buttons
+                        ? customDarkModeColor?.buttons
+                        : ""
+                    }
                     onClick={handlePrevious}
                   >
                     {backButtonText}
@@ -328,6 +333,11 @@ const FormWizard: React.FC<FormWizardProps> & {
                         ? customDarkModeColor?.buttonsText
                         : ""
                     }
+                    darkButtonColor={
+                      prefersDarkMode && customDarkModeColor?.buttons
+                        ? customDarkModeColor?.buttons
+                        : ""
+                    }
                     onClick={handleNext}
                   >
                     {nextButtonText}
@@ -344,6 +354,11 @@ const FormWizard: React.FC<FormWizardProps> & {
                 <div className="wizard-footer-right" style={fillButtonStyle}>
                   <WizardButton
                     darkTextColor={
+                      prefersDarkMode && customDarkModeColor?.finishButtonText
+                        ? customDarkModeColor?.finishButtonText
+                        : ""
+                    }
+                    darkButtonColor={
                       prefersDarkMode && customDarkModeColor?.finishButton
                         ? customDarkModeColor?.finishButton
                         : ""

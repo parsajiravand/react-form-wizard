@@ -40,6 +40,7 @@ export interface FormWizardProps {
     buttons?: string;
     buttonsText?: string;
     finishButton?: string;
+    finishButtonText?: string;
   };
   removeTabBackground?: boolean;
   removeTabBackgroundTransparentColor?: string;
