@@ -11,7 +11,7 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
       isActive,
       index,
       currentStep,
-      showProggressBar,
+      showProgressBar,
       layout,
       inlineStep = false,
       darkColor,
@@ -101,7 +101,7 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
           position: "relative",
         }}
       >
-        {showProggressBar && isChecked && index <= currentStep && (
+        {showProgressBar && isChecked && index <= currentStep && (
           <div
             className="smooth-border-left-to-right"
             style={progressStyle()}

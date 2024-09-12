@@ -28,7 +28,7 @@ export interface FormWizardProps {
   layout?: "horizontal" | "vertical";
   startIndex?: number;
   disableBackOnClickStep?: boolean;
-  showProggressBar?: boolean;
+  showProgressBar?: boolean;
   inlineStep?: boolean;
   darkMode?: boolean;
   customDarkModeColor?: {
