@@ -32,7 +32,7 @@ const FormWizard: React.FC<FormWizardProps> & {
       layout = "horizontal",
       startIndex = 0,
       disableBackOnClickStep = false,
-      showProggressBar = true,
+      showProgressBar = true,
       inlineStep = false,
       darkMode = false,
       customDarkModeColor = {}, //disable titles and subtitle color , background color and border color,buttons
@@ -50,7 +50,7 @@ const FormWizard: React.FC<FormWizardProps> & {
     // set type for useRef
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const wizardTabRef = steps.map(() => React.useRef<WizardTabRef[]>(null));
-    // set type for useRef
+    // set typwizardTabRefe for useRef
     useImperativeHandle(ref, () => ({
       nextTab: () => {
         handleNext();
@@ -114,8 +114,8 @@ const FormWizard: React.FC<FormWizardProps> & {
         });
       }
     }, [currentStep, startIndex, wizardTabRef]);
-    // if inline step hide proggress bar
-    if (inlineStep) showProggressBar = false;
+    // if inline step hide progress bar
+    if (inlineStep) showProgressBar = false;
 
     // emit tab change event prevIndex, nextIndex
     if (typeof onTabChange === "function") {
@@ -185,7 +185,7 @@ const FormWizard: React.FC<FormWizardProps> & {
             index={index}
             currentStep={currentStep}
             layout={layout}
-            showProggressBar={showProggressBar}
+            showProgressBar={showProgressBar}
             inlineStep={inlineStep}
             darkColor={
               prefersDarkMode && customDarkModeColor.tab
@@ -278,7 +278,7 @@ const FormWizard: React.FC<FormWizardProps> & {
           )}
         </div>
         <div className="wizard-navigation">
-          {/* {showProggressBar && (
+          {/* {showProgressBar && (
             <div className="wizard-progress-with-circle">
               <div
                 className={`wizard-progress-bar`}

@@ -8,7 +8,7 @@ export interface WizardTabProps {
   isActive: boolean;
   index: number;
   currentStep: number;
-  showProggressBar?: boolean;
+  showProgressBar?: boolean;
   layout?: string;
   inlineStep?: boolean;
   darkColor?: string;
