@@ -46,6 +46,7 @@ export interface FormWizardProps {
   removeBackgroundTabTransparentColor?: string;
   onComplete?: () => void;
   onTabChange?: (e: { prevIndex: number; nextIndex: number }) => void;
+  rtl?: boolean;
 }
 export interface FormWizardMethods {
   nextTab: () => void;
