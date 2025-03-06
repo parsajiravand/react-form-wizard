@@ -48,6 +48,22 @@ or
 yarn add react-form-wizard-component
 ```
 
+<!-- If your are using react v19  install wiht @next-->
+
+### React 19
+
+```bash
+npm install react-form-wizard-component@next
+```
+
+or
+
+```bash
+yarn add react-form-wizard-component@next
+```
+
+
+
 ## Usage
 
 Import the `FormWizard` component and use it in your React application:
