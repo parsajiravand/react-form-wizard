@@ -40,6 +40,7 @@ const FormWizard: React.FC<FormWizardProps> & {
       removeBackgroundTabTransparentColor = "",
       onComplete,
       onTabChange,
+      rtl = false,
     }: FormWizardProps,
     ref
   ) => {
@@ -243,10 +244,12 @@ const FormWizard: React.FC<FormWizardProps> & {
     };
     const isVertical = layout === "vertical" ? "vertical" : "horizontal";
     const isInline = inlineStep ? "inline" : "";
+    const isRtl = rtl ? "rtl" : "";
 
     return (
       <div
-        className={`react-form-wizard ${stepSize} ${isVertical} ${isInline} `}
+        className={`react-form-wizard ${stepSize} ${isVertical} ${isInline} ${isRtl}`}
+        style={{ direction: rtl ? "rtl" : "ltr" }}
       >
         <div className="wizard-header">
           {/* if title is element render other wise render string props */}
@@ -296,78 +299,160 @@ const FormWizard: React.FC<FormWizardProps> & {
         </div>
 
         <div className="wizard-card-footer clearfix">
-          {currentStep > 0 && (
+          {rtl ? (
             <>
-              {backButtonTemplate ? (
-                backButtonTemplate(handlePrevious)
-              ) : (
-                <div className="wizard-footer-left" style={fillButtonStyle}>
-                  <WizardButton
-                    darkTextColor={
-                      prefersDarkMode && customDarkModeColor?.buttonsText
-                        ? customDarkModeColor?.buttonsText
-                        : ""
-                    }
-                    darkButtonColor={
-                      prefersDarkMode && customDarkModeColor?.buttons
-                        ? customDarkModeColor?.buttons
-                        : ""
-                    }
-                    onClick={handlePrevious}
-                  >
-                    {backButtonText}
-                  </WizardButton>
-                </div>
+              {currentStep < steps.length - 1 && (
+                <>
+                  {nextButtonTemplate ? (
+                    nextButtonTemplate(handleNext)
+                  ) : (
+                    <div className="wizard-footer-left" style={fillButtonStyle}>
+                      <WizardButton
+                        darkTextColor={
+                          prefersDarkMode && customDarkModeColor?.buttonsText
+                            ? customDarkModeColor?.buttonsText
+                            : ""
+                        }
+                        darkButtonColor={
+                          prefersDarkMode && customDarkModeColor?.buttons
+                            ? customDarkModeColor?.buttons
+                            : ""
+                        }
+                        onClick={handleNext}
+                      >
+                        {nextButtonText}
+                      </WizardButton>
+                    </div>
+                  )}
+                </>
+              )}
+              {currentStep > 0 && (
+                <>
+                  {backButtonTemplate ? (
+                    backButtonTemplate(handlePrevious)
+                  ) : (
+                    <div className="wizard-footer-right" style={fillButtonStyle}>
+                      <WizardButton
+                        darkTextColor={
+                          prefersDarkMode && customDarkModeColor?.buttonsText
+                            ? customDarkModeColor?.buttonsText
+                            : ""
+                        }
+                        darkButtonColor={
+                          prefersDarkMode && customDarkModeColor?.buttons
+                            ? customDarkModeColor?.buttons
+                            : ""
+                        }
+                        onClick={handlePrevious}
+                      >
+                        {backButtonText}
+                      </WizardButton>
+                    </div>
+                  )}
+                </>
+              )}
+              {currentStep === steps.length - 1 && (
+                <>
+                  {finishButtonTemplate ? (
+                    finishButtonTemplate(handleSubmit)
+                  ) : (
+                    <div className="wizard-footer-left" style={fillButtonStyle}>
+                      <WizardButton
+                        darkTextColor={
+                          prefersDarkMode && customDarkModeColor?.finishButtonText
+                            ? customDarkModeColor?.finishButtonText
+                            : ""
+                        }
+                        darkButtonColor={
+                          prefersDarkMode && customDarkModeColor?.finishButton
+                            ? customDarkModeColor?.finishButton
+                            : ""
+                        }
+                        onClick={handleSubmit}
+                      >
+                        {finishButtonText}
+                      </WizardButton>
+                    </div>
+                  )}
+                </>
               )}
             </>
-          )}
-          {currentStep < steps.length - 1 && (
+          ) : (
             <>
-              {nextButtonTemplate ? (
-                nextButtonTemplate(handleNext)
-              ) : (
-                <div className="wizard-footer-right" style={fillButtonStyle}>
-                  <WizardButton
-                    darkTextColor={
-                      prefersDarkMode && customDarkModeColor?.buttonsText
-                        ? customDarkModeColor?.buttonsText
-                        : ""
-                    }
-                    darkButtonColor={
-                      prefersDarkMode && customDarkModeColor?.buttons
-                        ? customDarkModeColor?.buttons
-                        : ""
-                    }
-                    onClick={handleNext}
-                  >
-                    {nextButtonText}
-                  </WizardButton>
-                </div>
+              {currentStep > 0 && (
+                <>
+                  {backButtonTemplate ? (
+                    backButtonTemplate(handlePrevious)
+                  ) : (
+                    <div className="wizard-footer-left" style={fillButtonStyle}>
+                      <WizardButton
+                        darkTextColor={
+                          prefersDarkMode && customDarkModeColor?.buttonsText
+                            ? customDarkModeColor?.buttonsText
+                            : ""
+                        }
+                        darkButtonColor={
+                          prefersDarkMode && customDarkModeColor?.buttons
+                            ? customDarkModeColor?.buttons
+                            : ""
+                        }
+                        onClick={handlePrevious}
+                      >
+                        {backButtonText}
+                      </WizardButton>
+                    </div>
+                  )}
+                </>
               )}
-            </>
-          )}
-          {currentStep === steps.length - 1 && (
-            <>
-              {finishButtonTemplate ? (
-                finishButtonTemplate(handleSubmit)
-              ) : (
-                <div className="wizard-footer-right" style={fillButtonStyle}>
-                  <WizardButton
-                    darkTextColor={
-                      prefersDarkMode && customDarkModeColor?.finishButtonText
-                        ? customDarkModeColor?.finishButtonText
-                        : ""
-                    }
-                    darkButtonColor={
-                      prefersDarkMode && customDarkModeColor?.finishButton
-                        ? customDarkModeColor?.finishButton
-                        : ""
-                    }
-                    onClick={handleSubmit}
-                  >
-                    {finishButtonText}
-                  </WizardButton>
-                </div>
+              {currentStep < steps.length - 1 && (
+                <>
+                  {nextButtonTemplate ? (
+                    nextButtonTemplate(handleNext)
+                  ) : (
+                    <div className="wizard-footer-right" style={fillButtonStyle}>
+                      <WizardButton
+                        darkTextColor={
+                          prefersDarkMode && customDarkModeColor?.buttonsText
+                            ? customDarkModeColor?.buttonsText
+                            : ""
+                        }
+                        darkButtonColor={
+                          prefersDarkMode && customDarkModeColor?.buttons
+                            ? customDarkModeColor?.buttons
+                            : ""
+                        }
+                        onClick={handleNext}
+                      >
+                        {nextButtonText}
+                      </WizardButton>
+                    </div>
+                  )}
+                </>
+              )}
+              {currentStep === steps.length - 1 && (
+                <>
+                  {finishButtonTemplate ? (
+                    finishButtonTemplate(handleSubmit)
+                  ) : (
+                    <div className="wizard-footer-right" style={fillButtonStyle}>
+                      <WizardButton
+                        darkTextColor={
+                          prefersDarkMode && customDarkModeColor?.finishButtonText
+                            ? customDarkModeColor?.finishButtonText
+                            : ""
+                        }
+                        darkButtonColor={
+                          prefersDarkMode && customDarkModeColor?.finishButton
+                            ? customDarkModeColor?.finishButton
+                            : ""
+                        }
+                        onClick={handleSubmit}
+                      >
+                        {finishButtonText}
+                      </WizardButton>
+                    </div>
+                  )}
+                </>
               )}
             </>
           )}

@@ -385,3 +385,19 @@ fieldset[disabled] .react-form-wizard .wizard-btn {
   width: 100%;
   top: 39%;
 }
+
+.react-form-wizard.rtl {
+  direction: rtl;
+}
+
+.react-form-wizard.rtl .wizard-navigation {
+  text-align: right;
+}
+
+.react-form-wizard.rtl .wizard-footer-left {
+  float: right;
+}
+
+.react-form-wizard.rtl .wizard-footer-right {
+  float: left;
+}
