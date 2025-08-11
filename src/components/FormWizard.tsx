@@ -49,7 +49,7 @@ const FormWizard: React.FC<FormWizardProps> & {
 
     // set type for useRef
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const wizardTabRef = steps.map(() => React.useRef<WizardTabRef[]>(null));
+    const wizardTabRef = steps.map(() => React.useRef<{ setChecked: (value: boolean) => void }>(null));
     // set typwizardTabRefe for useRef
     useImperativeHandle(ref, () => ({
       nextTab: () => {
@@ -176,7 +176,7 @@ const FormWizard: React.FC<FormWizardProps> & {
         return (
           <WizardTab
             key={index}
-            ref={wizardTabRef[index] as unknown as WizardTabProps["ref"]}
+            ref={wizardTabRef[index]}
             title={title as string}
             icon={icon as string}
             shape={shape}

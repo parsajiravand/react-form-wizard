@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useMemo } from "react";
 import FormWizard from "./components/FormWizard";
-import "react-form-wizard-component/dist/style.css";
-
+import "./index.css";
 import "./App.css";
 
 export default function validateTab() {
@@ -12,7 +11,7 @@ export default function validateTab() {
   };
   // check validate tab
   const checkValidateTab = () => {
-    console.log(firstTabInput);
+    console.log(firstTabInput,'firstTabInput');
     if (firstTabInput === "") {
       return false;
     }
@@ -25,7 +24,7 @@ export default function validateTab() {
   };
   // check validate tab
   const checkValidateTab2 = () => {
-    console.log(firstTabInput);
+    console.log(firstTabInput , 'tab2');
     if (firstTabInput === "") {
       return false;
     }
@@ -44,12 +43,11 @@ export default function validateTab() {
         layout="horizontal"
         title="Form Wizard"
         subtitle="Step by step form wizard"
-        darkMode={true}
-        removeBackgroundTab={true}
+        darkMode={false}
         customDarkModeColor={{
-          title: "white",//simple color
+          title: "white", //simple color
           subtitle: "white",
-          tab: "#fff",//hex color
+          tab: "#fff", //hex color
           tabIconColor: "rgb(42, 74, 247)", //rgb color
           buttons: "black",
           buttonsText: "white",
@@ -81,22 +79,33 @@ export default function validateTab() {
             onChange={(e) => setFirstTabInput(e.target.value)}
           />
         </FormWizard.TabContent>
-        {/* Tabs should be validated */}
-        <FormWizard.TabContent
-          title="Additional Info"
-          icon="ti-settings"
-          isValid={checkValidateTab()}
-          validationError={errorMessages}
-        >
-          <h3>Second Tab</h3>
-          <p>Some content for the second tab</p>
-        </FormWizard.TabContent>
+
         <FormWizard.TabContent
           title="Last step"
           icon="ti-check"
           isValid={checkValidateTab2()}
           validationError={errorMessages2}
         >
+          <h3>Last Tab</h3>
+          <p>Some content for the last tab</p>
+        </FormWizard.TabContent>
+        <FormWizard.TabContent title="Last step" icon="ti-check">
+          <h3>Last Tab</h3>
+          <p>Some content for the last tab</p>
+        </FormWizard.TabContent>
+        <FormWizard.TabContent title="Last step" icon="ti-check">
+          <h3>Last Tab</h3>
+          <p>Some content for the last tab</p>
+        </FormWizard.TabContent>
+        <FormWizard.TabContent title="Last step" icon="ti-check">
+          <h3>Last Tab</h3>
+          <p>Some content for the last tab</p>
+        </FormWizard.TabContent>
+        <FormWizard.TabContent title="Last step" icon="ti-check">
+          <h3>Last Tab</h3>
+          <p>Some content for the last tab</p>
+        </FormWizard.TabContent>
+        <FormWizard.TabContent title="Last step" icon="ti-check">
           <h3>Last Tab</h3>
           <p>Some content for the last tab</p>
         </FormWizard.TabContent>

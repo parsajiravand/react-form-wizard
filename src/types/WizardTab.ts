@@ -17,8 +17,5 @@ export interface WizardTabProps {
   removeBackgroundTabTransparentColor?: string;
   showErrorOnTab?: boolean;
   showErrorOnTabColor?: string;
-  ref: Ref<{
-    setChecked: (value: boolean) => void;
-  }>;
   onClick?: () => void;
 }

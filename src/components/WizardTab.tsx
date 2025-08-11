@@ -1,7 +1,10 @@
 import React from "react";
 import { WizardTabProps } from "../types/WizardTab";
 
-const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
+const WizardTab = React.forwardRef<
+  { setChecked: (value: boolean) => void },
+  WizardTabProps
+>(
   (
     {
       title,
