@@ -23,6 +23,36 @@ A react form wizard component with validation and progress bar with no external 
 
 </p>
 
+## ⚠️ Migration Guide: v1.0.0
+
+**This is a major version update** with breaking changes. Please read the migration notes below.
+
+### What's New in v1.0.0
+- ✅ **Schema-first API** - New declarative wizard configuration
+- ✅ **Enhanced TypeScript** - Strict typing and better DX
+- ✅ **Accessibility** - Full WCAG 2.1 AA compliance
+- ✅ **Performance** - React.memo optimizations and reduced re-renders
+- ✅ **Mobile Support** - Touch gestures and responsive design
+
+### Breaking Changes
+- **API Changes**: Some prop names adjusted for clarity
+- **Type Changes**: Stricter TypeScript contracts
+- **Callback Changes**: `onComplete` now receives optional data payload
+- **Export Changes**: New types and helpers exported from main entry
+
+### Quick Migration
+```bash
+# Update to v1.0.0
+npm install react-form-wizard-component@latest
+
+# Check migration notes below for API changes
+# Most existing code will work with minor adjustments
+```
+
+---
+
+
+
 <p align="center">
   <br>
   <strong>
@@ -184,17 +214,67 @@ function LegacyWizard() {
 }
 ```
 
-## Migration Notes (minor breaking changes)
+## Migration Notes (v1.0.0 Breaking Changes)
 
-- The package now exports wizard types from the main entry:
-  - `FormWizardSchema`
-  - `WizardStepSchema`
-  - `WizardCondition`
-  - `WizardValidation`
-  - `FormWizardMethods`
-- `schema` is optional and takes precedence over children when both are provided.
-- `onComplete` now receives optional wizard data: `onComplete?: (data?: WizardData) => void`.
-- `TabContent` is exported from the package entry and also available as `FormWizard.TabContent`.
+### 🔄 API Changes
+- **`onComplete` callback signature**: Now receives optional `WizardData`
+  ```tsx
+  // Before (v0.x)
+  const handleComplete = () => { /* no data */ };
+
+  // After (v1.0.0)
+  const handleComplete = (data?: WizardData) => { /* wizard data available */ };
+  ```
+
+- **`onTabChange` callback signature**: Now includes optional `stepId`
+  ```tsx
+  // Before (v0.x)
+  const handleTabChange = ({ prevIndex, nextIndex }) => {};
+
+  // After (v1.0.0)
+  const handleTabChange = ({ prevIndex, nextIndex, stepId }) => {};
+  ```
+
+### 📦 Export Changes
+- **New exports available** from main package entry:
+  - `FormWizardSchema` - Type for schema configuration
+  - `WizardStepSchema` - Type for individual step schema
+  - `WizardCondition` - Type for conditional step functions
+  - `WizardValidation` - Type for validation functions
+  - `FormWizardMethods` - Type for imperative API methods
+  - `WizardData` - Type for wizard state data
+  - `TabContent` - Component export (also available as `FormWizard.TabContent`)
+
+### ⚙️ Behavior Changes
+- **Schema precedence**: When both `schema` and `children` props are provided, `schema` takes precedence
+- **Stricter validation**: Some previously optional props now have stricter TypeScript contracts
+- **Accessibility improvements**: Keyboard navigation and ARIA attributes added (non-breaking)
+
+### 🚀 New Features (Non-breaking)
+- **Schema API**: Declarative wizard configuration with conditions and validation
+- **Imperative API**: Programmatic wizard control via refs
+- **Enhanced styling**: Dark mode, custom colors, responsive design
+- **Better performance**: React.memo optimizations throughout
+
+### ✅ Compatibility
+- **Children API**: Still fully supported for existing users
+- **Most existing code**: Will work with minimal or no changes
+- **Gradual migration**: You can adopt new features incrementally
+
+### 📋 Version Compatibility Matrix
+
+| Feature | v0.x | v1.0.0 |
+|---------|------|--------|
+| Children API | ✅ | ✅ |
+| Basic styling | ✅ | ✅ |
+| Validation | ✅ | ✅ |
+| **Schema API** | ❌ | ✅ |
+| **Imperative API** | ❌ | ✅ |
+| **Dark mode** | ❌ | ✅ |
+| **Accessibility** | ❌ | ✅ |
+| **Mobile/touch** | ❌ | ✅ |
+| **TypeScript strict** | ❌ | ✅ |
+| **Performance optimizations** | ❌ | ✅ |
 
 
 ## Examples
