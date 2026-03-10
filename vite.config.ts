@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import banner from "vite-plugin-banner";
 import path from 'path'
 import pkg from "./package.json";
+import fs from 'fs';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -21,6 +22,16 @@ export default defineConfig({
           "react-dom": "ReactDOM",
         },
       },
+      plugins: [
+        {
+          name: 'generate-style-export',
+          writeBundle() {
+            // Generate the style.css export file after build
+            const styleContent = `@import "./react-form-wizard-component.css";`;
+            fs.writeFileSync(path.resolve(__dirname, 'dist/style.css'), styleContent);
+          }
+        }
+      ]
     },
   },
   plugins: [

@@ -5,7 +5,7 @@
   "homepage": "https://github.com/parsajiravand/react-form-wizard#readme",
   "repository": "https://github.com/parsajiravand/react-form-wizard",
   "description": "A modern, accessible React form wizard component with validation, progress tracking, and extensive customization options. Zero dependencies, TypeScript-first, mobile-responsive.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "files": [
     "dist",
@@ -21,7 +21,10 @@
       "import": "./dist/react-form-wizard-component.es.js",
       "require": "./dist/react-form-wizard-component.umd.js"
     },
-    "./dist/style.css": "./dist/style.css"
+    "./dist/style.css": {
+      "import": "./dist/style.css",
+      "require": "./dist/style.css"
+    }
   },
   "types": "./dist/types/main.d.ts",
   "scripts": {
@@ -34,6 +37,7 @@
     "test:coverage": "jest --coverage"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",

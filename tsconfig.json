@@ -17,5 +17,13 @@
     "emitDeclarationOnly": true
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/**/*.spec.ts",
+    "src/**/*.spec.tsx",
+    "src/main.tsx",
+    "src/vite-env.d.ts"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
