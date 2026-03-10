@@ -1,7 +1,7 @@
 import React from "react";
 import { WizardTabProps } from "../types/WizardTab";
 
-const WizardTab = React.forwardRef<
+const WizardTab = React.memo(React.forwardRef<
   { setChecked: (value: boolean) => void },
   WizardTabProps
 >(
@@ -117,6 +117,12 @@ const WizardTab = React.forwardRef<
           }`}
           style={{ cursor: cursorStyle }}
           onClick={onClick}
+          role="tab"
+          aria-selected={isActive}
+          aria-controls={`step-${index}-panel`}
+          id={`step-${index}`}
+          tabIndex={isActive ? 0 : -1}
+          aria-disabled={!isChecked && index > currentStep}
         >
           <div
             className={`wizard-icon-circle md ${isChecked ? "checked" : ""} ${
@@ -185,5 +191,5 @@ const WizardTab = React.forwardRef<
       </li>
     );
   }
-);
+));
 export default WizardTab;

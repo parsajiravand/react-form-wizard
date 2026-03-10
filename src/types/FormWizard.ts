@@ -55,5 +55,5 @@ export interface FormWizardMethods {
   goToTab: (index: number) => void;
 }
 export interface WizardTabRef {
-  current?: { setChecked: (value: boolean) => void };
+  setChecked: (value: boolean) => void;
 }

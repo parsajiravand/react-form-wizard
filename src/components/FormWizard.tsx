@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useImperativeHandle } from "react";
 import WizardTab from "./WizardTab";
 import WizardButton from "./WizardButton";
@@ -7,14 +6,10 @@ import {
   FormWizardProps,
   TabContentProps,
   WizardTabRef,
+  FormWizardMethods,
 } from "../types/FormWizard";
-import { WizardTabProps } from "../types/WizardTab";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const FormWizard: React.FC<FormWizardProps> & {
-  TabContent: React.FC<TabContentProps>;
-} = React.forwardRef(
+const FormWizard = React.memo(React.forwardRef<FormWizardMethods, FormWizardProps>(
   (
     {
       title,
@@ -40,45 +35,25 @@ const FormWizard: React.FC<FormWizardProps> & {
       removeBackgroundTabTransparentColor = "",
       onComplete,
       onTabChange,
-    }: FormWizardProps,
+    },
     ref
   ) => {
-    const steps = React.Children.toArray(
-      children
-    ) as React.ReactElement<TabContentProps>[];
+    const steps = React.useMemo(() =>
+      React.Children.toArray(
+        children
+      ) as React.ReactElement<TabContentProps>[],
+      [children]
+    );
 
-    // set type for useRef
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const wizardTabRef = steps.map(() => React.useRef<{ setChecked: (value: boolean) => void }>(null));
-    // set typwizardTabRefe for useRef
-    useImperativeHandle(ref, () => ({
-      nextTab: () => {
-        handleNext();
-      },
-      prevTab: () => {
-        handlePrevious();
-      },
-      reset: () => {
-        setCurrentStep(startIndex);
-        wizardTabRef.forEach((tab: any, index) => {
-          if (startIndex >= index) tab?.current?.setChecked(true);
-          else tab?.current?.setChecked(false);
-        });
-      },
-      activeAll: () => {
-        wizardTabRef.forEach((tab: any) => {
-          tab?.current?.setChecked(true);
-        });
-      },
-      goToTab: (index: number) => {
-        handelNavigate(index, true);
-        // checked tab
-        wizardTabRef.forEach((tab: any, i) => {
-          if (index >= i) tab?.current?.setChecked(true);
-          else tab?.current?.setChecked(false);
-        });
-      },
-    }));
+    // Create refs for wizard tabs
+    const wizardTabRef = React.useRef<(React.RefObject<WizardTabRef> | null)[]>([]);
+
+    // Initialize refs when steps change
+    React.useEffect(() => {
+      wizardTabRef.current = steps.map((_, index) =>
+        wizardTabRef.current[index] || React.createRef<WizardTabRef>()
+      );
+    }, [steps]);
     //check browser in dark mode or light mode
     const [prefersDarkMode, setPrefersDarkMode] = useState(false);
     // useEffect(() => {
@@ -95,6 +70,39 @@ const FormWizard: React.FC<FormWizardProps> & {
       }
     }, [darkMode]);
 
+
+    // Touch gesture support for mobile
+    const touchStartX = React.useRef<number>(0);
+    const touchStartY = React.useRef<number>(0);
+
+    const handleTouchStart = React.useCallback((e: React.TouchEvent) => {
+      touchStartX.current = e.touches[0].clientX;
+      touchStartY.current = e.touches[0].clientY;
+    }, []);
+
+    const handleTouchEnd = React.useCallback((e: React.TouchEvent) => {
+      if (!touchStartX.current || !touchStartY.current) return;
+
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const diffX = touchStartX.current - touchEndX;
+      const diffY = touchStartY.current - touchEndY;
+
+      // Only handle horizontal swipes (ignore vertical scrolls)
+      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+        if (diffX > 0) {
+          // Swipe left - next step
+          // handleNext(); // Will be set after function declarations
+        } else {
+          // Swipe right - previous step
+          // handlePrevious(); // Will be set after function declarations
+        }
+      }
+
+      touchStartX.current = 0;
+      touchStartY.current = 0;
+    }, []);
+
     // startIndex should be greater than or equal to 0 or less than steps.length
     if (startIndex < 0 || startIndex > steps.length) {
       startIndex = 0;
@@ -108,12 +116,11 @@ const FormWizard: React.FC<FormWizardProps> & {
     useEffect(() => {
       // set setChecked before all index to true
       if (currentStep > 0) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        wizardTabRef.forEach((tab: any, index) => {
+        wizardTabRef.current.forEach((tab, index) => {
           if (startIndex >= index) tab?.current?.setChecked(true);
         });
       }
-    }, [currentStep, startIndex, wizardTabRef]);
+    }, [currentStep, startIndex]);
     // if inline step hide progress bar
     if (inlineStep) showProgressBar = false;
 
@@ -127,7 +134,7 @@ const FormWizard: React.FC<FormWizardProps> & {
     /* END:Starter Component Checks */
 
     // add checked option if tab active or actived before
-    const handelNavigate = (index: number, navigateMode = false) => {
+    const handelNavigate = React.useCallback((index: number, navigateMode = false) => {
       if (navigateMode) {
         setCurrentStep(index);
         return;
@@ -135,22 +142,125 @@ const FormWizard: React.FC<FormWizardProps> & {
       if (index <= currentStep) {
         setCurrentStep(index);
       }
-    };
-    const handleNext = () => {
+    }, [currentStep]);
+    const handleNext = React.useCallback(() => {
       if (currentStep === steps.length - 1) return;
       setCurrentStep(currentStep + 1);
-    };
+    }, [currentStep, steps.length]);
 
-    const handlePrevious = () => {
+    const handlePrevious = React.useCallback(() => {
       if (currentStep === 0) return;
       setCurrentStep(currentStep - 1);
-    };
+    }, [currentStep]);
 
-    const handleSubmit = () => {
+    const handleSubmit = React.useCallback(() => {
       if (typeof onComplete === "function") onComplete();
-    };
+    }, [onComplete]);
 
-    const renderTabs = () => {
+    const imperativeMethods = React.useMemo(() => ({
+      nextTab: () => {
+        handleNext();
+      },
+      prevTab: () => {
+        handlePrevious();
+      },
+      reset: () => {
+        setCurrentStep(startIndex);
+        wizardTabRef.current.forEach((tab, index) => {
+          if (startIndex >= index) tab?.current?.setChecked(true);
+          else tab?.current?.setChecked(false);
+        });
+      },
+      activeAll: () => {
+        wizardTabRef.current.forEach((tab) => {
+          tab?.current?.setChecked(true);
+        });
+      },
+      goToTab: (index: number) => {
+        handelNavigate(index, true);
+        // checked tab
+        wizardTabRef.current.forEach((tab, i) => {
+          if (index >= i) tab?.current?.setChecked(true);
+          else tab?.current?.setChecked(false);
+        });
+      },
+    }), [startIndex, handelNavigate, handleNext, handlePrevious]);
+
+    useImperativeHandle(ref, () => imperativeMethods);
+
+    // Keyboard navigation support
+    React.useEffect(() => {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        // Only handle keyboard navigation when wizard is focused
+        if (!document.activeElement?.closest('.react-form-wizard')) return;
+
+        switch (e.key) {
+          case 'ArrowRight':
+            e.preventDefault();
+            handleNext();
+            break;
+          case 'ArrowLeft':
+            e.preventDefault();
+            handlePrevious();
+            break;
+          case 'Home':
+            e.preventDefault();
+            handelNavigate(0, true);
+            break;
+          case 'End':
+            e.preventDefault();
+            handelNavigate(steps.length - 1, true);
+            break;
+          case 'Enter':
+          case ' ':
+            if (currentStep === steps.length - 1) {
+              e.preventDefault();
+              handleSubmit();
+            }
+            break;
+        }
+      };
+
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [currentStep, steps.length, handleNext, handlePrevious, handelNavigate, handleSubmit]);
+
+    // Touch gesture handling
+    React.useEffect(() => {
+      const handleTouchEndWithFunctions = (e: TouchEvent) => {
+        if (!touchStartX.current || !touchStartY.current) return;
+
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchEndY = e.changedTouches[0].clientY;
+        const diffX = touchStartX.current - touchEndX;
+        const diffY = touchStartY.current - touchEndY;
+
+        // Only handle horizontal swipes (ignore vertical scrolls)
+        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+          if (diffX > 0) {
+            // Swipe left - next step
+            handleNext();
+          } else {
+            // Swipe right - previous step
+            handlePrevious();
+          }
+        }
+
+        touchStartX.current = 0;
+        touchStartY.current = 0;
+      };
+
+      // Override the touch end handler with actual function calls
+      const wizardElement = document.querySelector('.react-form-wizard');
+      if (wizardElement) {
+        wizardElement.addEventListener('touchend', handleTouchEndWithFunctions);
+        return () => {
+          wizardElement.removeEventListener('touchend', handleTouchEndWithFunctions);
+        };
+      }
+    }, [handleNext, handlePrevious]);
+
+    const renderTabs = React.useCallback(() => {
       return steps.map((step, index) => {
         const {
           title,
@@ -166,9 +276,7 @@ const FormWizard: React.FC<FormWizardProps> & {
         useEffect(() => {
           if (isActive && !isValid) {
             setCurrentStep(index - 1);
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //@ts-ignore
-            wizardTabRef[index]?.current?.setChecked(false) as WizardTabRef;
+            wizardTabRef.current[index]?.current?.setChecked(false);
             if (typeof validationError === "function") validationError();
           }
         }, [isActive, isValid, index, validationError]);
@@ -176,7 +284,7 @@ const FormWizard: React.FC<FormWizardProps> & {
         return (
           <WizardTab
             key={index}
-            ref={wizardTabRef[index]}
+            ref={wizardTabRef.current[index]}
             title={title as string}
             icon={icon as string}
             shape={shape}
@@ -209,11 +317,25 @@ const FormWizard: React.FC<FormWizardProps> & {
           />
         );
       });
-    };
+    }, [
+      steps,
+      currentStep,
+      shape,
+      color,
+      layout,
+      showProgressBar,
+      inlineStep,
+      prefersDarkMode,
+      customDarkModeColor,
+      removeBackgroundTab,
+      removeBackgroundTabTransparentColor,
+      disableBackOnClickStep,
+      handelNavigate
+    ]);
 
-    const renderContent = () => {
+    const renderContent = React.useCallback(() => {
       return steps[currentStep];
-    };
+    }, [steps, currentStep]);
     // const progressBarStyle = {
     //   backgroundColor:
     //     prefersDarkMode && customDarkModeColor?.border
@@ -247,8 +369,39 @@ const FormWizard: React.FC<FormWizardProps> & {
     return (
       <div
         className={`react-form-wizard ${stepSize} ${isVertical} ${isInline} `}
+        role="region"
+        aria-label="Form Wizard"
+        aria-describedby="wizard-description"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
+        {/* Skip link for keyboard users */}
+        <a
+          href="#wizard-content"
+          className="sr-only"
+          style={{
+            position: 'absolute',
+            top: '-40px',
+            left: '6px',
+            background: '#000',
+            color: '#fff',
+            padding: '8px',
+            textDecoration: 'none',
+            borderRadius: '4px',
+            zIndex: 1000
+          }}
+          onFocus={(e) => { e.target.style.top = '6px'; }}
+          onBlur={(e) => { e.target.style.top = '-40px'; }}
+        >
+          Skip to main content
+        </a>
+
         <div className="wizard-header">
+          {/* Hidden description for screen readers */}
+          <div id="wizard-description" className="sr-only">
+            Form wizard with {steps.length} steps. Currently on step {currentStep + 1}.
+            Use arrow keys to navigate between steps.
+          </div>
           {/* if title is element render other wise render string props */}
           {typeof title === "string" ? (
             <>
@@ -289,10 +442,19 @@ const FormWizard: React.FC<FormWizardProps> & {
           <ul
             className={`form-wizard-steps  wizard-nav wizard-nav-pills ${shape} ${stepSize}`}
             style={{ borderColor: color }}
+            role="tablist"
+            aria-label="Form steps"
           >
             {renderTabs()}
           </ul>
-          <div className="wizard-tab-content">{renderContent()}</div>
+          <div
+            className="wizard-tab-content"
+            role="tabpanel"
+            aria-labelledby={`step-${currentStep}`}
+            id={`wizard-content step-${currentStep}-panel`}
+          >
+            {renderContent()}
+          </div>
         </div>
 
         <div className="wizard-card-footer clearfix">
@@ -375,10 +537,16 @@ const FormWizard: React.FC<FormWizardProps> & {
       </div>
     );
   }
-);
+));
 
-FormWizard.TabContent = ({ children, isValid = true }) => {
+const TabContent: React.FC<TabContentProps> = ({ children, isValid = true, ...props }) => {
   return <>{isValid && children}</>;
 };
 
-export default FormWizard;
+// Attach TabContent to the memoized component
+const FormWizardWithTabContent = Object.assign(FormWizard, {
+  TabContent,
+});
+
+export default FormWizardWithTabContent;
+export { TabContent };

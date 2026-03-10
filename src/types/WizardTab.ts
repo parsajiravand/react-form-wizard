@@ -1,4 +1,3 @@
-import { Ref } from "react";
 
 export interface WizardTabProps {
   title: string;

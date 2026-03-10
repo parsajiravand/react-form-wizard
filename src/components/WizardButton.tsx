@@ -1,7 +1,9 @@
 import React from "react";
 import { WizardButtonProps } from "../types/WizardButton";
 
-const WizardButton: React.FC<WizardButtonProps> = ({
+const WizardButton = React.memo<WizardButtonProps>(({
+
+
   darkTextColor,
   darkButtonColor,
   onClick,
@@ -20,6 +22,6 @@ const WizardButton: React.FC<WizardButtonProps> = ({
       {children}
     </button>
   );
-};
+});
 
 export default WizardButton;

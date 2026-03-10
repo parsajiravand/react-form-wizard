@@ -1,9 +1,9 @@
-import React, { useMemo } from "react";
-import FormWizard from "./components/FormWizard";
+import React from "react";
+import FormWizard, { TabContent } from "./components/FormWizard";
 import "./index.css";
 import "./App.css";
 
-export default function validateTab() {
+export default function ValidateTab() {
   const [firstTabInput, setFirstTabInput] = React.useState("test");
   const handleComplete = () => {
     console.log("Form completed!");
@@ -16,11 +16,6 @@ export default function validateTab() {
       return false;
     }
     return true;
-  };
-  // error messages
-  const errorMessages = () => {
-    // you can add alert or console.log or any thing you want
-    alert("Please fill in the required field");
   };
   // check validate tab
   const checkValidateTab2 = () => {
@@ -56,7 +51,7 @@ export default function validateTab() {
         }}
         onComplete={handleComplete}
       >
-        <FormWizard.TabContent
+        <TabContent
           title="Personal details"
           showErrorOnTab={!checkValidateTab()}
           showErrorOnTabColor="red"
@@ -78,9 +73,9 @@ export default function validateTab() {
             value={firstTabInput}
             onChange={(e) => setFirstTabInput(e.target.value)}
           />
-        </FormWizard.TabContent>
+        </TabContent>
 
-        <FormWizard.TabContent
+        <TabContent
           title="Last step"
           icon="ti-check"
           isValid={checkValidateTab2()}
@@ -88,27 +83,27 @@ export default function validateTab() {
         >
           <h3>Last Tab</h3>
           <p>Some content for the last tab</p>
-        </FormWizard.TabContent>
-        <FormWizard.TabContent title="Last step" icon="ti-check">
+        </TabContent>
+        <TabContent title="Last step" icon="ti-check">
           <h3>Last Tab</h3>
           <p>Some content for the last tab</p>
-        </FormWizard.TabContent>
-        <FormWizard.TabContent title="Last step" icon="ti-check">
+        </TabContent>
+        <TabContent title="Last step" icon="ti-check">
           <h3>Last Tab</h3>
           <p>Some content for the last tab</p>
-        </FormWizard.TabContent>
-        <FormWizard.TabContent title="Last step" icon="ti-check">
+        </TabContent>
+        <TabContent title="Last step" icon="ti-check">
           <h3>Last Tab</h3>
           <p>Some content for the last tab</p>
-        </FormWizard.TabContent>
-        <FormWizard.TabContent title="Last step" icon="ti-check">
+        </TabContent>
+        <TabContent title="Last step" icon="ti-check">
           <h3>Last Tab</h3>
           <p>Some content for the last tab</p>
-        </FormWizard.TabContent>
-        <FormWizard.TabContent title="Last step" icon="ti-check">
+        </TabContent>
+        <TabContent title="Last step" icon="ti-check">
           <h3>Last Tab</h3>
           <p>Some content for the last tab</p>
-        </FormWizard.TabContent>
+        </TabContent>
       </FormWizard>
       {/* add style */}
       <style>{`
