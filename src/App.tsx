@@ -1,8 +1,7 @@
 import React from "react";
-import FormWizard, { TabContent } from "./components/FormWizard";
-import type { FormWizardMethods, FormWizardSchema, WizardData } from "./types/FormWizard";
-import "./index.css";
-import "./App.css";
+import FormWizard, { TabContent } from "react-form-wizard-component";
+import type { FormWizardMethods, FormWizardSchema, WizardData } from "react-form-wizard-component";
+
 
 export default function App() {
   const [userInput, setUserInput] = React.useState("");
