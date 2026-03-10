@@ -2,75 +2,87 @@
   "name": "react-form-wizard-component",
   "private": false,
   "author": "Parsa Jiravand",
-  "homepage": "https://github.com/parsajiravand/react-form-wizard",
+  "homepage": "https://github.com/parsajiravand/react-form-wizard#readme",
   "repository": "https://github.com/parsajiravand/react-form-wizard",
-  "description": "A react form wizard component with validation and progress bar with no external depenendcies which simplifies tab wizard management.",
-  "version": "0.2.7",
+  "description": "A modern, accessible React form wizard component with validation, progress tracking, and extensive customization options. Supports React 19, zero dependencies, TypeScript-first, mobile-responsive.",
+  "version": "1.1.1",
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "main": "./dist/react-form-wizard-component.umd.js",
   "module": "./dist/react-form-wizard-component.es.js",
   "exports": {
     ".": {
+      "types": "./dist/types/main.d.ts",
       "import": "./dist/react-form-wizard-component.es.js",
-      "require": "./dist/react-form-wizard-component.umd.js",
-      "types": "./dist/types/main.d.ts"
+      "require": "./dist/react-form-wizard-component.umd.js"
     },
-    "./dist/style.css": "./dist/style.css"
+    "./dist/style.css": {
+      "import": "./dist/style.css",
+      "require": "./dist/style.css"
+    }
   },
   "types": "./dist/types/main.d.ts",
   "scripts": {
     "dev": "vite",
     "build": " vite build && tsc",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "react-form-wizard-component": "^0.1.9"
+    "preview": "vite preview",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "devDependencies": {
-    "@types/react": "^18.0.37",
-    "@types/react-dom": "^18.0.11",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
-    "@vitejs/plugin-react": "^4.0.0",
+    "@vitejs/plugin-react": "^4.2.0",
     "eslint": "^8.38.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "typescript": "^5.0.2",
-    "vite": "^4.3.9",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.3.0",
+    "vite": "^6.0.0",
     "vite-plugin-banner": "^0.7.0"
   },
   "keywords": [
     "react",
     "form",
     "wizard",
-    "component",
-    "react-component",
-    "react-form-wizard",
-    "react-form-wizard-component",
-    "react-form-wizard-component",
-    "form-wizard",
-    "form-wizard-component",
-    "react-form",
-    "react-form-component",
-    "react-form-wizard-component",
-    "next",
-    "next-form-wizard",
-    "next-form-wizard-component",
-    "step",
-    "step-form",
-    "step-form-component",
-    "react-step-form",
     "stepper",
-    "react-stepper",
-    "react-stepper-component",
-    "react-step-form-component",
-    "react-step-form-wizard"
+    "multi-step",
+    "form-wizard",
+    "react-form",
+    "wizard-component",
+    "form-builder",
+    "step-form",
+    "guided-form",
+    "typescript",
+    "react-component",
+    "form-validation",
+    "step-by-step",
+    "wizard-form",
+    "react19",
+    "react-19"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "sideEffects": false,
+  "dependencies": {
+    "react-form-wizard-component": "^1.0.1"
+  }
 }

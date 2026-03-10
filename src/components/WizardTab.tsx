@@ -1,9 +1,13 @@
 import React from "react";
 import { WizardTabProps } from "../types/WizardTab";
 
-const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
+const WizardTab = React.memo(React.forwardRef<
+  { setChecked: (value: boolean) => void },
+  WizardTabProps
+>(
   (
     {
+      id,
       title,
       icon,
       shape,
@@ -11,6 +15,9 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
       isActive,
       index,
       currentStep,
+      isVisible = true,
+      isDisabled = false,
+      hasValidationError = false,
       showProgressBar,
       layout,
       inlineStep = false,
@@ -25,7 +32,11 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
     ref
   ) => {
     const stepClasses = isActive ? "active" : "";
-    const cursorStyle = shape === "square" ? "default" : "";
+    const cursorStyle = isDisabled
+      ? "not-allowed"
+      : shape === "square"
+      ? "default"
+      : "pointer";
     const [isChecked, setIsChecked] = React.useState(false);
     React.useEffect(() => {
       if (isActive) {
@@ -40,7 +51,7 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
       if (darkColor) {
         style.border = "2px solid " + darkColor;
       }
-      if (showErrorOnTab) {
+      if (showErrorOnTab || hasValidationError) {
         style.border = "2px solid " + showErrorOnTabColor;
       }
       if (layout === "vertical") {
@@ -69,7 +80,7 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
       }
     };
     const checkBackgroundCondition = () => {
-      if (showErrorOnTab && isChecked && index <= currentStep) {
+      if ((showErrorOnTab || hasValidationError) && isChecked && index <= currentStep) {
         return showErrorOnTabColor;
       }
       if (isChecked && !removeBackgroundTab) {
@@ -93,6 +104,8 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
       return icon;
     };
 
+    if (!isVisible) return null;
+
     return (
       <li
         key={index}
@@ -113,18 +126,18 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
             inlineStep ? "inline-step" : ""
           }`}
           style={{ cursor: cursorStyle }}
-          onClick={onClick}
+          onClick={isDisabled ? undefined : onClick}
+          role="tab"
+          aria-selected={isActive}
+          aria-controls={`${id ?? `step-${index}`}-panel`}
+          id={id ?? `step-${index}`}
+          tabIndex={isActive ? 0 : -1}
+          aria-disabled={isDisabled}
         >
           <div
             className={`wizard-icon-circle md ${isChecked ? "checked" : ""} ${
               shape === "square" ? "square_shape" : ""
             }`}
-            role="tab"
-            tabIndex={isActive ? 0 : undefined}
-            id={`step-${index}`}
-            aria-controls={`step-${index}`}
-            aria-disabled={isActive}
-            aria-selected={isActive}
             style={{
               backgroundColor: removeBackgroundTab
                 ? "transparent"
@@ -165,7 +178,8 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
             className={`stepTitle ${isActive ? "active" : ""}`}
             style={{
               color:
-                showErrorOnTab && isChecked && index <= currentStep
+                ((showErrorOnTab && isChecked && index <= currentStep) ||
+                  (hasValidationError && isChecked && index <= currentStep))
                   ? showErrorOnTabColor
                   : isChecked
                   ? darkColor
@@ -182,5 +196,5 @@ const WizardTab: React.FC<WizardTabProps> = React.forwardRef(
       </li>
     );
   }
-);
+));
 export default WizardTab;
