@@ -121,6 +121,81 @@ function App() {
 export default App;
 ```
 
+## Schema API (new)
+
+Use the new schema-first mode when you want conditional visibility, step-level validation, and data-driven flows.
+
+```tsx
+import FormWizard, {
+  FormWizardSchema,
+  WizardData,
+} from "react-form-wizard-component";
+import "react-form-wizard-component/dist/style.css";
+
+const schema: FormWizardSchema = {
+  initialData: { plan: "basic" },
+  steps: [
+    {
+      id: "intro",
+      title: "Intro",
+      content: <div>Welcome to onboarding</div>,
+    },
+    {
+      id: "premium",
+      title: "Premium features",
+      condition: ({ data }) => data.plan === "premium",
+      content: <div>Premium content</div>,
+    },
+    {
+      id: "review",
+      title: "Review",
+      validate: ({ data }) =>
+        data.plan ? true : "Plan is required before submit",
+      content: <div>Review your setup</div>,
+    },
+  ],
+};
+
+function SchemaWizard() {
+  const handleComplete = (data?: WizardData) => {
+    console.log("completed with data", data);
+  };
+
+  return <FormWizard title="Schema Wizard" schema={schema} onComplete={handleComplete} />;
+}
+```
+
+## Children API (existing)
+
+The existing children-based API remains supported for backward compatibility.
+
+```tsx
+import FormWizard, { TabContent } from "react-form-wizard-component";
+
+function LegacyWizard() {
+  return (
+    <FormWizard title="Legacy Wizard">
+      <TabContent title="First">First content</TabContent>
+      <TabContent title="Second" isValid={true}>
+        Second content
+      </TabContent>
+    </FormWizard>
+  );
+}
+```
+
+## Migration Notes (minor breaking changes)
+
+- The package now exports wizard types from the main entry:
+  - `FormWizardSchema`
+  - `WizardStepSchema`
+  - `WizardCondition`
+  - `WizardValidation`
+  - `FormWizardMethods`
+- `schema` is optional and takes precedence over children when both are provided.
+- `onComplete` now receives optional wizard data: `onComplete?: (data?: WizardData) => void`.
+- `TabContent` is exported from the package entry and also available as `FormWizard.TabContent`.
+
 
 ## Examples
 

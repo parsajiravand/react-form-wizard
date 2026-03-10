@@ -5,6 +5,7 @@ import "./App.css";
 
 export default function ValidateTab() {
   const [firstTabInput, setFirstTabInput] = React.useState("test");
+  const [plan, setPlan] = React.useState<"basic" | "premium">("basic");
   const handleComplete = () => {
     console.log("Form completed!");
     // Handle form completion logic here
@@ -31,8 +32,64 @@ export default function ValidateTab() {
     console.log("test");
   };
 
+  const schemaWizard = React.useMemo(
+    () => ({
+      initialData: {
+        plan,
+      },
+      steps: [
+        {
+          id: "schema-intro",
+          title: "Schema Intro",
+          content: (
+            <>
+              <h3>Schema Step 1</h3>
+              <p>This wizard section is driven by a schema object.</p>
+            </>
+          ),
+        },
+        {
+          id: "premium-only",
+          title: "Premium",
+          condition: ({ data }: { data: Record<string, unknown> }) =>
+            data.plan === "premium",
+          content: (
+            <>
+              <h3>Premium Step</h3>
+              <p>This step is only visible when plan is premium.</p>
+            </>
+          ),
+        },
+        {
+          id: "schema-review",
+          title: "Schema Review",
+          validate: ({ data }: { data: Record<string, unknown> }) =>
+            data.plan ? true : "Please select a plan first",
+          content: (
+            <>
+              <h3>Schema Step 2</h3>
+              <p>Validation is provided by schema validate callback.</p>
+            </>
+          ),
+        },
+      ],
+    }),
+    [plan]
+  );
+
   return (
     <>
+      <div style={{ marginBottom: "16px" }}>
+        <label style={{ marginRight: "8px" }}>Plan:</label>
+        <select
+          value={plan}
+          onChange={(e) => setPlan(e.target.value as "basic" | "premium")}
+        >
+          <option value="basic">Basic</option>
+          <option value="premium">Premium</option>
+        </select>
+      </div>
+
       <FormWizard
         inlineStep={false}
         layout="horizontal"
@@ -105,6 +162,16 @@ export default function ValidateTab() {
           <p>Some content for the last tab</p>
         </TabContent>
       </FormWizard>
+
+      <hr style={{ margin: "24px 0" }} />
+
+      <FormWizard
+        title="Schema-first Wizard"
+        subtitle="Conditional + validation from schema"
+        schema={schemaWizard}
+        data={{ plan }}
+      />
+
       {/* add style */}
       <style>{`
         @import url("https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/themify-icons.css");

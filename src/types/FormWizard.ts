@@ -1,6 +1,27 @@
 import { ReactNode, Ref } from "react";
 
+export type WizardData = Record<string, unknown>;
+
+export interface WizardConditionContext {
+  data: WizardData;
+  currentStep: number;
+  stepIndex: number;
+}
+
+export interface WizardValidationContext {
+  data: WizardData;
+  currentStep: number;
+  stepIndex: number;
+}
+
+export type WizardCondition = (context: WizardConditionContext) => boolean;
+export type WizardValidationResult = boolean | string;
+export type WizardValidation = (
+  context: WizardValidationContext
+) => WizardValidationResult;
+
 export interface TabContentProps {
+  id?: string;
   title?: string;
   icon?: string | ReactNode;
   route?: string;
@@ -9,6 +30,24 @@ export interface TabContentProps {
   showErrorOnTab?: boolean;
   showErrorOnTabColor?: string;
   validationError?: () => void | ReactNode;
+  condition?: WizardCondition;
+  validate?: WizardValidation;
+}
+
+export interface WizardStepSchema {
+  id?: string;
+  title?: string;
+  icon?: string | ReactNode;
+  content: ReactNode | ((context: WizardConditionContext) => ReactNode);
+  condition?: WizardCondition;
+  validate?: WizardValidation;
+  showErrorOnTab?: boolean;
+  showErrorOnTabColor?: string;
+}
+
+export interface FormWizardSchema {
+  steps: WizardStepSchema[];
+  initialData?: WizardData;
 }
 
 export interface FormWizardProps {
@@ -17,13 +56,16 @@ export interface FormWizardProps {
   subtitle?: string;
   shape?: string;
   color?: string;
-  children: ReactNode;
+  children?: ReactNode;
+  schema?: FormWizardSchema;
+  data?: WizardData;
+  onDataChange?: (nextData: WizardData) => void;
   nextButtonText?: string;
-  nextButtonTemplate?: (arg0: () => void) => void;
+  nextButtonTemplate?: (arg0: () => void) => ReactNode;
   backButtonText?: string;
-  backButtonTemplate?: (arg0: () => void) => void;
+  backButtonTemplate?: (arg0: () => void) => ReactNode;
   finishButtonText?: string;
-  finishButtonTemplate?: (arg0: () => void) => void;
+  finishButtonTemplate?: (arg0: () => void) => ReactNode;
   stepSize?: "xs" | "sm" | "md" | "lg";
   layout?: "horizontal" | "vertical";
   startIndex?: number;
@@ -44,16 +86,21 @@ export interface FormWizardProps {
   };
   removeBackgroundTab?: boolean;
   removeBackgroundTabTransparentColor?: string;
-  onComplete?: () => void;
-  onTabChange?: (e: { prevIndex: number; nextIndex: number }) => void;
+  onComplete?: (data?: WizardData) => void;
+  onTabChange?: (e: { prevIndex: number; nextIndex: number; stepId?: string }) => void;
 }
+
 export interface FormWizardMethods {
   nextTab: () => void;
   prevTab: () => void;
   reset: () => void;
   activeAll: () => void;
   goToTab: (index: number) => void;
+  goToTabById: (id: string) => void;
+  setData: (data: WizardData) => void;
+  getData: () => WizardData;
 }
+
 export interface WizardTabRef {
   setChecked: (value: boolean) => void;
 }

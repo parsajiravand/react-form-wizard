@@ -9,7 +9,7 @@ jest.mock('../../index.css', () => ({}));
 const mockOnComplete = jest.fn();
 const mockOnTabChange = jest.fn();
 
-const TestWizard = () => (
+const ChildrenWizard = () => (
   <FormWizard
     title="Test Wizard"
     subtitle="Test Subtitle"
@@ -31,27 +31,55 @@ const TestWizard = () => (
   </FormWizard>
 );
 
+const SchemaWizard = () => (
+  <FormWizard
+    title="Schema Wizard"
+    schema={{
+      initialData: { plan: 'basic' },
+      steps: [
+        {
+          id: 'intro',
+          title: 'Intro',
+          content: <div>Schema Intro</div>,
+        },
+        {
+          id: 'premium',
+          title: 'Premium',
+          condition: ({ data }) => data.plan === 'premium',
+          content: <div>Premium Content</div>,
+        },
+        {
+          id: 'review',
+          title: 'Review',
+          validate: () => false,
+          content: <div>Schema Review</div>,
+        },
+      ],
+    }}
+  />
+);
+
 describe('FormWizard', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('renders the wizard with title and subtitle', () => {
-    render(<TestWizard />);
+    render(<ChildrenWizard />);
 
     expect(screen.getByText('Test Wizard')).toBeInTheDocument();
     expect(screen.getByText('Test Subtitle')).toBeInTheDocument();
   });
 
   it('renders the first step content by default', () => {
-    render(<TestWizard />);
+    render(<ChildrenWizard />);
 
     expect(screen.getByText('Step 1 Content')).toBeInTheDocument();
     expect(screen.getByText('First step content')).toBeInTheDocument();
   });
 
   it('navigates to next step when Next button is clicked', async () => {
-    render(<TestWizard />);
+    render(<ChildrenWizard />);
 
     const nextButton = screen.getByText('Next');
     await userEvent.click(nextButton);
@@ -62,7 +90,7 @@ describe('FormWizard', () => {
   });
 
   it('navigates to previous step when Back button is clicked', async () => {
-    render(<TestWizard />);
+    render(<ChildrenWizard />);
 
     // Go to second step first
     const nextButton = screen.getByText('Next');
@@ -78,7 +106,7 @@ describe('FormWizard', () => {
   });
 
   it('calls onComplete when Finish button is clicked on last step', async () => {
-    render(<TestWizard />);
+    render(<ChildrenWizard />);
 
     // Navigate to last step
     const nextButton = screen.getByText('Next');
@@ -93,7 +121,7 @@ describe('FormWizard', () => {
   });
 
   it('calls onTabChange when navigating between steps', async () => {
-    render(<TestWizard />);
+    render(<ChildrenWizard />);
 
     const nextButton = screen.getByText('Next');
     await userEvent.click(nextButton);
@@ -101,17 +129,16 @@ describe('FormWizard', () => {
     expect(mockOnTabChange).toHaveBeenCalledWith({
       prevIndex: 0,
       nextIndex: 1,
+      stepId: 'step-2',
     });
   });
 
   it('supports keyboard navigation with arrow keys', async () => {
-    render(<TestWizard />);
+    render(<ChildrenWizard />);
+    // Focus an element inside wizard so keyboard listener can resolve closest(".react-form-wizard")
+    const nextButton = screen.getByText('Next');
+    nextButton.focus();
 
-    // Focus the wizard
-    const wizard = screen.getByRole('region');
-    wizard.focus();
-
-    // Press right arrow
     fireEvent.keyDown(document, { key: 'ArrowRight' });
 
     await waitFor(() => {
@@ -120,7 +147,7 @@ describe('FormWizard', () => {
   });
 
   it('has proper accessibility attributes', () => {
-    render(<TestWizard />);
+    render(<ChildrenWizard />);
 
     const wizard = screen.getByRole('region', { name: 'Form Wizard' });
     expect(wizard).toBeInTheDocument();
@@ -133,10 +160,33 @@ describe('FormWizard', () => {
   });
 
   it('renders step titles in navigation', () => {
-    render(<TestWizard />);
+    render(<ChildrenWizard />);
 
     expect(screen.getByText('Step 1')).toBeInTheDocument();
     expect(screen.getByText('Step 2')).toBeInTheDocument();
     expect(screen.getByText('Step 3')).toBeInTheDocument();
+  });
+
+  it('supports schema mode and hides conditional steps when condition is false', async () => {
+    render(<SchemaWizard />);
+
+    expect(screen.getByText('Schema Intro')).toBeInTheDocument();
+    expect(screen.queryByText('Premium')).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByText('Next'));
+    expect(screen.getByText('Schema Review')).toBeInTheDocument();
+  });
+
+  it('blocks submit in schema mode when validation returns false', async () => {
+    render(<SchemaWizard />);
+
+    await userEvent.click(screen.getByText('Next'));
+    const finishButton = screen.getByText('Finish');
+    fireEvent.click(finishButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('Schema Review')).toBeInTheDocument();
+    });
+    expect(mockOnComplete).not.toHaveBeenCalled();
   });
 });

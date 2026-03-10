@@ -1,11 +1,13 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import WizardTab from '../WizardTab';
+import { WizardTabProps } from '../../types/WizardTab';
 
 // Mock CSS imports
 jest.mock('../../index.css', () => ({}));
 
-const defaultProps = {
+const defaultProps: WizardTabProps = {
+  id: 'step-0',
   title: 'Test Step',
   icon: 'ti-user',
   shape: 'circle' as const,
@@ -13,8 +15,11 @@ const defaultProps = {
   isActive: false,
   index: 0,
   currentStep: 0,
+  isVisible: true,
+  isDisabled: false,
+  hasValidationError: false,
   showProgressBar: true,
-  layout: 'horizontal',
+  layout: 'horizontal' as const,
   inlineStep: false,
   darkColor: '',
   darkIconColor: '',
@@ -30,7 +35,7 @@ describe('WizardTab', () => {
     render(<WizardTab {...defaultProps} />);
 
     expect(screen.getByText('Test Step')).toBeInTheDocument();
-    expect(screen.getByText('1')).toBeInTheDocument(); // Default number when icon is provided
+    expect(document.querySelector('.ti-user')).toBeInTheDocument();
   });
 
   it('shows the step number when no icon is provided', () => {
@@ -80,6 +85,19 @@ describe('WizardTab', () => {
     const tabElement = screen.getByRole('tab');
     expect(tabElement).toBeInTheDocument();
     // The error styling would be applied via CSS classes and inline styles
+  });
+
+  it('renders nothing when isVisible is false', () => {
+    render(<WizardTab {...defaultProps} isVisible={false} />);
+    expect(screen.queryByRole('tab')).not.toBeInTheDocument();
+  });
+
+  it('does not trigger click handler when disabled', () => {
+    const onClick = jest.fn();
+    render(<WizardTab {...defaultProps} isDisabled={true} onClick={onClick} />);
+    const tab = screen.getByRole('tab');
+    fireEvent.click(tab);
+    expect(onClick).not.toHaveBeenCalled();
   });
 
   it('renders custom icon when provided', () => {

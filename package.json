@@ -17,9 +17,9 @@
   "module": "./dist/react-form-wizard-component.es.js",
   "exports": {
     ".": {
+      "types": "./dist/types/main.d.ts",
       "import": "./dist/react-form-wizard-component.es.js",
-      "require": "./dist/react-form-wizard-component.umd.js",
-      "types": "./dist/types/main.d.ts"
+      "require": "./dist/react-form-wizard-component.umd.js"
     },
     "./dist/style.css": "./dist/style.css"
   },
