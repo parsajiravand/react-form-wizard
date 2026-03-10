@@ -23,6 +23,28 @@ A react form wizard component with validation and progress bar with no external 
 
 </p>
 
+## 🚨 IMPORTANT: React Version Compatibility
+
+### ⚠️ **DANGER: React Version Requirements**
+
+**If you are using React v18 or lower, you CANNOT use this version (v1.0.0+).**
+
+**You must use version 0.2.7 instead:**
+```bash
+npm install react-form-wizard-component@0.2.7
+```
+
+**React v19 is REQUIRED** for this version. The new features and optimizations are only compatible with React 19+.
+
+**Check your React version:**
+```bash
+npm list react
+```
+
+If you see `react@18.x.x` or lower, **do not upgrade** to v1.0.0+.
+
+---
+
 ## ⚠️ Migration Guide: v1.0.0
 
 **This is a major version update** with breaking changes. Please read the migration notes below.
@@ -66,19 +88,36 @@ npm install react-form-wizard-component@latest
 
 ## Installation
 
+### ⚠️ **React Version Requirement**
+**REQUIRES React v19+**. If you're using React v18 or lower, use version 0.2.7 instead.
+
 To install the package, you can use npm or yarn:
 
 ```bash
+# For React v19+ (recommended)
 npm install react-form-wizard-component
+
+# For React v18 or lower (legacy version)
+npm install react-form-wizard-component@0.2.7
 ```
 
 or
 
 ```bash
+# For React v19+ (recommended)
 yarn add react-form-wizard-component
+
+# For React v18 or lower (legacy version)
+yarn add react-form-wizard-component@0.2.7
 ```
 
-<!-- React 19 is fully supported -->
+### 📋 Version Compatibility Matrix
+
+| React Version | Package Version | Status |
+|---------------|----------------|--------|
+| React 19.x | v1.0.0+ | ✅ Recommended |
+| React 18.x | v0.2.7 | ⚠️ Legacy support |
+| React 17.x | v0.2.7 | ⚠️ Legacy support |
 
 
 
@@ -251,8 +290,16 @@ function LegacyWizard() {
 
 ### 📋 Version Compatibility Matrix
 
-| Feature | v0.x | v1.0.0 |
-|---------|------|--------|
+#### React Version Requirements
+| React Version | Package Version | Status | Link |
+|---------------|----------------|--------|------|
+| React 19.x | v1.0.0+ | ✅ **Recommended** | [Current](https://www.npmjs.com/package/react-form-wizard-component) |
+| React 18.x | v0.2.7 | ⚠️ **Legacy** | [v0.2.7](https://www.npmjs.com/package/react-form-wizard-component/v/0.2.7) |
+| React 17.x | v0.2.7 | ⚠️ **Legacy** | [v0.2.7](https://www.npmjs.com/package/react-form-wizard-component/v/0.2.7) |
+
+#### Feature Availability
+| Feature | v0.2.7 | v1.0.0 |
+|---------|--------|--------|
 | Children API | ✅ | ✅ |
 | Basic styling | ✅ | ✅ |
 | Validation | ✅ | ✅ |
@@ -263,6 +310,7 @@ function LegacyWizard() {
 | **Mobile/touch** | ❌ | ✅ |
 | **TypeScript strict** | ❌ | ✅ |
 | **Performance optimizations** | ❌ | ✅ |
+| **React 19 support** | ❌ | ✅ |
 
 
 ## Examples

@@ -5,7 +5,7 @@
   "homepage": "https://github.com/parsajiravand/react-form-wizard#readme",
   "repository": "https://github.com/parsajiravand/react-form-wizard",
   "description": "A modern, accessible React form wizard component with validation, progress tracking, and extensive customization options. Supports React 19, zero dependencies, TypeScript-first, mobile-responsive.",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "type": "module",
   "files": [
     "dist",
