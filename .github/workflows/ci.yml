@@ -37,7 +37,7 @@ jobs:
         run: npm run build
 
       - name: Upload build for downstream jobs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist
@@ -109,7 +109,7 @@ jobs:
       - name: Documented examples typecheck
         run: npm run check:docs
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: tarball
           path: ./*.tgz
