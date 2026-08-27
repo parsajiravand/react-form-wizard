@@ -1,0 +1,143 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main, dev, v2]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint, typecheck, test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck (strict)
+        run: npm run typecheck
+
+      - name: Test with coverage
+        run: npm run test:coverage
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload build for downstream jobs
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 1
+
+  package:
+    name: Package validity
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      # Catches malformed exports maps, missing files, wrong main/module.
+      - name: publint
+        run: npm run check:publish
+
+      # Catches missing or mis-resolving type declarations in every module mode.
+      # This is the check that would have caught the missing main.d.ts.
+      - name: Are the types wrong?
+        run: npm run check:exports
+
+      - name: Bundle size budget
+        run: npm run size
+
+      # The package ships zero runtime dependencies, so no advisory can reach a
+      # consumer through it. Asserting that keeps it true. Dev-tooling
+      # advisories are handled by Dependabot, not by failing the build.
+      - name: Audit runtime dependencies
+        run: npm audit --omit=dev --audit-level=low
+
+      - name: Assert no runtime dependencies
+        run: |
+          COUNT=$(node -p "Object.keys(require('./package.json').dependencies || {}).length")
+          echo "runtime dependencies: $COUNT"
+          if [ "$COUNT" != "0" ]; then
+            echo "::error::This package must have zero runtime dependencies."
+            exit 1
+          fi
+
+      - name: Assert no dev-mode React inlined in the bundle
+        run: |
+          if grep -qE "recentlyCreatedOwnerStacks|jsxDEV" dist/react-form-wizard-component.es.js; then
+            echo "::error::React's development JSX runtime was bundled. Check rollupOptions.external."
+            exit 1
+          fi
+          echo "OK: no React internals inlined"
+
+      - name: Assert "use client" in every bundle
+        run: |
+          for f in es.js cjs umd.js; do
+            head -c 400 "dist/react-form-wizard-component.$f" | grep -q '"use client"' \
+              || { echo "::error::missing \"use client\" in $f"; exit 1; }
+          done
+          echo "OK: use client present in all bundles"
+
+      - name: Pack tarball
+        run: npm pack --pack-destination .
+
+      # Compiles every complete example in README.md and docs/recipes.md
+      # against the packed tarball, with real zod and react-hook-form.
+      - name: Documented examples typecheck
+        run: npm run check:docs
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tarball
+          path: ./*.tgz
+          retention-days: 1
+
+  consumer:
+    name: Consumer smoke test (React ${{ matrix.react }})
+    runs-on: ubuntu-latest
+    needs: package
+    strategy:
+      fail-fast: false
+      matrix:
+        react: [17, 18, 19]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
+          path: tarball
+
+      # Installs the real published artifact into a clean project, then does
+      # what a user does: typecheck it, import it, require it, render it.
+      - name: Verify tarball as a consumer
+        run: |
+          TARBALL="$(readlink -f tarball/*.tgz)"
+          bash scripts/verify-consumer.sh "${{ matrix.react }}" "$TARBALL"

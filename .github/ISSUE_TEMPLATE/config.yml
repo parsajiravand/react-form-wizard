@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Documentation
+    url: https://react-form-wizard-component-document.netlify.app
+    about: Guides, demos and the playground.
+  - name: Questions and ideas
+    url: https://github.com/parsajiravand/react-form-wizard/discussions
+    about: For usage questions, ask here rather than opening an issue.

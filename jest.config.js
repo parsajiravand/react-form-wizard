@@ -4,6 +4,9 @@ export default {
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    // Source uses explicit .js extensions on relative imports (required so the
+    // emitted .d.ts files resolve under node16); strip them for ts-jest.
+    '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
@@ -14,18 +17,21 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   testMatch: ['**/__tests__/**/*.test.(ts|tsx)', '**/?(*.)+(spec|test).(ts|tsx)'],
+  // Coverage measures the library only. App.tsx/dev.tsx are the local demo
+  // playground, and main.ts is a re-export barrel with no logic.
   collectCoverageFrom: [
     'src/**/*.(ts|tsx)',
     '!src/**/*.d.ts',
-    '!src/main.tsx',
-    '!src/vite-env.d.ts',
+    '!src/App.tsx',
+    '!src/dev.tsx',
+    '!src/main.ts',
   ],
   coverageThreshold: {
     global: {
-      branches: 50, // Start lower for initial tests
-      functions: 50,
-      lines: 50,
-      statements: 50,
+      branches: 65,
+      functions: 85,
+      lines: 80,
+      statements: 80,
     },
   },
 };

@@ -1,0 +1,55 @@
+/*
+ * Tailwind bridge — optional.
+ *
+ * Maps the wizard's tokens onto Tailwind's own theme variables, so the bundled
+ * skin adopts your palette, radius and font instead of its defaults. One
+ * import, no `unstyled`, no utility classes to write:
+ *
+ *   @import "tailwindcss";
+ *   @import "react-form-wizard-component/styles.css";
+ *   @import "react-form-wizard-component/tailwind.css";
+ *
+ * Tailwind v4 only — it reads the `--color-*` / `--radius-*` variables that v4
+ * exposes from `@theme`. On v3 those variables do not exist; set the `--rfw-*`
+ * tokens directly instead (see the Tailwind guide in the docs).
+ *
+ * Every value keeps a fallback, so nothing breaks if a scale is absent or has
+ * been renamed in your theme.
+ */
+
+.react-form-wizard {
+  --rfw-primary: var(--color-blue-600, #2563eb);
+  --rfw-primary-contrast: var(--color-white, #ffffff);
+  --rfw-error: var(--color-red-600, #dc2626);
+  --rfw-success: var(--color-emerald-600, #059669);
+
+  --rfw-surface: var(--color-white, #ffffff);
+  --rfw-muted: var(--color-slate-100, #f1f5f9);
+  --rfw-border: var(--color-slate-200, #e2e8f0);
+  --rfw-border-strong: var(--color-slate-300, #cbd5e1);
+
+  --rfw-text: var(--color-slate-900, #0f172a);
+  --rfw-text-muted: var(--color-slate-500, #64748b);
+
+  --rfw-radius: var(--radius-lg, 0.5rem);
+  --rfw-font: var(--font-sans, inherit);
+}
+
+/* Matches Tailwind's own `dark:` strategies — the class and the data attribute.
+   The wizard follows the page, so whichever one your app already sets works. */
+.dark .react-form-wizard:not(.rfw-light),
+[data-theme="dark"] .react-form-wizard:not(.rfw-light),
+.react-form-wizard.rfw-dark {
+  --rfw-primary: var(--color-blue-400, #60a5fa);
+  --rfw-primary-contrast: var(--color-slate-950, #020617);
+  --rfw-error: var(--color-red-400, #f87171);
+  --rfw-success: var(--color-emerald-400, #34d399);
+
+  --rfw-surface: var(--color-slate-900, #0f172a);
+  --rfw-muted: var(--color-slate-800, #1e293b);
+  --rfw-border: var(--color-slate-800, #1e293b);
+  --rfw-border-strong: var(--color-slate-700, #334155);
+
+  --rfw-text: var(--color-slate-200, #e2e8f0);
+  --rfw-text-muted: var(--color-slate-400, #94a3b8);
+}

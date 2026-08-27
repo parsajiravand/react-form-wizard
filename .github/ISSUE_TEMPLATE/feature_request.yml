@@ -1,0 +1,30 @@
+name: Feature request
+description: Suggest a capability or improvement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to build?
+      description: Describe the use case, not just the API you have in mind.
+    validations:
+      required: true
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: How are you working around it today?
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed API
+      render: tsx
+
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Constraints you are aware of
+      options:
+        - label: This should not add a runtime dependency
+        - label: This should work in both the styled and headless API

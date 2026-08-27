@@ -1,0 +1,103 @@
+/*
+ * Design tokens.
+ *
+ * Every colour the wizard paints comes from here, so a host can restyle it by
+ * setting custom properties — no !important, no selector wrestling. The
+ * `theme` prop writes these same properties inline.
+ *
+ * Dark mode follows the PAGE, not the operating system. A component embedded
+ * in someone else's layout cannot know the OS preference says anything useful
+ * about the surface behind it — a light page on a dark-mode machine would get
+ * a dark wizard on a white background.
+ *
+ * So the default (`colorScheme="auto"`) reacts only to explicit signals from
+ * the host:
+ *   - an ancestor marked [data-theme="dark"] or .dark, which is what Tailwind,
+ *     next-themes, Docusaurus and Fumadocs all set
+ *   - the `darkMode` prop
+ *
+ * Sites that drive their own theme purely from prefers-color-scheme can opt in
+ * with `colorScheme="system"`, and `"light"` / `"dark"` pin it outright.
+ */
+
+.react-form-wizard {
+  /* palette */
+  --rfw-primary: #2563eb;
+  --rfw-primary-contrast: #ffffff;
+  --rfw-error: #dc2626;
+  --rfw-success: #059669;
+
+  /* surfaces */
+  --rfw-bg: transparent;
+  --rfw-surface: #ffffff;
+  --rfw-muted: #f1f5f9;
+  --rfw-border: #e2e8f0;
+  --rfw-border-strong: #cbd5e1;
+
+  /* text */
+  --rfw-text: #0f172a;
+  --rfw-text-muted: #64748b;
+  --rfw-title: var(--rfw-text);
+  --rfw-subtitle: var(--rfw-text-muted);
+
+  /* component-specific, kept for backwards compatibility with v1 names */
+  --rfw-tab: var(--rfw-muted);
+  --rfw-tab-icon: var(--rfw-text-muted);
+  --rfw-button: var(--rfw-primary);
+  --rfw-button-text: var(--rfw-primary-contrast);
+  --rfw-finish-button: var(--rfw-primary);
+  --rfw-finish-button-text: var(--rfw-primary-contrast);
+
+  /* shape and rhythm */
+  --rfw-radius: 0.5rem;
+  --rfw-step-size: 2.25rem;
+  --rfw-gap: 1.5rem;
+  --rfw-font: inherit;
+  --rfw-transition: 150ms ease;
+}
+
+/* Opt-in only: colorScheme="system" */
+@media (prefers-color-scheme: dark) {
+  .react-form-wizard.rfw-system {
+    --rfw-surface: #0f172a;
+    --rfw-muted: #1e293b;
+    --rfw-border: #1e293b;
+    --rfw-border-strong: #334155;
+    --rfw-text: #e2e8f0;
+    --rfw-text-muted: #94a3b8;
+    --rfw-primary: #60a5fa;
+    --rfw-primary-contrast: #0b1220;
+    --rfw-error: #f87171;
+    --rfw-success: #34d399;
+  }
+}
+
+/* Default: follow the host page's own dark-mode switch, or the darkMode prop */
+[data-theme="dark"] .react-form-wizard:not(.rfw-light):not(.rfw-system),
+.dark .react-form-wizard:not(.rfw-light):not(.rfw-system),
+.react-form-wizard.rfw-dark {
+  --rfw-surface: #0f172a;
+  --rfw-muted: #1e293b;
+  --rfw-border: #1e293b;
+  --rfw-border-strong: #334155;
+  --rfw-text: #e2e8f0;
+  --rfw-text-muted: #94a3b8;
+  --rfw-primary: #60a5fa;
+  --rfw-primary-contrast: #0b1220;
+  --rfw-error: #f87171;
+  --rfw-success: #34d399;
+}
+
+/* Visually hidden but available to assistive tech. Unscoped so it still
+   applies when the wizard is rendered with `unstyled`. */
+.rfw-sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}

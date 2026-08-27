@@ -1,0 +1,57 @@
+version: 2
+
+updates:
+  # Everything vulnerable in this repo is dev tooling — the package itself has
+  # zero runtime dependencies, so advisories never reach consumers. Grouping
+  # keeps that maintenance to one PR a week instead of thirty.
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    versioning-strategy: increase-if-necessary
+    labels: [dependencies]
+    groups:
+      build-tooling:
+        patterns:
+          - "vite"
+          - "@vitejs/*"
+          - "typescript"
+          - "publint"
+          - "@arethetypeswrong/*"
+          - "size-limit"
+          - "@size-limit/*"
+      test-tooling:
+        patterns:
+          - "jest"
+          - "jest-*"
+          - "ts-jest"
+          - "@types/jest"
+          - "@testing-library/*"
+          - "identity-obj-proxy"
+      lint-tooling:
+        patterns:
+          - "eslint"
+          - "eslint-*"
+          - "@typescript-eslint/*"
+      react-types:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+    ignore:
+      # React is a peer dependency spanning three majors. The devDependency
+      # pins the version the suite runs against; CI already tests 17, 18 and 19,
+      # so a major bump here is a deliberate choice, not an automated one.
+      - dependency-name: react
+        update-types: [version-update:semver-major]
+      - dependency-name: react-dom
+        update-types: [version-update:semver-major]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+    labels: [dependencies]
