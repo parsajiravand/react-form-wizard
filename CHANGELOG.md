@@ -51,6 +51,8 @@ verified against the published tarball on React 17, 18 and 19.
 - CI on GitHub Actions: lint, strict typecheck, tests, build, `publint`,
   `attw`, a size budget, and a real install-the-tarball smoke test across the
   React version matrix.
+- Dependabot configuration with grouped weekly updates, and a CI step
+  asserting the runtime dependency tree stays free of advisories.
 
 ### Fixed
 
@@ -100,6 +102,10 @@ verified against the published tarball on React 17, 18 and 19.
   declarations resolve identically under every module resolution mode.
 - Test suite grew from 28 to 70 tests; coverage thresholds raised from 50% to
   80% lines / 85% functions.
+- Dev-dependency tree refreshed to clear all outstanding npm advisories
+  (13 on this branch, 32 on the previous default branch). Every one was
+  transitive dev tooling; none could reach consumers, because the package has
+  no runtime dependencies.
 
 ### Notes
 

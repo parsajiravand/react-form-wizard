@@ -70,6 +70,12 @@ jobs:
       - name: Bundle size budget
         run: npm run size
 
+      # The package ships zero runtime dependencies, so no advisory can reach a
+      # consumer through it. Asserting that keeps it true. Dev-tooling
+      # advisories are handled by Dependabot, not by failing the build.
+      - name: Audit runtime dependencies
+        run: npm audit --omit=dev --audit-level=low
+
       - name: Assert no runtime dependencies
         run: |
           COUNT=$(node -p "Object.keys(require('./package.json').dependencies || {}).length")
