@@ -64,8 +64,15 @@ describe("theming", () => {
     expect(screen.getByRole("region")).toHaveClass("rfw-dark");
     u2();
 
-    render(threeSteps({ colorScheme: "light" }));
+    const { unmount: u3 } = render(threeSteps({ colorScheme: "light" }));
     expect(screen.getByRole("region")).toHaveClass("rfw-light");
+    u3();
+
+    // The OS preference is opt-in: an embedded wizard must follow the page,
+    // not the machine, or a light page on a dark-mode laptop renders a dark
+    // wizard on a white background.
+    render(threeSteps({ colorScheme: "system" }));
+    expect(screen.getByRole("region")).toHaveClass("rfw-system");
   });
 
   it("omits tokens that were not supplied", () => {

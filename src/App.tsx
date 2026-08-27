@@ -31,7 +31,7 @@ import type {
 // palette. Works in light and dark, unlike the older customDarkModeColor.
 const Sample16_Theme = () => {
   const [theme, setTheme] = React.useState<WizardTheme>({
-    primaryColor: "#0e6f70",
+    primaryColor: "var(--pg-accent)",
     borderRadius: "10px",
     errorColor: "#c0392b",
   });
@@ -43,7 +43,7 @@ const Sample16_Theme = () => {
           Accent{" "}
           <input
             type="color"
-            value={theme.primaryColor ?? "#0e6f70"}
+            value={theme.primaryColor ?? "var(--pg-accent)"}
             onChange={(e) => setTheme((t) => ({ ...t, primaryColor: e.target.value }))}
           />
         </label>
@@ -83,14 +83,14 @@ const Sample17_Unstyled = () => (
     <style>{`
       .u-root { display: flex; flex-direction: column; gap: 20px; font-family: inherit; }
       .u-steps { display: flex; gap: 8px; list-style: none; margin: 0; padding: 0; }
-      .u-step { padding: 6px 14px; border-radius: 999px; background: #eef2f2;
-                color: #5c6968; font-size: 14px; cursor: pointer; display: block; }
-      .u-step-active { background: #0e6f70; color: #fff; }
-      .u-panel { border: 1px solid #d6dede; border-radius: 10px; padding: 20px; }
+      .u-step { padding: 6px 14px; border-radius: 999px; background: var(--pg-border);
+                color: var(--pg-muted); font-size: 14px; cursor: pointer; display: block; }
+      .u-step-active { background: var(--pg-accent); color: #fff; }
+      .u-panel { border: 1px solid var(--pg-border); border-radius: 10px; padding: 20px; }
       .u-footer { display: flex; gap: 10px; }
       .u-btn { border: 0; border-radius: 8px; padding: 9px 18px; cursor: pointer;
-               background: #0e6f70; color: #fff; font-size: 14px; }
-      .u-btn-ghost { background: transparent; color: #0e6f70; border: 1px solid #0e6f70; }
+               background: var(--pg-accent); color: #fff; font-size: 14px; }
+      .u-btn-ghost { background: transparent; color: var(--pg-accent); border: 1px solid var(--pg-accent); }
     `}</style>
 
     <FormWizard
@@ -138,13 +138,13 @@ const Sample18_Headless = () => {
               flex: 1,
               height: 4,
               borderRadius: 2,
-              background: i <= wizard.currentStep ? "#0e6f70" : "#dce3e3",
+              background: i <= wizard.currentStep ? "var(--pg-accent)" : "var(--pg-border)",
             }}
           />
         ))}
       </div>
 
-      <p style={{ margin: 0, color: "#5c6968", fontSize: 14 }}>
+      <p style={{ margin: 0, color: "var(--pg-muted)", fontSize: 14 }}>
         Step {wizard.currentStep + 1} of {wizard.totalSteps} — <code>{wizard.stepId}</code>
       </p>
 
@@ -171,7 +171,7 @@ const Sample18_Headless = () => {
       )}
 
       {wizard.stepId === "review" && (
-        <pre style={{ background: "#f5f7f7", padding: 12, borderRadius: 6, fontSize: 13 }}>
+        <pre style={{ background: "var(--pg-border)", padding: 12, borderRadius: 6, fontSize: 13 }}>
           {JSON.stringify(wizard.data, null, 2)}
         </pre>
       )}
@@ -253,7 +253,7 @@ const Sample19_Adapters = () => {
 
   return (
     <>
-      <p style={{ color: "#5c6968", fontSize: 14 }}>
+      <p style={{ color: "var(--pg-muted)", fontSize: 14 }}>
         Next stays blocked until the step is valid; the step marker turns red and
         the validator's message is what gets surfaced.
       </p>
@@ -261,7 +261,7 @@ const Sample19_Adapters = () => {
         ref={wizardRef}
         title="Adapter validation"
         schema={schema}
-        color="#0e6f70"
+        color="var(--pg-accent)"
         onComplete={(data) => alert(`Submitted: ${JSON.stringify(data)}`)}
       />
     </>
@@ -302,7 +302,7 @@ const Sample20_Persistence = () => {
 
   return (
     <>
-      <p style={{ color: "#5c6968", fontSize: 14 }}>
+      <p style={{ color: "var(--pg-muted)", fontSize: 14 }}>
         Data goes to <code>sessionStorage["demo-persist"]</code>; the active step is
         mirrored into <code>?demo-step=</code>. <b>Reload the page to see it restored.</b>
       </p>
@@ -312,7 +312,7 @@ const Sample20_Persistence = () => {
         schema={schema}
         persist={{ key: "demo-persist", storage: "session" }}
         syncToUrl={{ param: "demo-step" }}
-        color="#0e6f70"
+        color="var(--pg-accent)"
         onComplete={() => {
           alert("Done — clearing saved data");
           // reset() returns to the start and clears the persisted payload.
@@ -328,13 +328,13 @@ const Sample20_Persistence = () => {
 // one containing focus responds to the arrow keys.
 const Sample21_Accessibility = () => (
   <>
-    <p style={{ color: "#5c6968", fontSize: 14 }}>
+    <p style={{ color: "var(--pg-muted)", fontSize: 14 }}>
       Click into either wizard, then use <kbd>←</kbd> <kbd>→</kbd> <kbd>Home</kbd>{" "}
       <kbd>End</kbd>. Only the focused wizard moves. Tabs also activate with{" "}
       <kbd>Enter</kbd> and <kbd>Space</kbd>.
     </p>
     <div style={{ display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
-      <FormWizard title="Wizard A" ariaLabel="Wizard A" color="#0e6f70">
+      <FormWizard title="Wizard A" ariaLabel="Wizard A" color="var(--pg-accent)">
         <TabContent title="A1">First panel of A</TabContent>
         <TabContent title="A2">Second panel of A</TabContent>
         <TabContent title="A3">Third panel of A</TabContent>
@@ -382,7 +382,7 @@ const Sample22_SplitHooks = () => {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-      <p style={{ margin: 0, color: "#5c6968", fontSize: 14 }}>
+      <p style={{ margin: 0, color: "var(--pg-muted)", fontSize: 14 }}>
         Question {cursor.currentStep + 1} of {cursor.totalSteps} — the list resizes as
         you answer.
       </p>
@@ -417,7 +417,7 @@ const Sample22_SplitHooks = () => {
         </button>
       </div>
 
-      <pre style={{ background: "#f5f7f7", padding: 12, borderRadius: 6, fontSize: 13 }}>
+      <pre style={{ background: "var(--pg-border)", padding: 12, borderRadius: 6, fontSize: 13 }}>
         {JSON.stringify(answers.data, null, 2)}
       </pre>
     </div>
@@ -426,6 +426,17 @@ const Sample22_SplitHooks = () => {
 
 
 export default function App() {
+  // The playground drives its own light/dark switch by stamping data-theme on
+  // <html>. The wizard follows that automatically — which is the point: an
+  // embedded component should track the page, not the operating system.
+  const [dark, setDark] = React.useState(false);
+  React.useEffect(() => {
+    document.documentElement.setAttribute(
+      "data-theme",
+      dark ? "dark" : "light"
+    );
+  }, [dark]);
+
   const [userInput, setUserInput] = React.useState("");
   const [plan, setPlan] = React.useState<"basic" | "premium">("basic");
   const [accepted, setAccepted] = React.useState(false);
@@ -980,12 +991,23 @@ export default function App() {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
-      <h1>React Form Wizard — 22 feature samples</h1>
-      <p>
-        Samples 1–15 cover the existing API. Samples 16–22 are new in{" "}
-        <strong>v1.2.0</strong>.
-      </p>
+    <div className="pg-shell">
+      <header className="pg-head">
+        <div>
+          <h1 className="pg-title">React Form Wizard — playground</h1>
+          <p className="pg-lede">
+            Every feature, rendered from source. Samples 16–22 cover what is new
+            in v2.
+          </p>
+        </div>
+        <button
+          className="pg-toggle"
+          onClick={() => setDark((d) => !d)}
+          aria-pressed={dark}
+        >
+          {dark ? "☀ Light" : "☾ Dark"}
+        </button>
+      </header>
 
       <section style={{ marginBottom: "40px" }}>
         <h2>1. Basic Children API</h2>
@@ -1063,8 +1085,8 @@ export default function App() {
       </section>
 
 
-      <hr style={{ margin: "48px 0 32px", border: 0, borderTop: "2px solid #101718" }} />
-      <h2 style={{ borderBottom: "none" }}>New in v1.2.0</h2>
+      <hr className="pg-divider" />
+      <p className="pg-divider-label">New in v2</p>
 
       <section style={{ marginBottom: "40px" }}>
         <h2>16. Theme tokens (CSS custom properties)</h2>
@@ -1102,37 +1124,121 @@ export default function App() {
       </section>
 
       <style>{`
-        @import url("https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/themify-icons.css");
-
-        .form-control {
-          height: 36px;
-          padding: 0.375rem 0.75rem;
-          font-size: 1rem;
-          font-weight: 400;
-          line-height: 1.5;
-          color: #495057;
-          border: 1px solid #ced4da;
-          border-radius: 0.25rem;
-          width: 100%;
-          max-width: 300px;
+        :root {
+          --pg-bg: #ffffff;
+          --pg-surface: #ffffff;
+          --pg-border: #e5e7eb;
+          --pg-text: #0f172a;
+          --pg-muted: #64748b;
+          --pg-accent: #2563eb;
         }
 
-        h1, h2, h3, h4 {
-          margin: 16px 0;
+        [data-theme="dark"] {
+          --pg-bg: #0b1220;
+          --pg-surface: #0f172a;
+          --pg-border: #1e293b;
+          --pg-text: #e2e8f0;
+          --pg-muted: #94a3b8;
+          --pg-accent: #60a5fa;
         }
+
+        html, body {
+          margin: 0;
+          background: var(--pg-bg);
+          color: var(--pg-text);
+        }
+
+        body {
+          font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+            Roboto, Helvetica, Arial, sans-serif;
+          font-size: 15px;
+          line-height: 1.6;
+          -webkit-font-smoothing: antialiased;
+        }
+
+        .pg-shell { max-width: 880px; margin: 0 auto; padding: 40px 24px 96px; }
+
+        .pg-head {
+          display: flex; align-items: flex-start; justify-content: space-between;
+          gap: 24px; flex-wrap: wrap; margin-bottom: 8px;
+        }
+
+        .pg-title {
+          font-size: 1.6rem; font-weight: 650; letter-spacing: -0.02em; margin: 0;
+        }
+
+        .pg-lede { color: var(--pg-muted); margin: 4px 0 32px; font-size: 0.9375rem; }
+
+        .pg-toggle {
+          display: inline-flex; align-items: center; gap: 6px;
+          border: 1px solid var(--pg-border); border-radius: 8px;
+          background: var(--pg-surface); color: var(--pg-text);
+          padding: 6px 12px; font: inherit; font-size: 0.8125rem;
+          cursor: pointer;
+        }
+        .pg-toggle:hover { border-color: var(--pg-accent); }
 
         section {
-          border: 1px solid #e5e7eb;
-          border-radius: 8px;
-          padding: 20px;
-          margin-bottom: 32px;
+          border: 1px solid var(--pg-border);
+          border-radius: 12px;
+          background: var(--pg-surface);
+          padding: 24px;
+          margin-bottom: 20px;
         }
 
-        h2 {
-          color: #1f2937;
-          border-bottom: 2px solid #e5e7eb;
-          padding-bottom: 8px;
+        section > h2 {
+          font-size: 0.8125rem;
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: var(--pg-muted);
+          margin: 0 0 20px;
+          padding: 0 0 12px;
+          border-bottom: 1px solid var(--pg-border);
         }
+
+        .pg-divider {
+          margin: 44px 0 20px;
+          border: 0;
+          border-top: 1px solid var(--pg-border);
+        }
+
+        .pg-divider-label {
+          font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.06em;
+          text-transform: uppercase; color: var(--pg-accent); margin: 0 0 20px;
+        }
+
+        input:not([type="radio"]):not([type="checkbox"]):not([type="color"]):not([type="range"]),
+        select, textarea {
+          font: inherit; font-size: 0.9375rem;
+          padding: 8px 10px;
+          border: 1px solid var(--pg-border);
+          border-radius: 8px;
+          background: var(--pg-bg);
+          color: var(--pg-text);
+        }
+
+        code {
+          font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+          font-size: 0.875em;
+          background: var(--pg-border);
+          border-radius: 4px;
+          padding: 1px 5px;
+        }
+
+        button:not(.wizard-btn):not(.pg-toggle) {
+          font: inherit; font-size: 0.875rem;
+          padding: 7px 14px;
+          border-radius: 8px;
+          border: 1px solid var(--pg-border);
+          background: var(--pg-surface);
+          color: var(--pg-text);
+          cursor: pointer;
+        }
+        button:not(.wizard-btn):not(.pg-toggle):hover:not(:disabled) {
+          border-color: var(--pg-accent);
+        }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
       `}</style>
     </div>
   );

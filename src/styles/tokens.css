@@ -5,12 +5,19 @@
  * setting custom properties — no !important, no selector wrestling. The
  * `theme` prop writes these same properties inline.
  *
- * Dark mode resolves in three ways, in increasing priority:
- *   1. the OS preference, via prefers-color-scheme
- *   2. an ancestor marked [data-theme="dark"] or .dark (most frameworks)
- *   3. the `darkMode` prop, which stamps .rfw-dark on the root
- * Point 1 is new in v2 — before this, dark mode only worked if you passed a
- * prop and hand-listed colours.
+ * Dark mode follows the PAGE, not the operating system. A component embedded
+ * in someone else's layout cannot know the OS preference says anything useful
+ * about the surface behind it — a light page on a dark-mode machine would get
+ * a dark wizard on a white background.
+ *
+ * So the default (`colorScheme="auto"`) reacts only to explicit signals from
+ * the host:
+ *   - an ancestor marked [data-theme="dark"] or .dark, which is what Tailwind,
+ *     next-themes, Docusaurus and Fumadocs all set
+ *   - the `darkMode` prop
+ *
+ * Sites that drive their own theme purely from prefers-color-scheme can opt in
+ * with `colorScheme="system"`, and `"light"` / `"dark"` pin it outright.
  */
 
 .react-form-wizard {
@@ -49,9 +56,9 @@
   --rfw-transition: 150ms ease;
 }
 
-/* 1. follow the operating system */
+/* Opt-in only: colorScheme="system" */
 @media (prefers-color-scheme: dark) {
-  .react-form-wizard:not(.rfw-light) {
+  .react-form-wizard.rfw-system {
     --rfw-surface: #0f172a;
     --rfw-muted: #1e293b;
     --rfw-border: #1e293b;
@@ -65,10 +72,9 @@
   }
 }
 
-/* 2. follow the host's own dark-mode switch */
-[data-theme="dark"] .react-form-wizard:not(.rfw-light),
-.dark .react-form-wizard:not(.rfw-light),
-/* 3. follow the darkMode prop */
+/* Default: follow the host page's own dark-mode switch, or the darkMode prop */
+[data-theme="dark"] .react-form-wizard:not(.rfw-light):not(.rfw-system),
+.dark .react-form-wizard:not(.rfw-light):not(.rfw-system),
 .react-form-wizard.rfw-dark {
   --rfw-surface: #0f172a;
   --rfw-muted: #1e293b;

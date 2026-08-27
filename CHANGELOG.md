@@ -28,12 +28,16 @@ and the old one is opt-in.
 ### Added
 
 - **`variant`** — `"modern"` (default) or `"legacy"`. See below.
-- **`colorScheme`** — `"auto"` (default), `"light"` or `"dark"`, to pin the
-  scheme instead of following the environment.
-- **Automatic dark mode**, resolved in three ways: the OS via
-  `prefers-color-scheme`, an ancestor marked `[data-theme="dark"]` or `.dark`
-  (what Tailwind, Next-themes, Docusaurus and Fumadocs all set), or the
-  existing `darkMode` prop.
+- **`colorScheme`** — `"auto"` (default, follows the page), `"system"`
+  (follows the OS), `"light"` or `"dark"`.
+- **Dark mode that follows the page.** By default the wizard reacts to an
+  ancestor marked `[data-theme="dark"]` or `.dark` — what Tailwind,
+  next-themes, Docusaurus and Fumadocs all set — or to the `darkMode` prop.
+  It deliberately ignores `prefers-color-scheme`: an embedded component cannot
+  assume the OS preference describes the surface behind it, and a light page on
+  a dark-mode machine would otherwise render a dark wizard on white. Sites that
+  drive their theme purely from the media query can opt in with
+  `colorScheme="system"`.
 - New tokens: `--rfw-surface`, `--rfw-muted`, `--rfw-border-strong`,
   `--rfw-text`, `--rfw-text-muted`, `--rfw-primary-contrast`, `--rfw-success`,
   `--rfw-step-size`, `--rfw-gap`, `--rfw-font`, `--rfw-transition`.

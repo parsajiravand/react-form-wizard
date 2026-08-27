@@ -243,10 +243,17 @@ export interface FormWizardProps {
    */
   variant?: "modern" | "legacy";
   /**
-   * Force the colour scheme instead of following the OS, the host's
-   * `[data-theme]`/`.dark` switch, or the `darkMode` prop.
+   * How the wizard picks light or dark.
+   *
+   * - `"auto"` (default) — follow the page: an ancestor with `.dark` or
+   *   `[data-theme="dark"]`, or the `darkMode` prop. It deliberately ignores
+   *   the OS preference, because a light page on a dark-mode machine would
+   *   otherwise get a dark wizard on a white background.
+   * - `"system"` — follow the OS via `prefers-color-scheme`. Use this only if
+   *   your page does the same.
+   * - `"light"` / `"dark"` — pin it.
    */
-  colorScheme?: "light" | "dark" | "auto";
+  colorScheme?: "auto" | "system" | "light" | "dark";
   /** Theme tokens emitted as CSS custom properties on the root element. */
   theme?: WizardTheme;
   /** Drop the bundled class names so only your own styles apply. */

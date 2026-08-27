@@ -453,6 +453,7 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
           // these only pin it when the caller asks.
           colorScheme === "dark" || darkMode ? "rfw-dark" : null,
           colorScheme === "light" ? "rfw-light" : null,
+          colorScheme === "system" ? "rfw-system" : null,
           stepSize,
           isVertical,
           isInline,
