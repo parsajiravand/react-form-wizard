@@ -37,7 +37,8 @@
     "./dist/style.css": "./dist/style.css",
     "./dist/react-form-wizard-component.css": "./dist/react-form-wizard-component.css",
     "./package.json": "./package.json",
-    "./legacy.css": "./dist/legacy.css"
+    "./legacy.css": "./dist/legacy.css",
+    "./tailwind.css": "./dist/tailwind.css"
   },
   "files": [
     "dist",
@@ -68,7 +69,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "check:exports": "attw --pack . --exclude-entrypoints styles.css legacy.css dist/style.css dist/react-form-wizard-component.css",
+    "check:exports": "attw --pack . --exclude-entrypoints styles.css legacy.css tailwind.css dist/style.css dist/react-form-wizard-component.css",
     "check:publish": "publint",
     "size": "size-limit",
     "verify": "npm run lint && npm run typecheck && npm run test && npm run build && npm run check:publish && npm run check:exports",

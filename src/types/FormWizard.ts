@@ -158,7 +158,12 @@ export interface WizardClassNames {
   navigation?: string;
   stepList?: string;
   step?: string;
+  /** Added to the step the user is on. */
   stepActive?: string;
+  /** Added to steps already completed. */
+  stepComplete?: string;
+  /** Added to a step that failed validation after an attempt to leave it. */
+  stepInvalid?: string;
   stepIcon?: string;
   stepTitle?: string;
   content?: string;

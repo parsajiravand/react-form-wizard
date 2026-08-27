@@ -27,6 +27,14 @@ and the old one is opt-in.
 
 ### Added
 
+- **Tailwind integration**, two ways. `react-form-wizard-component/tailwind.css`
+  maps the wizard's tokens onto Tailwind v4's theme variables, so the bundled
+  skin adopts your palette with one import and no `unstyled`. For full control,
+  `tailwindPreset()` returns a ready-made `classNames` map for `unstyled` mode —
+  every class a literal string so Tailwind's scanner finds them, with the accent
+  read from `--rfw-primary` so it stays themeable.
+- **`classNames.stepComplete` and `classNames.stepInvalid`**, so a utility-class
+  consumer can style a finished or failed step, not just the active one.
 - **`variant`** — `"modern"` (default) or `"legacy"`. See below.
 - **`colorScheme`** — `"auto"` (default, follows the page), `"system"`
   (follows the OS), `"light"` or `"dark"`.

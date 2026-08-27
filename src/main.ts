@@ -36,6 +36,9 @@ export {
   zodValidator,
 } from "./adapters/validators.js";
 
+export { tailwindPreset } from "./adapters/tailwind.js";
+export type { TailwindPresetOptions } from "./adapters/tailwind.js";
+
 export type {
   HookFormLike,
   HookFormValidatorOptions,

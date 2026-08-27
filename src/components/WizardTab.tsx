@@ -43,8 +43,8 @@ const WizardTab = React.memo(
 
       const stepClasses = [
         isActive ? "active" : "",
-        !isLegacy && isComplete ? "rfw-done" : "",
-        !isLegacy && showsError ? "rfw-invalid" : "",
+        isComplete && !isLegacy ? "rfw-done" : "",
+        showsError && !isLegacy ? "rfw-invalid" : "",
       ]
         .filter(Boolean)
         .join(" ");
@@ -129,15 +129,21 @@ const WizardTab = React.memo(
 
       if (!isVisible) return null;
 
+      // State classes are offered for every state, not just "active", so a
+      // utility-class consumer can style a completed or failed step too.
+      const stateClasses = [
+        classNames?.step,
+        isActive ? classNames?.stepActive : undefined,
+        isComplete ? classNames?.stepComplete : undefined,
+        showsError ? classNames?.stepInvalid : undefined,
+      ];
+
       const anchorClass = unstyled
-        ? [isActive ? classNames?.stepActive : undefined, classNames?.step]
-            .filter(Boolean)
-            .join(" ")
+        ? stateClasses.filter(Boolean).join(" ")
         : [
             isActive ? "active" : "",
             inlineStep ? "inline-step" : "",
-            classNames?.step,
-            isActive ? classNames?.stepActive : undefined,
+            ...stateClasses,
           ]
             .filter(Boolean)
             .join(" ");

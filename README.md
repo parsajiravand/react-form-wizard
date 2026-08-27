@@ -316,6 +316,76 @@ your own stylesheet instead if you prefer:
 In `unstyled` mode you can skip the stylesheet import — accessibility helpers
 stay hidden without it.
 
+## Tailwind CSS
+
+Two ways in, depending on how much control you want.
+
+### 1. Keep the bundled skin, adopt your theme
+
+One import. The wizard's tokens map onto Tailwind's own theme variables, so it
+picks up your palette, radius and font:
+
+```css
+@import "tailwindcss";
+@import "react-form-wizard-component/styles.css";
+@import "react-form-wizard-component/tailwind.css";
+```
+
+```tsx
+<FormWizard schema={schema} />
+```
+
+Dark mode follows whichever strategy you already use — a `.dark` class or
+`[data-theme="dark"]`. Nothing else to configure.
+
+> Tailwind **v4** only, since it reads the `--color-*` / `--radius-*` variables
+> v4 exposes. On v3, set the `--rfw-*` tokens yourself:
+> ```css
+> .react-form-wizard { --rfw-primary: theme('colors.blue.600'); }
+> ```
+
+### 2. Build it from utility classes
+
+Go `unstyled` and let your classes do everything:
+
+```tsx
+import FormWizard, { tailwindPreset } from "react-form-wizard-component";
+
+<FormWizard unstyled classNames={tailwindPreset()} schema={schema} />;
+```
+
+Tailwind only generates classes it can see in your source, and these live in
+`node_modules` — so point it at the package:
+
+```css
+/* v4 */
+@source "../node_modules/react-form-wizard-component/dist/**/*.js";
+```
+
+```js
+// v3 — tailwind.config.js
+content: ["./src/**/*.{ts,tsx}", "./node_modules/react-form-wizard-component/dist/**/*.js"]
+```
+
+Customise without starting over:
+
+```tsx
+tailwindPreset({
+  dark: false,                                   // drop dark: variants
+  extend: { content: "p-10", nextButton: "rounded-full" },
+})
+```
+
+The preset takes its accent from `--rfw-primary` via `bg-[var(--rfw-primary)]`,
+so recolouring stays a one-line CSS change rather than a rebuild:
+
+```css
+.react-form-wizard { --rfw-primary: var(--color-violet-600); }
+```
+
+Prefer to own it outright? `tailwindPreset()` returns a plain object — copy it
+into your project and skip the `@source` line entirely.
+
 ## Persistence and URL sync
 
 ```tsx

@@ -19,4 +19,5 @@ if (!existsSync(dist)) {
 
 await mkdir(dist, { recursive: true });
 await copyFile(join(root, "src/styles/legacy.css"), join(dist, "legacy.css"));
-console.log("css: dist/legacy.css written (opt-in v1 skin)");
+await copyFile(join(root, "src/styles/tailwind.css"), join(dist, "tailwind.css"));
+console.log("css: dist/legacy.css + dist/tailwind.css written (opt-in)");

@@ -31,6 +31,7 @@ All from the package root:
 - `zodValidator` — Zod-style schema → step validator
 - `hookFormValidator` — react-hook-form field subset → step validator
 - `composeValidators` — chain validators, first failure wins
+- `tailwindPreset` — Tailwind classes for `unstyled` mode
 
 Types: `FormWizardProps`, `FormWizardMethods`, `FormWizardSchema`,
 `WizardStepSchema`, `WizardData`, `WizardTheme`, `WizardClassNames`,
@@ -134,6 +135,27 @@ The bundles include a `"use client"` directive, so importing `FormWizard` from
 a server component works with no wrapper. Import the stylesheet once, commonly
 in `app/layout.tsx`.
 
+## Tailwind
+
+Two integrations:
+
+1. Token bridge — keeps the bundled skin, adopts your Tailwind theme (v4 only):
+```css
+@import "tailwindcss";
+@import "react-form-wizard-component/styles.css";
+@import "react-form-wizard-component/tailwind.css";
+```
+
+2. Utility preset — `unstyled` plus generated classes:
+```tsx
+import FormWizard, { tailwindPreset } from "react-form-wizard-component";
+<FormWizard unstyled classNames={tailwindPreset()} />
+```
+Tailwind must be told to scan the package, or the classes are never emitted:
+`@source "../node_modules/react-form-wizard-component/dist/**/*.js";` (v4), or add the
+same path to `content` (v3). `tailwindPreset({ dark, extend })` customises it;
+the accent reads from `--rfw-primary`.
+
 ## Styling
 
 Theme tokens become `--rfw-*` CSS custom properties on the wizard root:
@@ -154,8 +176,8 @@ Unstyled with your own classes:
 ```
 
 `classNames` keys: `root`, `header`, `title`, `subtitle`, `navigation`,
-`stepList`, `step`, `stepActive`, `stepIcon`, `stepTitle`, `content`, `footer`,
-`backButton`, `nextButton`, `finishButton`.
+`stepList`, `step`, `stepActive`, `stepComplete`, `stepInvalid`, `stepIcon`,
+`stepTitle`, `content`, `footer`, `backButton`, `nextButton`, `finishButton`.
 
 ## Imperative control
 
@@ -178,7 +200,8 @@ ref.current.getCurrentStep();
 ## Key props
 
 `title`, `subtitle`, `schema`, `data`, `onDataChange`, `onComplete`,
-`onTabChange`, `color`, `theme`, `unstyled`, `classNames`, `shape`
+`onTabChange`, `color`, `theme`, `variant` (`modern`/`legacy`), `colorScheme`
+(`auto`/`system`/`light`/`dark`), `unstyled`, `classNames`, `shape`
 (`circle`/`square`/`tab`), `stepSize` (`xs`/`sm`/`md`/`lg`), `layout`
 (`horizontal`/`vertical`), `startIndex`, `showProgressBar`, `inlineStep`,
 `disableBackOnClickStep`, `persist`, `syncToUrl`, `announceStepChanges`,
