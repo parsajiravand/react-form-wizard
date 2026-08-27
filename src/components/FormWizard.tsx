@@ -1,4 +1,5 @@
 import React, {
+  useState,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -52,7 +53,7 @@ const normalizeSchemaStep = (
     title: step.title ?? `Step ${index + 1}`,
     icon: step.icon,
     content,
-    showErrorOnTab: step.showErrorOnTab ?? !isValid,
+    showErrorOnTab: step.showErrorOnTab,
     showErrorOnTabColor: step.showErrorOnTabColor ?? "red",
     isValid,
     validationError:
@@ -81,7 +82,7 @@ const normalizeChildrenStep = (
     title: child.props.title ?? `Step ${index + 1}`,
     icon: child.props.icon,
     content: child.props.children,
-    showErrorOnTab: child.props.showErrorOnTab ?? !isValid,
+    showErrorOnTab: child.props.showErrorOnTab,
     showErrorOnTabColor: child.props.showErrorOnTabColor ?? "red",
     validationError:
       child.props.validationError ??
@@ -147,6 +148,8 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
       removeBackgroundTabTransparentColor = "",
       onComplete,
       onTabChange,
+      variant = "modern",
+      colorScheme = "auto",
       theme,
       unstyled = false,
       classNames,
@@ -218,6 +221,20 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
     const activeStep = steps[currentStep];
     const canMoveToNext = activeStep ? activeStep.isValid : false;
 
+    // A step is only marked invalid once the user has actually tried to leave
+    // it. Without this a wizard whose first step has a validator renders in
+    // the error colour on first paint, accusing the user before they have
+    // typed anything.
+    const [attemptedSteps, setAttemptedSteps] = useState<ReadonlySet<string>>(
+      () => new Set()
+    );
+    const markAttempted = useCallback((id?: string) => {
+      if (!id) return;
+      setAttemptedSteps((prev) =>
+        prev.has(id) ? prev : new Set(prev).add(id)
+      );
+    }, []);
+
     const triggerValidationError = useCallback(() => {
       const step = steps[currentStep];
       if (typeof step?.validationError === "function") {
@@ -239,11 +256,12 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
     const handleNext = useCallback(() => {
       if (currentStep >= steps.length - 1) return;
       if (!canMoveToNext) {
+        markAttempted(activeStep?.id);
         triggerValidationError();
         return;
       }
       cursor.next();
-    }, [currentStep, steps.length, canMoveToNext, triggerValidationError, cursor]);
+    }, [currentStep, steps.length, canMoveToNext, triggerValidationError, cursor, markAttempted, activeStep]);
 
     const handlePrevious = useCallback(() => {
       cursor.previous();
@@ -251,11 +269,12 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
 
     const handleSubmit = useCallback(() => {
       if (!canMoveToNext) {
+        markAttempted(activeStep?.id);
         triggerValidationError();
         return;
       }
       onComplete?.(wizardData);
-    }, [canMoveToNext, triggerValidationError, onComplete, wizardData]);
+    }, [canMoveToNext, triggerValidationError, onComplete, wizardData, markAttempted, activeStep]);
 
     /* ---------------- tab checked sync ---------------- */
     const tabRefs = useRef<Array<WizardTabRef | null>>([]);
@@ -398,7 +417,11 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
     // `theme` prop can recolour the wizard. An explicit `color` still wins.
     const accent = color ?? "var(--rfw-primary, #2196f3)";
 
-    const fillButtonStyle: React.CSSProperties = unstyled
+    const isLegacy = variant === "legacy";
+
+    // Only the legacy skin paints the footer wrappers inline; the modern one
+    // lets the button own its colour so hover and focus states work.
+    const fillButtonStyle: React.CSSProperties = unstyled || !isLegacy
       ? {}
       : {
           backgroundColor:
@@ -425,6 +448,11 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
       ? classNames?.root ?? ""
       : [
           "react-form-wizard",
+          variant === "legacy" ? "rfw-legacy" : null,
+          // The stylesheet follows the OS and the host's own dark-mode switch;
+          // these only pin it when the caller asks.
+          colorScheme === "dark" || darkMode ? "rfw-dark" : null,
+          colorScheme === "light" ? "rfw-light" : null,
           stepSize,
           isVertical,
           isInline,
@@ -501,7 +529,7 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
                     .filter(Boolean)
                     .join(" ")
             }
-            style={unstyled ? undefined : { borderColor: accent }}
+            style={unstyled || !isLegacy ? undefined : { borderColor: accent }}
             role="tablist"
             aria-label="Form steps"
           >
@@ -523,9 +551,10 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
                     ? index !== currentStep
                     : index > maxVisitedStep
                 }
-                hasValidationError={Boolean(
-                  step.showErrorOnTab && !step.isValid
-                )}
+                hasValidationError={
+                  step.showErrorOnTab ??
+                  (attemptedSteps.has(step.id) && !step.isValid)
+                }
                 layout={layout}
                 showProgressBar={shouldShowProgressBar}
                 inlineStep={inlineStep}
@@ -535,9 +564,14 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
                 removeBackgroundTabTransparentColor={
                   removeBackgroundTabTransparentColor
                 }
-                showErrorOnTab={step.showErrorOnTab}
+                showErrorOnTab={
+                  step.showErrorOnTab ??
+                  (attemptedSteps.has(step.id) && !step.isValid)
+                }
                 showErrorOnTabColor={step.showErrorOnTabColor}
                 unstyled={unstyled}
+                variant={variant}
+                isComplete={index < currentStep && index <= maxVisitedStep}
                 classNames={classNames}
                 onClick={() => navigateTo(index)}
               />

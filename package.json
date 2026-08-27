@@ -1,10 +1,10 @@
 {
   "name": "react-form-wizard-component",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "private": false,
   "author": "Parsa Jiravand",
   "license": "MIT",
-  "description": "Accessible multi-step form wizard for React 17, 18 and 19. Zero dependencies, TypeScript-first, styled or headless, with per-step validation for Zod and react-hook-form.",
+  "description": "Accessible multi-step form wizard for React 17, 18 and 19. Zero dependencies, TypeScript-first, modern styling with automatic dark mode, styled or headless, with per-step validation for Zod and react-hook-form.",
   "homepage": "https://github.com/parsajiravand/react-form-wizard#readme",
   "repository": {
     "type": "git",
@@ -36,7 +36,8 @@
     "./styles.css": "./dist/react-form-wizard-component.css",
     "./dist/style.css": "./dist/style.css",
     "./dist/react-form-wizard-component.css": "./dist/react-form-wizard-component.css",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./legacy.css": "./dist/legacy.css"
   },
   "files": [
     "dist",
@@ -60,14 +61,14 @@
   "scripts": {
     "dev": "vite",
     "preview": "vite preview",
-    "build": "vite build && npm run build:types",
+    "build": "vite build && node scripts/build-css.mjs && npm run build:types",
     "build:types": "tsc -p tsconfig.build.json && node scripts/build-types.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "check:exports": "attw --pack . --exclude-entrypoints styles.css dist/style.css dist/react-form-wizard-component.css",
+    "check:exports": "attw --pack . --exclude-entrypoints styles.css legacy.css dist/style.css dist/react-form-wizard-component.css",
     "check:publish": "publint",
     "size": "size-limit",
     "verify": "npm run lint && npm run typecheck && npm run test && npm run build && npm run check:publish && npm run check:exports",
@@ -78,7 +79,7 @@
     {
       "name": "FormWizard (ESM, gzip)",
       "path": "dist/react-form-wizard-component.es.js",
-      "limit": "6 kB",
+      "limit": "6.5 kB",
       "ignore": [
         "react",
         "react-dom"
@@ -88,6 +89,11 @@
       "name": "Stylesheet (gzip)",
       "path": "dist/react-form-wizard-component.css",
       "limit": "2.5 kB"
+    },
+    {
+      "name": "Legacy skin (gzip, opt-in)",
+      "path": "dist/legacy.css",
+      "limit": "3 kB"
     }
   ],
   "devDependencies": {

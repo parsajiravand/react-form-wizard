@@ -24,6 +24,10 @@ export interface WizardTabProps {
   showErrorOnTabColor?: string;
   /** Drop the bundled classes and inline colours. */
   unstyled?: boolean;
+  /** Visual skin; the modern skin paints from CSS rather than inline styles. */
+  variant?: "modern" | "legacy";
+  /** True once the step has been visited and is no longer the active one. */
+  isComplete?: boolean;
   /** Per-element class overrides forwarded from `<FormWizard classNames>`. */
   classNames?: WizardClassNames;
   onClick?: () => void;

@@ -23,26 +23,49 @@ describe("theming", () => {
     expect(root.style.getPropertyValue("--rfw-radius")).toBe("12px");
   });
 
-  it("drives the accent through --rfw-primary when no color prop is given", () => {
-    // Regression: `color` used to default to a literal #2196f3 applied as an
-    // inline style, which beat the custom property and made `theme` inert.
+  it("paints nothing inline in the modern skin, so CSS wins", () => {
+    // The modern skin styles state through classes and custom properties. An
+    // inline colour here would beat --rfw-primary and break both theming and
+    // dark mode, which is exactly what went wrong in v1.
     render(threeSteps({ theme: { primaryColor: "#ff0000" } }));
 
     const root = screen.getByRole("region");
     expect(root.style.getPropertyValue("--rfw-primary")).toBe("#ff0000");
 
-    // The nav rail and buttons must defer to the property, not a literal.
-    const list = screen.getByRole("tablist");
-    expect(list.getAttribute("style")).toContain("--rfw-primary");
-    const footer = screen.getByText("Next").closest("div");
-    expect(footer?.getAttribute("style")).toContain("--rfw-primary");
+    expect(screen.getByRole("tablist").getAttribute("style")).toBeNull();
+    const marker = document.querySelector(".wizard-icon-circle");
+    expect(marker?.getAttribute("style")).toBeNull();
   });
 
-  it("lets an explicit color prop win over the theme token", () => {
-    render(threeSteps({ color: "#00ff00", theme: { primaryColor: "#ff0000" } }));
+  it("still paints inline in the legacy skin, where an explicit color wins", () => {
+    render(threeSteps({ variant: "legacy", color: "#00ff00" }));
 
     const list = screen.getByRole("tablist");
     expect(list.getAttribute("style")).toContain("rgb(0, 255, 0)");
+  });
+
+  it("marks the root with the chosen skin", () => {
+    const { unmount } = render(threeSteps());
+    expect(screen.getByRole("region")).not.toHaveClass("rfw-legacy");
+    unmount();
+
+    render(threeSteps({ variant: "legacy" }));
+    expect(screen.getByRole("region")).toHaveClass("rfw-legacy");
+  });
+
+  it("pins the colour scheme only when asked", () => {
+    const { unmount } = render(threeSteps());
+    const auto = screen.getByRole("region");
+    expect(auto).not.toHaveClass("rfw-dark");
+    expect(auto).not.toHaveClass("rfw-light");
+    unmount();
+
+    const { unmount: u2 } = render(threeSteps({ colorScheme: "dark" }));
+    expect(screen.getByRole("region")).toHaveClass("rfw-dark");
+    u2();
+
+    render(threeSteps({ colorScheme: "light" }));
+    expect(screen.getByRole("region")).toHaveClass("rfw-light");
   });
 
   it("omits tokens that were not supplied", () => {
@@ -50,6 +73,69 @@ describe("theming", () => {
 
     const root = screen.getByRole("region");
     expect(root.style.getPropertyValue("--rfw-bg")).toBe("");
+  });
+});
+
+describe("error state timing", () => {
+  const withValidator = (props: Record<string, unknown> = {}) => (
+    <FormWizard
+      title="W"
+      {...props}
+      schema={{
+        steps: [
+          {
+            id: "one",
+            title: "One",
+            content: <div>First</div>,
+            validate: () => "Pick something first",
+          },
+          { id: "two", title: "Two", content: <div>Second</div> },
+        ],
+      }}
+    />
+  );
+
+  it("does not mark a step invalid before the user has tried to leave it", () => {
+    // Regression: showErrorOnTab defaulted to !isValid, so any step with a
+    // validator rendered in the error colour on first paint — the wizard
+    // accused the user before they had done anything.
+    render(withValidator());
+
+    const first = screen.getAllByRole("tab")[0].closest("li");
+    expect(first).not.toHaveClass("rfw-invalid");
+  });
+
+  it("marks it invalid once Next is pressed and blocked", async () => {
+    render(withValidator());
+
+    await userEvent.click(screen.getByText("Next"));
+
+    const first = screen.getAllByRole("tab")[0].closest("li");
+    expect(first).toHaveClass("rfw-invalid");
+    // still on step one — the validator blocked navigation
+    expect(screen.getByText("First")).toBeInTheDocument();
+  });
+
+  it("honours an explicit showErrorOnTab without waiting for an attempt", () => {
+    render(
+      <FormWizard
+        title="W"
+        schema={{
+          steps: [
+            {
+              id: "one",
+              title: "One",
+              content: <div>First</div>,
+              validate: () => "nope",
+              showErrorOnTab: true,
+            },
+          ],
+        }}
+      />
+    );
+
+    const first = screen.getAllByRole("tab")[0].closest("li");
+    expect(first).toHaveClass("rfw-invalid");
   });
 });
 

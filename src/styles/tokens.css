@@ -1,0 +1,97 @@
+/*
+ * Design tokens.
+ *
+ * Every colour the wizard paints comes from here, so a host can restyle it by
+ * setting custom properties — no !important, no selector wrestling. The
+ * `theme` prop writes these same properties inline.
+ *
+ * Dark mode resolves in three ways, in increasing priority:
+ *   1. the OS preference, via prefers-color-scheme
+ *   2. an ancestor marked [data-theme="dark"] or .dark (most frameworks)
+ *   3. the `darkMode` prop, which stamps .rfw-dark on the root
+ * Point 1 is new in v2 — before this, dark mode only worked if you passed a
+ * prop and hand-listed colours.
+ */
+
+.react-form-wizard {
+  /* palette */
+  --rfw-primary: #2563eb;
+  --rfw-primary-contrast: #ffffff;
+  --rfw-error: #dc2626;
+  --rfw-success: #059669;
+
+  /* surfaces */
+  --rfw-bg: transparent;
+  --rfw-surface: #ffffff;
+  --rfw-muted: #f1f5f9;
+  --rfw-border: #e2e8f0;
+  --rfw-border-strong: #cbd5e1;
+
+  /* text */
+  --rfw-text: #0f172a;
+  --rfw-text-muted: #64748b;
+  --rfw-title: var(--rfw-text);
+  --rfw-subtitle: var(--rfw-text-muted);
+
+  /* component-specific, kept for backwards compatibility with v1 names */
+  --rfw-tab: var(--rfw-muted);
+  --rfw-tab-icon: var(--rfw-text-muted);
+  --rfw-button: var(--rfw-primary);
+  --rfw-button-text: var(--rfw-primary-contrast);
+  --rfw-finish-button: var(--rfw-primary);
+  --rfw-finish-button-text: var(--rfw-primary-contrast);
+
+  /* shape and rhythm */
+  --rfw-radius: 0.5rem;
+  --rfw-step-size: 2.25rem;
+  --rfw-gap: 1.5rem;
+  --rfw-font: inherit;
+  --rfw-transition: 150ms ease;
+}
+
+/* 1. follow the operating system */
+@media (prefers-color-scheme: dark) {
+  .react-form-wizard:not(.rfw-light) {
+    --rfw-surface: #0f172a;
+    --rfw-muted: #1e293b;
+    --rfw-border: #1e293b;
+    --rfw-border-strong: #334155;
+    --rfw-text: #e2e8f0;
+    --rfw-text-muted: #94a3b8;
+    --rfw-primary: #60a5fa;
+    --rfw-primary-contrast: #0b1220;
+    --rfw-error: #f87171;
+    --rfw-success: #34d399;
+  }
+}
+
+/* 2. follow the host's own dark-mode switch */
+[data-theme="dark"] .react-form-wizard:not(.rfw-light),
+.dark .react-form-wizard:not(.rfw-light),
+/* 3. follow the darkMode prop */
+.react-form-wizard.rfw-dark {
+  --rfw-surface: #0f172a;
+  --rfw-muted: #1e293b;
+  --rfw-border: #1e293b;
+  --rfw-border-strong: #334155;
+  --rfw-text: #e2e8f0;
+  --rfw-text-muted: #94a3b8;
+  --rfw-primary: #60a5fa;
+  --rfw-primary-contrast: #0b1220;
+  --rfw-error: #f87171;
+  --rfw-success: #34d399;
+}
+
+/* Visually hidden but available to assistive tech. Unscoped so it still
+   applies when the wizard is rendered with `unstyled`. */
+.rfw-sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}

@@ -236,6 +236,17 @@ export interface FormWizardProps {
   /** Called on every step change. Does not fire on mount. */
   onTabChange?: (e: WizardStepChangeEvent) => void;
 
+  /**
+   * Visual skin. `"modern"` (the default from v2) is a compact, restrained
+   * look with real dark-mode support. `"legacy"` restores the v1 appearance
+   * for sites that styled around it.
+   */
+  variant?: "modern" | "legacy";
+  /**
+   * Force the colour scheme instead of following the OS, the host's
+   * `[data-theme]`/`.dark` switch, or the `darkMode` prop.
+   */
+  colorScheme?: "light" | "dark" | "auto";
   /** Theme tokens emitted as CSS custom properties on the root element. */
   theme?: WizardTheme;
   /** Drop the bundled class names so only your own styles apply. */

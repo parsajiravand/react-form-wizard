@@ -27,12 +27,27 @@ const WizardTab = React.memo(
         showErrorOnTab,
         showErrorOnTabColor = "red",
         unstyled = false,
+        variant = "modern",
+        isComplete = false,
         classNames,
         onClick,
       }: WizardTabProps,
       ref
     ) => {
-      const stepClasses = isActive ? "active" : "";
+      const isLegacy = variant === "legacy";
+      // The modern skin styles state through classes so it can respond to
+      // hover, focus and the colour scheme; the legacy skin keeps its inline
+      // colours so existing sites look unchanged.
+      const paintInline = isLegacy && !unstyled;
+      const showsError = Boolean(showErrorOnTab || hasValidationError);
+
+      const stepClasses = [
+        isActive ? "active" : "",
+        !isLegacy && isComplete ? "rfw-done" : "",
+        !isLegacy && showsError ? "rfw-invalid" : "",
+      ]
+        .filter(Boolean)
+        .join(" ");
       const cursorStyle = isDisabled
         ? "not-allowed"
         : shape === "square"
@@ -67,6 +82,7 @@ const WizardTab = React.memo(
       };
 
       const iconStyle = (): React.CSSProperties | undefined => {
+        if (!isLegacy) return undefined;
         if (isActive && darkIconColor) {
           return { color: darkIconColor ? darkIconColor : color };
         }
@@ -129,9 +145,9 @@ const WizardTab = React.memo(
       return (
         <li
           className={stepClasses}
-          style={unstyled ? undefined : { position: "relative" }}
+          style={paintInline ? { position: "relative" } : undefined}
         >
-          {!unstyled && showProgressBar && isChecked && index <= currentStep && (
+          {paintInline && showProgressBar && isChecked && index <= currentStep && (
             <div
               className="smooth-border-left-to-right"
               style={progressStyle()}
@@ -140,7 +156,7 @@ const WizardTab = React.memo(
 
           <a
             className={anchorClass}
-            style={unstyled ? undefined : { cursor: cursorStyle }}
+            style={paintInline ? { cursor: cursorStyle } : undefined}
             onClick={isDisabled ? undefined : onClick}
             role="tab"
             aria-selected={isActive}
@@ -166,7 +182,8 @@ const WizardTab = React.memo(
                 unstyled
                   ? classNames?.stepIcon ?? ""
                   : [
-                      "wizard-icon-circle md",
+                      "wizard-icon-circle",
+                      isLegacy ? "md" : "",
                       isChecked ? "checked" : "",
                       shape === "square" ? "square_shape" : "",
                       classNames?.stepIcon,
@@ -175,7 +192,7 @@ const WizardTab = React.memo(
                       .join(" ")
               }
               style={
-                unstyled
+                !paintInline
                   ? undefined
                   : {
                       backgroundColor: removeBackgroundTab
@@ -198,15 +215,15 @@ const WizardTab = React.memo(
                       }`
                 }
                 style={
-                  unstyled
-                    ? undefined
-                    : { backgroundColor: checkBackgroundCondition() }
+                  paintInline
+                    ? { backgroundColor: checkBackgroundCondition() }
+                    : undefined
                 }
               >
                 <span
                   className={unstyled ? "" : "wizard-icon"}
                   style={
-                    !unstyled && removeBackgroundTab
+                    paintInline && removeBackgroundTab
                       ? {
                           backgroundColor:
                             removeBackgroundTabTransparentColor || "white",
@@ -233,7 +250,7 @@ const WizardTab = React.memo(
                       .join(" ")
               }
               style={
-                unstyled
+                !paintInline
                   ? undefined
                   : {
                       color:

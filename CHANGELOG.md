@@ -7,6 +7,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-08-28
+
+A visual release. The component API is unchanged — every prop, method, hook and
+adapter behaves exactly as it did in 1.2.x — but the default appearance is new
+and the old one is opt-in.
+
+### Fixed
+
+- **Steps rendered in the error colour before the user had done anything.**
+  `showErrorOnTab` defaulted to `!isValid`, so any step carrying a validator
+  painted its marker red on first paint — a wizard whose first question was
+  required looked broken on load. The error state now waits until the user has
+  actually tried to leave the step. An explicit `showErrorOnTab` still applies
+  immediately.
+- **Dark mode barely worked.** The stylesheet had no `prefers-color-scheme`
+  rules at all; dark mode existed only as inline styles you had to hand-list
+  through `customDarkModeColor`. The wizard now ships a real dark palette.
+
+### Added
+
+- **`variant`** — `"modern"` (default) or `"legacy"`. See below.
+- **`colorScheme`** — `"auto"` (default), `"light"` or `"dark"`, to pin the
+  scheme instead of following the environment.
+- **Automatic dark mode**, resolved in three ways: the OS via
+  `prefers-color-scheme`, an ancestor marked `[data-theme="dark"]` or `.dark`
+  (what Tailwind, Next-themes, Docusaurus and Fumadocs all set), or the
+  existing `darkMode` prop.
+- New tokens: `--rfw-surface`, `--rfw-muted`, `--rfw-border-strong`,
+  `--rfw-text`, `--rfw-text-muted`, `--rfw-primary-contrast`, `--rfw-success`,
+  `--rfw-step-size`, `--rfw-gap`, `--rfw-font`, `--rfw-transition`.
+- State classes on each step: `rfw-done`, `rfw-invalid`, alongside `active`.
+
+### Changed
+
+- **The default look is new**: a compact step rail, hairline connectors, one
+  button weight and markers that read state through colour *and* fill rather
+  than size. It is deliberately quiet enough to sit inside an existing design.
+- **The modern skin paints nothing inline.** v1 set colours as inline styles on
+  the markers, rail and footer, which beat any CSS you wrote and made theming
+  and dark mode unreliable. Styling now flows from custom properties and state
+  classes, so your CSS wins without `!important`.
+- **The v1 skin is a separate stylesheet**, so sites on the default no longer
+  download it. The bundled stylesheet is *smaller* than 1.2.1 despite the new
+  palette — 1.37 kB brotli, down from 1.85 kB.
+
+### Migration
+
+To keep the v1 appearance exactly:
+
+```diff
+  import "react-form-wizard-component/styles.css";
++ import "react-form-wizard-component/legacy.css";
+
+- <FormWizard … />
++ <FormWizard variant="legacy" … />
+```
+
+Everything else is unchanged. If you never styled the wizard, upgrading needs
+no code change — you get the new look and working dark mode.
+
 ## [1.2.1] - 2026-08-28
 
 ### Fixed
@@ -235,7 +295,8 @@ verified against the published tarball on React 17, 18 and 19.
 
 - Initial release.
 
-[unreleased]: https://github.com/parsajiravand/react-form-wizard/compare/v1.2.1...HEAD
+[unreleased]: https://github.com/parsajiravand/react-form-wizard/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/parsajiravand/react-form-wizard/compare/v1.2.1...v2.0.0
 [1.2.1]: https://github.com/parsajiravand/react-form-wizard/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/parsajiravand/react-form-wizard/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/parsajiravand/react-form-wizard/compare/v1.1.0...v1.1.1

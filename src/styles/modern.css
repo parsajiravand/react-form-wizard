@@ -1,0 +1,299 @@
+/*
+ * Default appearance (v2).
+ *
+ * Restrained on purpose: one accent, hairline borders, a compact step rail and
+ * a single button weight. Everything reads from the tokens, so recolouring is
+ * a custom property away and dark mode needs no extra markup.
+ */
+
+.react-form-wizard:not(.rfw-legacy) {
+  font-family: var(--rfw-font);
+  color: var(--rfw-text);
+  background: var(--rfw-bg);
+  box-sizing: border-box;
+}
+
+.react-form-wizard:not(.rfw-legacy) *,
+.react-form-wizard:not(.rfw-legacy) *::before,
+.react-form-wizard:not(.rfw-legacy) *::after {
+  box-sizing: inherit;
+}
+
+/* ---------------- header ---------------- */
+
+.react-form-wizard:not(.rfw-legacy) .wizard-header {
+  text-align: center;
+  margin-bottom: var(--rfw-gap);
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--rfw-title);
+  margin: 0;
+}
+
+.react-form-wizard:not(.rfw-legacy) .category {
+  font-size: 0.875rem;
+  color: var(--rfw-subtitle);
+  margin: 0.25rem 0 0;
+}
+
+/* ---------------- step rail ---------------- */
+
+.react-form-wizard:not(.rfw-legacy) .wizard-nav {
+  display: flex;
+  list-style: none;
+  margin: 0 0 var(--rfw-gap);
+  padding: 0;
+  border: 0;
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-nav > li {
+  flex: 1;
+  position: relative;
+  min-width: 0;
+}
+
+/* The connector runs between markers, not under them. */
+.react-form-wizard:not(.rfw-legacy) .wizard-nav > li:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--rfw-step-size) / 2);
+  right: 50%;
+  left: -50%;
+  height: 2px;
+  background: var(--rfw-border-strong);
+  transform: translateY(-50%);
+  z-index: 0;
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-nav > li.rfw-done::before,
+.react-form-wizard:not(.rfw-legacy) .wizard-nav > li.active::before {
+  background: var(--rfw-primary);
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-nav > li > a {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0;
+  text-decoration: none;
+  color: var(--rfw-text-muted);
+  background: none;
+  border: 0;
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-icon-circle {
+  width: var(--rfw-step-size);
+  height: var(--rfw-step-size);
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--rfw-surface);
+  border: 2px solid var(--rfw-border-strong);
+  color: var(--rfw-text-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1;
+  transition: background var(--rfw-transition), border-color var(--rfw-transition),
+    color var(--rfw-transition);
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-icon-circle.square_shape {
+  border-radius: var(--rfw-radius);
+}
+
+/* visited but not current */
+.react-form-wizard:not(.rfw-legacy) .wizard-nav > li.rfw-done .wizard-icon-circle {
+  background: var(--rfw-primary);
+  border-color: var(--rfw-primary);
+  color: var(--rfw-primary-contrast);
+}
+
+/* current */
+.react-form-wizard:not(.rfw-legacy) .wizard-nav > li.active .wizard-icon-circle {
+  background: var(--rfw-surface);
+  border-color: var(--rfw-primary);
+  color: var(--rfw-primary);
+  box-shadow: 0 0 0 4px
+    color-mix(in srgb, var(--rfw-primary) 14%, transparent);
+}
+
+/* invalid — only after the user has tried to leave the step */
+.react-form-wizard:not(.rfw-legacy) .wizard-nav > li.rfw-invalid .wizard-icon-circle {
+  border-color: var(--rfw-error);
+  color: var(--rfw-error);
+  background: var(--rfw-surface);
+  box-shadow: none;
+}
+
+.react-form-wizard:not(.rfw-legacy) .stepTitle {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-align: center;
+  color: var(--rfw-text-muted);
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-nav > li.active .stepTitle {
+  color: var(--rfw-text);
+  font-weight: 600;
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-nav > li.rfw-invalid .stepTitle {
+  color: var(--rfw-error);
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-nav > li > a[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-nav > li > a:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+.react-form-wizard:not(.rfw-legacy)
+  .wizard-nav
+  > li
+  > a:not([aria-disabled="true"]):hover
+  .wizard-icon-circle {
+  border-color: var(--rfw-primary);
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-nav > li > a:focus-visible {
+  outline: 2px solid var(--rfw-primary);
+  outline-offset: 4px;
+  border-radius: var(--rfw-radius);
+}
+
+/* Icons inherit the marker colour instead of being painted inline. */
+.react-form-wizard:not(.rfw-legacy) .wizard-icon,
+.react-form-wizard:not(.rfw-legacy) .wizard-icon-container {
+  display: contents;
+  color: inherit;
+}
+
+/* ---------------- inline / vertical variants ---------------- */
+
+.react-form-wizard:not(.rfw-legacy).inline .wizard-nav > li > a {
+  flex-direction: row;
+  justify-content: center;
+}
+
+.react-form-wizard:not(.rfw-legacy).vertical .wizard-nav {
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.react-form-wizard:not(.rfw-legacy).vertical .wizard-nav > li > a {
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.react-form-wizard:not(.rfw-legacy).vertical .wizard-nav > li::before {
+  display: none;
+}
+
+/* ---------------- sizes ---------------- */
+
+.react-form-wizard:not(.rfw-legacy).xs { --rfw-step-size: 1.75rem; }
+.react-form-wizard:not(.rfw-legacy).sm { --rfw-step-size: 2rem; }
+.react-form-wizard:not(.rfw-legacy).lg { --rfw-step-size: 2.75rem; }
+
+/* ---------------- panel ---------------- */
+
+.react-form-wizard:not(.rfw-legacy) .wizard-tab-content {
+  outline: none;
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-tab-content:focus-visible {
+  outline: 2px solid var(--rfw-primary);
+  outline-offset: 4px;
+  border-radius: var(--rfw-radius);
+}
+
+/* ---------------- footer ---------------- */
+
+.react-form-wizard:not(.rfw-legacy) .wizard-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: var(--rfw-gap);
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-footer-left {
+  margin-right: auto;
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-footer-right {
+  margin-left: auto;
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-btn {
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.2;
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--rfw-radius);
+  border: 1px solid transparent;
+  background: var(--rfw-primary);
+  color: var(--rfw-primary-contrast);
+  cursor: pointer;
+  transition: opacity var(--rfw-transition), background var(--rfw-transition),
+    border-color var(--rfw-transition);
+}
+
+/* Back is the quieter of the two. */
+.react-form-wizard:not(.rfw-legacy) .wizard-footer-left .wizard-btn {
+  background: transparent;
+  color: var(--rfw-text);
+  border-color: var(--rfw-border-strong);
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-footer-left .wizard-btn:hover {
+  background: var(--rfw-muted);
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-btn:hover {
+  opacity: 0.9;
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-btn:focus-visible {
+  outline: 2px solid var(--rfw-primary);
+  outline-offset: 2px;
+}
+
+.react-form-wizard:not(.rfw-legacy) .wizard-btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* The footer wrappers used to carry the accent as an inline style; in the
+   modern skin the button owns its own colour. */
+.react-form-wizard:not(.rfw-legacy) .wizard-footer-left,
+.react-form-wizard:not(.rfw-legacy) .wizard-footer-right {
+  background: none !important;
+  border: 0 !important;
+}
+
+@media (max-width: 600px) {
+  .react-form-wizard:not(.rfw-legacy) .stepTitle {
+    display: none;
+  }
+  .react-form-wizard:not(.rfw-legacy) .wizard-nav > li:not(:first-child)::before {
+    top: calc(var(--rfw-step-size) / 2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .react-form-wizard:not(.rfw-legacy) * {
+    transition: none !important;
+  }
+}
