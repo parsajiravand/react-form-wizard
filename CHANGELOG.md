@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **`theme.primaryColor` had no effect on tabs or buttons.** The `color` prop
+  defaulted to a literal `#2196f3` applied as an inline style, and inline
+  styles beat the `--rfw-primary` custom property that `theme` writes — so the
+  token only ever reached the progress bar. `color` now falls back to
+  `var(--rfw-primary, #2196f3)`, so `theme` recolours the whole wizard while an
+  explicit `color` prop still wins. The stylesheet's `--rfw-primary` default was
+  also `#337ab7` while the JS default was `#2196f3`; both are now `#2196f3`, so
+  nothing shifts for existing users.
+- `zodValidator` accepts schemas whose `issues` array is readonly or frozen.
+
 ## [1.2.0] - 2026-08-27
 
 The packaging release. Every entry point the package advertised is now

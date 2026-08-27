@@ -23,6 +23,28 @@ describe("theming", () => {
     expect(root.style.getPropertyValue("--rfw-radius")).toBe("12px");
   });
 
+  it("drives the accent through --rfw-primary when no color prop is given", () => {
+    // Regression: `color` used to default to a literal #2196f3 applied as an
+    // inline style, which beat the custom property and made `theme` inert.
+    render(threeSteps({ theme: { primaryColor: "#ff0000" } }));
+
+    const root = screen.getByRole("region");
+    expect(root.style.getPropertyValue("--rfw-primary")).toBe("#ff0000");
+
+    // The nav rail and buttons must defer to the property, not a literal.
+    const list = screen.getByRole("tablist");
+    expect(list.getAttribute("style")).toContain("--rfw-primary");
+    const footer = screen.getByText("Next").closest("div");
+    expect(footer?.getAttribute("style")).toContain("--rfw-primary");
+  });
+
+  it("lets an explicit color prop win over the theme token", () => {
+    render(threeSteps({ color: "#00ff00", theme: { primaryColor: "#ff0000" } }));
+
+    const list = screen.getByRole("tablist");
+    expect(list.getAttribute("style")).toContain("rgb(0, 255, 0)");
+  });
+
   it("omits tokens that were not supplied", () => {
     render(threeSteps({ theme: { primaryColor: "#ff0000" } }));
 

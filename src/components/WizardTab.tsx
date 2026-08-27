@@ -10,7 +10,7 @@ const WizardTab = React.memo(
         title,
         icon,
         shape,
-        color = "#2196f3",
+        color = "var(--rfw-primary, #2196f3)",
         isActive,
         index,
         currentStep,

@@ -124,7 +124,7 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
       title,
       subtitle = "",
       shape = "",
-      color = "#2196f3",
+      color,
       children,
       schema,
       data,
@@ -394,17 +394,21 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
       ...style,
     };
 
+    // Falls back to the CSS custom property rather than a literal, so the
+    // `theme` prop can recolour the wizard. An explicit `color` still wins.
+    const accent = color ?? "var(--rfw-primary, #2196f3)";
+
     const fillButtonStyle: React.CSSProperties = unstyled
       ? {}
       : {
           backgroundColor:
             darkMode && customDarkModeColor?.buttons
               ? customDarkModeColor.buttons
-              : color,
+              : accent,
           borderColor:
             darkMode && customDarkModeColor?.buttons
               ? customDarkModeColor.buttons
-              : color,
+              : accent,
           color:
             darkMode && customDarkModeColor?.buttonsText
               ? customDarkModeColor.buttonsText
@@ -497,7 +501,7 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
                     .filter(Boolean)
                     .join(" ")
             }
-            style={unstyled ? undefined : { borderColor: color }}
+            style={unstyled ? undefined : { borderColor: accent }}
             role="tablist"
             aria-label="Form steps"
           >
@@ -509,7 +513,7 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
                 title={step.title}
                 icon={step.icon}
                 shape={shape}
-                color={color}
+                color={accent}
                 isActive={index === currentStep}
                 index={index}
                 currentStep={currentStep}
