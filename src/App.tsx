@@ -1,6 +1,428 @@
 import React from "react";
-import FormWizard, { TabContent } from "react-form-wizard-component";
-import type { FormWizardMethods, FormWizardSchema, WizardData } from "react-form-wizard-component";
+// The demo imports the library from source so the playground always
+// exercises the current code rather than a stale dist/ build.
+import FormWizard, {
+  TabContent,
+  useWizard,
+  useWizardCursor,
+  useWizardData,
+  zodValidator,
+  composeValidators,
+} from "./main.js";
+import type {
+  FormWizardMethods,
+  FormWizardSchema,
+  WizardData,
+  WizardTheme,
+} from "./main.js";
+
+
+/* ==================================================================== *
+ * v1.2.0 samples
+ *
+ * These are declared at module scope rather than inside App(). A component
+ * defined inside another component is a new type on every render, so React
+ * remounts it and it loses its state — which would break the headless and
+ * persistence demos below.
+ * ==================================================================== */
+
+// Sample 16: Theme tokens — the `theme` prop writes --rfw-* custom properties
+// onto the wizard root, so one token can be overridden without restating a
+// palette. Works in light and dark, unlike the older customDarkModeColor.
+const Sample16_Theme = () => {
+  const [theme, setTheme] = React.useState<WizardTheme>({
+    primaryColor: "#0e6f70",
+    borderRadius: "10px",
+    errorColor: "#c0392b",
+  });
+
+  return (
+    <>
+      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 16 }}>
+        <label>
+          Accent{" "}
+          <input
+            type="color"
+            value={theme.primaryColor ?? "#0e6f70"}
+            onChange={(e) => setTheme((t) => ({ ...t, primaryColor: e.target.value }))}
+          />
+        </label>
+        <label>
+          Radius{" "}
+          <input
+            type="range"
+            min={0}
+            max={24}
+            value={Number.parseInt(theme.borderRadius ?? "10", 10)}
+            onChange={(e) => setTheme((t) => ({ ...t, borderRadius: `${e.target.value}px` }))}
+          />
+        </label>
+        <code style={{ fontSize: 12 }}>{JSON.stringify(theme)}</code>
+      </div>
+
+      <FormWizard title="Themed wizard" subtitle="Live CSS custom properties" theme={theme}>
+        <TabContent title="One">
+          <p>The accent, progress ring and buttons all read the same token.</p>
+        </TabContent>
+        <TabContent title="Two">
+          <p>No stylesheet edit and no rebuild — just the `theme` prop.</p>
+        </TabContent>
+        <TabContent title="Three">
+          <p>Set the same `--rfw-*` variables in your own CSS for a global default.</p>
+        </TabContent>
+      </FormWizard>
+    </>
+  );
+};
+
+// Sample 17: Unstyled mode — drop every bundled class and inline colour, then
+// bring your own. `classNames` also works without `unstyled`, in which case
+// the overrides are merged with the defaults instead of replacing them.
+const Sample17_Unstyled = () => (
+  <>
+    <style>{`
+      .u-root { display: flex; flex-direction: column; gap: 20px; font-family: inherit; }
+      .u-steps { display: flex; gap: 8px; list-style: none; margin: 0; padding: 0; }
+      .u-step { padding: 6px 14px; border-radius: 999px; background: #eef2f2;
+                color: #5c6968; font-size: 14px; cursor: pointer; display: block; }
+      .u-step-active { background: #0e6f70; color: #fff; }
+      .u-panel { border: 1px solid #d6dede; border-radius: 10px; padding: 20px; }
+      .u-footer { display: flex; gap: 10px; }
+      .u-btn { border: 0; border-radius: 8px; padding: 9px 18px; cursor: pointer;
+               background: #0e6f70; color: #fff; font-size: 14px; }
+      .u-btn-ghost { background: transparent; color: #0e6f70; border: 1px solid #0e6f70; }
+    `}</style>
+
+    <FormWizard
+      unstyled
+      classNames={{
+        root: "u-root",
+        stepList: "u-steps",
+        step: "u-step",
+        stepActive: "u-step-active",
+        content: "u-panel",
+        footer: "u-footer",
+        backButton: "u-btn u-btn-ghost",
+        nextButton: "u-btn",
+        finishButton: "u-btn",
+      }}
+      onComplete={() => alert("Unstyled wizard finished")}
+    >
+      <TabContent title="Details">
+        <p>No bundled CSS is applied here — every class above is mine.</p>
+      </TabContent>
+      <TabContent title="Preferences">
+        <p>Swap these for Tailwind utilities and nothing else changes.</p>
+      </TabContent>
+      <TabContent title="Done">
+        <p>Screen-reader helpers stay hidden even without the stylesheet.</p>
+      </TabContent>
+    </FormWizard>
+  </>
+);
+
+// Sample 18: Headless — same state machine, none of the markup.
+// <FormWizard /> is built on these hooks, so behaviour is identical.
+const HEADLESS_STEPS = ["account", "profile", "review"];
+
+const Sample18_Headless = () => {
+  const wizard = useWizard({ stepIds: HEADLESS_STEPS });
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ display: "flex", gap: 6 }}>
+        {HEADLESS_STEPS.map((id, i) => (
+          <span
+            key={id}
+            style={{
+              flex: 1,
+              height: 4,
+              borderRadius: 2,
+              background: i <= wizard.currentStep ? "#0e6f70" : "#dce3e3",
+            }}
+          />
+        ))}
+      </div>
+
+      <p style={{ margin: 0, color: "#5c6968", fontSize: 14 }}>
+        Step {wizard.currentStep + 1} of {wizard.totalSteps} — <code>{wizard.stepId}</code>
+      </p>
+
+      {wizard.stepId === "account" && (
+        <label>
+          Email{" "}
+          <input
+            value={String(wizard.data.email ?? "")}
+            onChange={(e) => wizard.updateData({ email: e.target.value })}
+            placeholder="you@example.com"
+          />
+        </label>
+      )}
+
+      {wizard.stepId === "profile" && (
+        <label>
+          Display name{" "}
+          <input
+            value={String(wizard.data.name ?? "")}
+            onChange={(e) => wizard.updateData({ name: e.target.value })}
+            placeholder="Ada"
+          />
+        </label>
+      )}
+
+      {wizard.stepId === "review" && (
+        <pre style={{ background: "#f5f7f7", padding: 12, borderRadius: 6, fontSize: 13 }}>
+          {JSON.stringify(wizard.data, null, 2)}
+        </pre>
+      )}
+
+      <div style={{ display: "flex", gap: 10 }}>
+        <button onClick={wizard.previous} disabled={wizard.isFirstStep}>
+          Back
+        </button>
+        <button onClick={wizard.next} disabled={wizard.isLastStep}>
+          Next
+        </button>
+        <button onClick={wizard.reset}>Reset</button>
+      </div>
+    </div>
+  );
+};
+
+// Sample 19: Validation adapters. `zodValidator` is typed structurally — it
+// accepts anything exposing `safeParse`, so zod never becomes a dependency of
+// this package (or of this demo). With zod installed you would pass
+// `z.object({ ... })` here instead of the hand-rolled schema.
+const emailSchema = {
+  safeParse: (value: unknown) => {
+    const email = (value as { email?: unknown } | null)?.email;
+    return typeof email === "string" && /.+@.+\..+/.test(email)
+      ? ({ success: true } as const)
+      : ({
+          success: false,
+          error: { issues: [{ message: "Enter a valid email address" }] },
+        } as const);
+  },
+};
+
+const Sample19_Adapters = () => {
+  const wizardRef = React.useRef<FormWizardMethods>(null);
+
+  const schema: FormWizardSchema = {
+    initialData: { email: "", terms: false },
+    steps: [
+      {
+        id: "email",
+        title: "Email",
+        content: ({ data }) => (
+          <label>
+            Email{" "}
+            <input
+              value={String(data.email ?? "")}
+              onChange={(e) => wizardRef.current?.updateData({ email: e.target.value })}
+              placeholder="you@example.com"
+            />
+          </label>
+        ),
+        // Two rules on one step; the first failure wins.
+        validate: composeValidators(
+          zodValidator(emailSchema, { pick: ["email"] }),
+          ({ data }) =>
+            String(data.email ?? "").endsWith("@example.org")
+              ? "example.org addresses are not accepted"
+              : true
+        ),
+      },
+      {
+        id: "terms",
+        title: "Terms",
+        content: ({ data }) => (
+          <label>
+            <input
+              type="checkbox"
+              checked={Boolean(data.terms)}
+              onChange={(e) => wizardRef.current?.updateData({ terms: e.target.checked })}
+            />{" "}
+            I accept the terms
+          </label>
+        ),
+        validate: ({ data }) => (data.terms === true ? true : "You must accept the terms"),
+      },
+    ],
+  };
+
+  return (
+    <>
+      <p style={{ color: "#5c6968", fontSize: 14 }}>
+        Next stays blocked until the step is valid; the step marker turns red and
+        the validator's message is what gets surfaced.
+      </p>
+      <FormWizard
+        ref={wizardRef}
+        title="Adapter validation"
+        schema={schema}
+        color="#0e6f70"
+        onComplete={(data) => alert(`Submitted: ${JSON.stringify(data)}`)}
+      />
+    </>
+  );
+};
+
+// Sample 20: Persistence and URL sync. Fill something in, then reload the page
+// — the answers and the step both come back. Storage access is guarded, so
+// private browsing and SSR never throw.
+const Sample20_Persistence = () => {
+  const wizardRef = React.useRef<FormWizardMethods>(null);
+
+  const schema: FormWizardSchema = {
+    initialData: { note: "" },
+    steps: [
+      {
+        id: "write",
+        title: "Write",
+        content: ({ data }) => (
+          <label>
+            Note{" "}
+            <input
+              value={String(data.note ?? "")}
+              onChange={(e) => wizardRef.current?.updateData({ note: e.target.value })}
+              placeholder="Type, then reload the page"
+            />
+          </label>
+        ),
+      },
+      {
+        id: "confirm",
+        title: "Confirm",
+        content: ({ data }) => <p>Saved note: “{String(data.note ?? "")}”</p>,
+      },
+      { id: "done", title: "Done", content: <p>Still here after a refresh.</p> },
+    ],
+  };
+
+  return (
+    <>
+      <p style={{ color: "#5c6968", fontSize: 14 }}>
+        Data goes to <code>sessionStorage["demo-persist"]</code>; the active step is
+        mirrored into <code>?demo-step=</code>. <b>Reload the page to see it restored.</b>
+      </p>
+      <FormWizard
+        ref={wizardRef}
+        title="Resumable wizard"
+        schema={schema}
+        persist={{ key: "demo-persist", storage: "session" }}
+        syncToUrl={{ param: "demo-step" }}
+        color="#0e6f70"
+        onComplete={() => {
+          alert("Done — clearing saved data");
+          // reset() returns to the start and clears the persisted payload.
+          wizardRef.current?.reset();
+        }}
+      />
+    </>
+  );
+};
+
+// Sample 21: Accessibility. An aria-live region announces each step change and
+// focus moves to the revealed panel. Two wizards can share a page — only the
+// one containing focus responds to the arrow keys.
+const Sample21_Accessibility = () => (
+  <>
+    <p style={{ color: "#5c6968", fontSize: 14 }}>
+      Click into either wizard, then use <kbd>←</kbd> <kbd>→</kbd> <kbd>Home</kbd>{" "}
+      <kbd>End</kbd>. Only the focused wizard moves. Tabs also activate with{" "}
+      <kbd>Enter</kbd> and <kbd>Space</kbd>.
+    </p>
+    <div style={{ display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+      <FormWizard title="Wizard A" ariaLabel="Wizard A" color="#0e6f70">
+        <TabContent title="A1">First panel of A</TabContent>
+        <TabContent title="A2">Second panel of A</TabContent>
+        <TabContent title="A3">Third panel of A</TabContent>
+      </FormWizard>
+
+      <FormWizard title="Wizard B" ariaLabel="Wizard B" color="#9a7000">
+        <TabContent title="B1">First panel of B</TabContent>
+        <TabContent title="B2">Second panel of B</TabContent>
+        <TabContent title="B3">Third panel of B</TabContent>
+      </FormWizard>
+    </div>
+  </>
+);
+
+// Sample 22: The split hooks. `useWizardData` owns the answers and
+// `useWizardCursor` owns the position — which is what lets the step list itself
+// be data, resizing as branches appear and disappear.
+const QUESTIONS = [
+  { id: "react", prompt: "Do you use React at work?", options: ["Yes", "No"] },
+  {
+    id: "version",
+    prompt: "Which major?",
+    options: ["17", "18", "19"],
+    showIf: (a: WizardData) => a.react === "Yes",
+  },
+  {
+    id: "instead",
+    prompt: "What do you use instead?",
+    options: ["Vue", "Svelte", "Angular"],
+    showIf: (a: WizardData) => a.react === "No",
+  },
+  { id: "forms", prompt: "How do you build forms?", options: ["By hand", "A library"] },
+];
+
+const Sample22_SplitHooks = () => {
+  const answers = useWizardData({});
+  const visible = React.useMemo(
+    () => QUESTIONS.filter((q) => !q.showIf || q.showIf(answers.data)),
+    [answers.data]
+  );
+  const cursor = useWizardCursor({ stepIds: visible.map((q) => q.id) });
+  const question = visible[cursor.currentStep];
+
+  if (!question) return <p>Thanks for taking part.</p>;
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <p style={{ margin: 0, color: "#5c6968", fontSize: 14 }}>
+        Question {cursor.currentStep + 1} of {cursor.totalSteps} — the list resizes as
+        you answer.
+      </p>
+
+      <h4 id="branch-q" style={{ margin: 0 }}>
+        {question.prompt}
+      </h4>
+
+      <div role="radiogroup" aria-labelledby="branch-q">
+        {question.options.map((option) => (
+          <label key={option} style={{ display: "block" }}>
+            <input
+              type="radio"
+              name={question.id}
+              checked={answers.data[question.id] === option}
+              onChange={() => answers.updateData({ [question.id]: option })}
+            />{" "}
+            {option}
+          </label>
+        ))}
+      </div>
+
+      <div style={{ display: "flex", gap: 10 }}>
+        <button onClick={cursor.previous} disabled={cursor.isFirstStep}>
+          Back
+        </button>
+        <button
+          onClick={cursor.next}
+          disabled={cursor.isLastStep || answers.data[question.id] === undefined}
+        >
+          Next
+        </button>
+      </div>
+
+      <pre style={{ background: "#f5f7f7", padding: 12, borderRadius: 6, fontSize: 13 }}>
+        {JSON.stringify(answers.data, null, 2)}
+      </pre>
+    </div>
+  );
+};
 
 
 export default function App() {
@@ -559,8 +981,11 @@ export default function App() {
 
   return (
     <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
-      <h1>React Form Wizard - 15 Feature Samples</h1>
-      <p>Comprehensive showcase of all available features</p>
+      <h1>React Form Wizard — 22 feature samples</h1>
+      <p>
+        Samples 1–15 cover the existing API. Samples 16–22 are new in{" "}
+        <strong>v1.2.0</strong>.
+      </p>
 
       <section style={{ marginBottom: "40px" }}>
         <h2>1. Basic Children API</h2>
@@ -635,6 +1060,45 @@ export default function App() {
       <section style={{ marginBottom: "40px" }}>
         <h2>15. Complete Feature Showcase</h2>
         <Sample15_CompleteShowcase />
+      </section>
+
+
+      <hr style={{ margin: "48px 0 32px", border: 0, borderTop: "2px solid #101718" }} />
+      <h2 style={{ borderBottom: "none" }}>New in v1.2.0</h2>
+
+      <section style={{ marginBottom: "40px" }}>
+        <h2>16. Theme tokens (CSS custom properties)</h2>
+        <Sample16_Theme />
+      </section>
+
+      <section style={{ marginBottom: "40px" }}>
+        <h2>17. Unstyled mode + classNames</h2>
+        <Sample17_Unstyled />
+      </section>
+
+      <section style={{ marginBottom: "40px" }}>
+        <h2>18. Headless useWizard()</h2>
+        <Sample18_Headless />
+      </section>
+
+      <section style={{ marginBottom: "40px" }}>
+        <h2>19. Validation adapters (Zod-shaped + composed)</h2>
+        <Sample19_Adapters />
+      </section>
+
+      <section style={{ marginBottom: "40px" }}>
+        <h2>20. Persistence + URL sync</h2>
+        <Sample20_Persistence />
+      </section>
+
+      <section style={{ marginBottom: "40px" }}>
+        <h2>21. Accessibility &amp; two wizards on one page</h2>
+        <Sample21_Accessibility />
+      </section>
+
+      <section style={{ marginBottom: "40px" }}>
+        <h2>22. Split hooks: branching questions</h2>
+        <Sample22_SplitHooks />
       </section>
 
       <style>{`

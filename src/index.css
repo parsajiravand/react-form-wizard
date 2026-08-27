@@ -1,3 +1,39 @@
+/*
+ * Theme tokens. Every value below can be overridden per-instance via the
+ * `theme` prop (which writes these same custom properties onto the wizard
+ * root) or globally in your own stylesheet.
+ */
+.react-form-wizard {
+  --rfw-primary: #337ab7;
+  --rfw-bg: #fff;
+  --rfw-text: #777;
+  --rfw-title: inherit;
+  --rfw-subtitle: #9a9a9a;
+  --rfw-tab: #eee;
+  --rfw-tab-icon: inherit;
+  --rfw-border: #f3f2ee;
+  --rfw-button: transparent;
+  --rfw-button-text: #fff;
+  --rfw-finish-button: transparent;
+  --rfw-finish-button-text: #fff;
+  --rfw-error: #c84513;
+  --rfw-radius: 4px;
+}
+
+/* Visually hidden but available to assistive tech. Unscoped so it still
+   applies when the wizard is rendered with `unstyled`. */
+.rfw-sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
 .react-form-wizard .wizard-btn {
   display: inline-block;
   margin-bottom: 0;
@@ -12,8 +48,8 @@
   padding: 6px 12px;
   font-size: 14px;
   line-height: 1.428571429;
-  border-radius: 4px;
-  color: white;
+  border-radius: var(--rfw-radius, 4px);
+  color: var(--rfw-button-text, white);
 }
 .react-form-wizard .wizard-btn.disabled,
 .react-form-wizard .wizard-btn[disabled],
@@ -60,14 +96,14 @@ fieldset[disabled] .react-form-wizard .wizard-btn {
 .react-form-wizard .wizard-nav > li > a:hover,
 .react-form-wizard .wizard-nav > li > a:focus {
   text-decoration: none;
-  background-color: #eee;
+  background-color: var(--rfw-tab, #eee);
 }
 .react-form-wizard .wizard-nav > li.disabled > a {
-  color: #777;
+  color: var(--rfw-text, #777);
 }
 .react-form-wizard .wizard-nav > li.disabled > a:hover,
 .react-form-wizard .wizard-nav > li.disabled > a:focus {
-  color: #777;
+  color: var(--rfw-text, #777);
   text-decoration: none;
   background-color: transparent;
   cursor: not-allowed;
@@ -80,7 +116,7 @@ fieldset[disabled] .react-form-wizard .wizard-btn {
   line-height: 20px;
   color: #fff;
   text-align: center;
-  background-color: #337ab7;
+  background-color: var(--rfw-primary, #337ab7);
   -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   box-shadow: inset 0 -1px #00000026;
   -webkit-transition: width 0.6s ease;
@@ -167,10 +203,10 @@ fieldset[disabled] .react-form-wizard .wizard-btn {
   padding-bottom: 20px;
 }
 .react-form-wizard .is_error {
-  border-color: #c84513 !important;
+  border-color: var(--rfw-error, #c84513) !important;
 }
 .react-form-wizard .is_error .icon-container {
-  background: #c84513 !important;
+  background: var(--rfw-error, #c84513) !important;
 }
 .react-form-wizard.xs .wizard-icon-circle {
   width: 40px;
@@ -238,12 +274,12 @@ fieldset[disabled] .react-form-wizard .wizard-btn {
 }
 .react-form-wizard .wizard-icon-circle {
   font-size: 18px;
-  border: 3px solid #f3f2ee;
+  border: 3px solid var(--rfw-border, #f3f2ee);
   border-radius: 50%;
   font-weight: 600;
   width: 70px;
   height: 70px;
-  background-color: #fff;
+  background-color: var(--rfw-bg, #fff);
   position: relative;
   display: flex;
   justify-content: center;
@@ -257,7 +293,7 @@ fieldset[disabled] .react-form-wizard .wizard-btn {
   min-width: 100px;
   height: 40px;
   border: none;
-  background-color: #f3f2ee;
+  background-color: var(--rfw-border, #f3f2ee);
   border-radius: 0;
 }
 .react-form-wizard .wizard-icon-circle .wizard-icon-container {
@@ -294,11 +330,12 @@ fieldset[disabled] .react-form-wizard .wizard-btn {
   font-weight: 300;
   margin: 0;
   text-align: center;
+  color: var(--rfw-title, inherit);
 }
 .react-form-wizard .category {
   font-size: 14px;
   font-weight: 400;
-  color: #9a9a9a;
+  color: var(--rfw-subtitle, #9a9a9a);
   margin-bottom: 0;
   text-align: center;
 }

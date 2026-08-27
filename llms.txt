@@ -1,0 +1,216 @@
+# react-form-wizard-component
+
+> Accessible multi-step form wizard for React 17, 18 and 19. Zero runtime
+> dependencies. Ships a styled component and a headless hook from one package,
+> with per-step validation adapters for Zod and react-hook-form.
+
+Package: `react-form-wizard-component` (npm, MIT)
+Repository: https://github.com/parsajiravand/react-form-wizard
+Docs: https://react-form-wizard-component-document.netlify.app
+
+## Install
+
+```bash
+npm install react-form-wizard-component
+```
+
+Peer range: `react` and `react-dom` `^17 || ^18 || ^19`. No other dependencies.
+Stylesheet: `import "react-form-wizard-component/styles.css"` (omit in
+`unstyled` mode). The legacy path `react-form-wizard-component/dist/style.css`
+still resolves.
+
+## Exports
+
+All from the package root:
+
+- `default` / `FormWizard` — the styled component
+- `TabContent` — a step, also available as `FormWizard.TabContent`
+- `useWizard` — headless state machine
+- `useWizardCursor` — step cursor only
+- `useWizardData` — shared data only
+- `zodValidator` — Zod-style schema → step validator
+- `hookFormValidator` — react-hook-form field subset → step validator
+- `composeValidators` — chain validators, first failure wins
+
+Types: `FormWizardProps`, `FormWizardMethods`, `FormWizardSchema`,
+`WizardStepSchema`, `WizardData`, `WizardTheme`, `WizardClassNames`,
+`WizardPersistOptions`, `WizardUrlSyncOptions`, `WizardStepChangeEvent`,
+`WizardCondition`, `WizardValidation`, `WizardValidationResult`,
+`WizardConditionContext`, `WizardValidationContext`, `UseWizardOptions`,
+`UseWizardReturn`, `TabContentProps`, `WizardTabProps`, `WizardButtonProps`.
+
+## Minimal usage (children API)
+
+```tsx
+import FormWizard from "react-form-wizard-component";
+import "react-form-wizard-component/styles.css";
+
+<FormWizard onComplete={(data) => console.log(data)}>
+  <FormWizard.TabContent title="Account">…</FormWizard.TabContent>
+  <FormWizard.TabContent title="Review">…</FormWizard.TabContent>
+</FormWizard>
+```
+
+## Schema API (conditional steps, per-step validation)
+
+```tsx
+import FormWizard, { type FormWizardSchema } from "react-form-wizard-component";
+
+const schema: FormWizardSchema = {
+  initialData: { plan: "basic" },
+  steps: [
+    { id: "plan", title: "Plan", content: <PlanPicker /> },
+    {
+      id: "billing",
+      title: "Billing",
+      condition: ({ data }) => data.plan === "premium",   // hide when false
+      content: <BillingFields />,
+    },
+    {
+      id: "review",
+      title: "Review",
+      validate: ({ data }) => (data.accepted ? true : "Accept the terms"),
+      content: ({ data }) => <Review data={data} />,       // content can be a function
+    },
+  ],
+};
+
+<FormWizard schema={schema} onComplete={(data) => submit(data)} />;
+```
+
+Validator contract: return `true` to allow navigation, a `string` to block it
+and supply the message, or `false` to block without a message.
+`schema` takes precedence over children when both are supplied.
+
+## Zod per-step validation
+
+```tsx
+import { z } from "zod";
+import FormWizard, { zodValidator } from "react-form-wizard-component";
+
+const account = z.object({ email: z.string().email("Enter a valid email") });
+
+validate: zodValidator(account, { pick: ["email"] });  // pick = this step's fields
+```
+
+`zod` is not a dependency — the adapter accepts anything with `safeParse`
+(Zod, Valibot, ArkType).
+
+## react-hook-form per-step validation
+
+```tsx
+import { useForm } from "react-hook-form";
+import FormWizard, { hookFormValidator } from "react-form-wizard-component";
+
+const form = useForm({ mode: "onChange" });
+
+validate: hookFormValidator(form, { fields: ["email", "phone"] });
+```
+
+Reads `formState.errors` only; it never mutates form state. Call
+`form.trigger(fields)` yourself to populate errors.
+
+## Headless
+
+```tsx
+import { useWizard } from "react-form-wizard-component";
+
+const wizard = useWizard({
+  stepIds: ["account", "profile", "review"],
+  persist: { key: "signup" },        // optional
+  syncToUrl: true,                   // optional, writes ?step=2
+});
+
+// wizard.currentStep, .maxVisitedStep, .totalSteps, .stepId
+// wizard.isFirstStep, .isLastStep, .data
+// wizard.next(), .previous(), .goTo(i), .goToId(id)
+// wizard.reset(), .activateAll()
+// wizard.setData(obj), .updateData(patch), .clearPersisted()
+```
+
+## Next.js App Router
+
+The bundles include a `"use client"` directive, so importing `FormWizard` from
+a server component works with no wrapper. Import the stylesheet once, commonly
+in `app/layout.tsx`.
+
+## Styling
+
+Theme tokens become `--rfw-*` CSS custom properties on the wizard root:
+
+```tsx
+<FormWizard theme={{ primaryColor: "#0e6f70", borderRadius: "8px" }} />
+```
+
+Tokens: `primaryColor`, `backgroundColor`, `textColor`, `titleColor`,
+`subtitleColor`, `tabColor`, `tabIconColor`, `borderColor`, `buttonColor`,
+`buttonTextColor`, `finishButtonColor`, `finishButtonTextColor`, `errorColor`,
+`borderRadius`.
+
+Unstyled with your own classes:
+
+```tsx
+<FormWizard unstyled classNames={{ root: "…", step: "…", stepActive: "…", nextButton: "…" }} />
+```
+
+`classNames` keys: `root`, `header`, `title`, `subtitle`, `navigation`,
+`stepList`, `step`, `stepActive`, `stepIcon`, `stepTitle`, `content`, `footer`,
+`backButton`, `nextButton`, `finishButton`.
+
+## Imperative control
+
+```tsx
+const ref = useRef<FormWizardMethods>(null);
+<FormWizard ref={ref} schema={schema} />;
+
+ref.current.nextTab();
+ref.current.prevTab();
+ref.current.goToTab(2);           // bypasses the visited-step gate
+ref.current.goToTabById("review");
+ref.current.reset();              // also clears persisted data
+ref.current.activeAll();
+ref.current.getData();
+ref.current.setData({ … });
+ref.current.updateData({ … });    // merges
+ref.current.getCurrentStep();
+```
+
+## Key props
+
+`title`, `subtitle`, `schema`, `data`, `onDataChange`, `onComplete`,
+`onTabChange`, `color`, `theme`, `unstyled`, `classNames`, `shape`
+(`circle`/`square`/`tab`), `stepSize` (`xs`/`sm`/`md`/`lg`), `layout`
+(`horizontal`/`vertical`), `startIndex`, `showProgressBar`, `inlineStep`,
+`disableBackOnClickStep`, `persist`, `syncToUrl`, `announceStepChanges`,
+`keyboardNavigation`, `swipeNavigation`, `ariaLabel`, `nextButtonText`,
+`backButtonText`, `finishButtonText`, `nextButtonTemplate`,
+`backButtonTemplate`, `finishButtonTemplate`, `darkMode`,
+`customDarkModeColor`, `removeBackgroundTab`, `style`.
+
+## Accessibility
+
+`role="region"` root; `tablist`/`tab`/`tabpanel` with `aria-selected`,
+`aria-controls`, `aria-disabled`; `aria-live="polite"` step announcements;
+focus moves to the panel on step change; Enter/Space activate a tab;
+`←`/`→` move and `Home`/`End` jump. Multiple wizards on a page are isolated —
+only the one containing focus responds to keys.
+
+## Compatibility notes
+
+- ESM, CJS (`require()`) and UMD builds; types verified with `attw` under
+  `bundler`, `node16` (ESM and CJS) and `node10`.
+- SSR-safe; storage and URL access are guarded and best-effort.
+- React 17 works through any bundler. It cannot be loaded under **native Node
+  ESM** because React 17 ships no `exports` field, so Node cannot resolve
+  `react/jsx-runtime` — a React 17 limitation, not this package's.
+
+## Common mistakes
+
+- Forgetting the stylesheet import — the wizard renders unstyled. Import
+  `react-form-wizard-component/styles.css` (not needed with `unstyled`).
+- Expecting `validate` to run on submit only. It runs on every render, so keep
+  it pure and cheap; it must not set state.
+- Using `startIndex` to skip ahead. Steps beyond `maxVisitedStep` stay locked;
+  use `ref.current.goToTab(i)` or `activeAll()` to unlock.
+- Mutating the object passed to `setData`. Pass a new object; use `updateData`
+  for partial changes.

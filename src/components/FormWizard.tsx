@@ -1,16 +1,25 @@
-import React, { useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import WizardTab from "./WizardTab";
-import WizardButton from "./WizardButton";
+import React, {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+} from "react";
+import WizardTab from "./WizardTab.js";
+import WizardButton from "./WizardButton.js";
+import { useWizardCursor, useWizardData } from "../hooks/useWizard.js";
 import "../index.css";
 import {
   FormWizardMethods,
   FormWizardProps,
   TabContentProps,
+  WizardClassNames,
   WizardConditionContext,
   WizardData,
   WizardStepSchema,
   WizardTabRef,
-} from "../types/FormWizard";
+  WizardTheme,
+} from "../types/FormWizard.js";
 
 type NormalizedStep = {
   id: string;
@@ -64,7 +73,8 @@ const normalizeChildrenStep = (
 
   const validateResult = child.props.validate?.(context);
   const fallbackValid = child.props.isValid ?? true;
-  const isValid = validateResult === undefined ? fallbackValid : validateResult === true;
+  const isValid =
+    validateResult === undefined ? fallbackValid : validateResult === true;
 
   return {
     id: child.props.id ?? createFallbackStepId(index),
@@ -73,9 +83,39 @@ const normalizeChildrenStep = (
     content: child.props.children,
     showErrorOnTab: child.props.showErrorOnTab ?? !isValid,
     showErrorOnTabColor: child.props.showErrorOnTabColor ?? "red",
-    validationError: child.props.validationError,
+    validationError:
+      child.props.validationError ??
+      (typeof validateResult === "string" ? () => validateResult : undefined),
     isValid,
   };
+};
+
+/** Map theme tokens onto the CSS custom properties the stylesheet reads. */
+const themeToCssVars = (theme?: WizardTheme): React.CSSProperties => {
+  if (!theme) return {};
+  const pairs: Array<[keyof WizardTheme, string]> = [
+    ["primaryColor", "--rfw-primary"],
+    ["backgroundColor", "--rfw-bg"],
+    ["textColor", "--rfw-text"],
+    ["titleColor", "--rfw-title"],
+    ["subtitleColor", "--rfw-subtitle"],
+    ["tabColor", "--rfw-tab"],
+    ["tabIconColor", "--rfw-tab-icon"],
+    ["borderColor", "--rfw-border"],
+    ["buttonColor", "--rfw-button"],
+    ["buttonTextColor", "--rfw-button-text"],
+    ["finishButtonColor", "--rfw-finish-button"],
+    ["finishButtonTextColor", "--rfw-finish-button-text"],
+    ["errorColor", "--rfw-error"],
+    ["borderRadius", "--rfw-radius"],
+  ];
+
+  const style: Record<string, string> = {};
+  for (const [key, cssVar] of pairs) {
+    const value = theme[key];
+    if (value) style[cssVar] = value;
+  }
+  return style as React.CSSProperties;
 };
 
 const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
@@ -107,28 +147,35 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
       removeBackgroundTabTransparentColor = "",
       onComplete,
       onTabChange,
+      theme,
+      unstyled = false,
+      classNames,
+      persist,
+      syncToUrl,
+      announceStepChanges = true,
+      keyboardNavigation = true,
+      swipeNavigation = true,
+      style,
+      ariaLabel = "Form Wizard",
     },
     ref
   ) => {
-    const [prefersDarkMode, setPrefersDarkMode] = useState(darkMode);
-    const [wizardData, setWizardData] = useState<WizardData>(
-      data ?? schema?.initialData ?? {}
-    );
+    const rootRef = useRef<HTMLDivElement | null>(null);
+    const panelRef = useRef<HTMLDivElement | null>(null);
 
-    useEffect(() => {
-      setPrefersDarkMode(Boolean(darkMode));
-    }, [darkMode]);
+    /* ---------------- data ---------------- */
+    const { data: wizardData, setData, updateData, clearPersisted } = useWizardData({
+      initialData: schema?.initialData,
+      data,
+      onDataChange,
+      persist,
+    });
 
-    useEffect(() => {
-      if (data) setWizardData(data);
-    }, [data]);
-
-    const context = useMemo<WizardConditionContext>(
-      () => ({
-        data: wizardData,
-        currentStep: 0,
-        stepIndex: 0,
-      }),
+    /* ---------------- steps ---------------- */
+    // Steps are derived from data (conditions and validators read it), which is
+    // why data is resolved before the cursor is sized.
+    const baseContext = useMemo(
+      () => ({ data: wizardData, currentStep: 0, stepIndex: 0 }),
       [wizardData]
     );
 
@@ -136,13 +183,10 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
       if (!schema) return [];
       return schema.steps
         .map((step, index) =>
-          normalizeSchemaStep(step, index, {
-            ...context,
-            stepIndex: index,
-          })
+          normalizeSchemaStep(step, index, { ...baseContext, stepIndex: index })
         )
         .filter((step): step is NormalizedStep => step !== null);
-    }, [schema, context]);
+    }, [schema, baseContext]);
 
     const childrenSteps = useMemo(() => {
       if (!children) return [];
@@ -152,80 +196,60 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
 
       return childArray
         .map((child, index) =>
-          normalizeChildrenStep(child, index, {
-            ...context,
-            stepIndex: index,
-          })
+          normalizeChildrenStep(child, index, { ...baseContext, stepIndex: index })
         )
         .filter((step): step is NormalizedStep => step !== null);
-    }, [children, context]);
+    }, [children, baseContext]);
 
     // Compatibility layer: schema API takes precedence if provided.
     const steps = schema ? schemaSteps : childrenSteps;
-    const safeStartIndex =
-      startIndex >= 0 && startIndex < steps.length ? startIndex : 0;
-    const [currentStep, setCurrentStep] = useState(safeStartIndex);
-    const [maxVisitedStep, setMaxVisitedStep] = useState(safeStartIndex);
 
-    useEffect(() => {
-      if (currentStep > maxVisitedStep) {
-        setMaxVisitedStep(currentStep);
-      }
-    }, [currentStep, maxVisitedStep]);
+    const stepIds = useMemo(() => steps.map((step) => step.id), [steps]);
 
-    useEffect(() => {
-      if (currentStep >= steps.length) {
-        setCurrentStep(Math.max(0, steps.length - 1));
-      }
-    }, [currentStep, steps.length]);
+    /* ---------------- cursor ---------------- */
+    const cursor = useWizardCursor({
+      stepIds,
+      startIndex,
+      onStepChange: onTabChange,
+      syncToUrl,
+    });
+    const { currentStep, maxVisitedStep } = cursor;
 
-    const wizardTabRef = useRef<(React.RefObject<WizardTabRef> | null)[]>([]);
-    useEffect(() => {
-      wizardTabRef.current = steps.map(
-        (_, index) => wizardTabRef.current[index] ?? React.createRef<WizardTabRef>()
-      );
-    }, [steps]);
+    const activeStep = steps[currentStep];
+    const canMoveToNext = activeStep ? activeStep.isValid : false;
 
-    useEffect(() => {
-      wizardTabRef.current.forEach((tab, index) => {
-        tab?.current?.setChecked(index <= maxVisitedStep);
-      });
-    }, [maxVisitedStep, steps.length]);
-
-    const canMoveToNext = useMemo(() => {
-      const activeStep = steps[currentStep];
-      return activeStep ? activeStep.isValid : false;
-    }, [steps, currentStep]);
-
-    const triggerValidationError = React.useCallback(() => {
-      const activeStep = steps[currentStep];
-      if (!activeStep?.validationError) return;
-      if (typeof activeStep.validationError === "function") {
-        activeStep.validationError();
+    const triggerValidationError = useCallback(() => {
+      const step = steps[currentStep];
+      if (typeof step?.validationError === "function") {
+        step.validationError();
       }
     }, [steps, currentStep]);
 
-    const navigateTo = React.useCallback((index: number, force = false) => {
-      if (index < 0 || index >= steps.length) return;
-      if (!force && disableBackOnClickStep && index > currentStep) return;
-      if (!force && index > maxVisitedStep) return;
-      setCurrentStep(index);
-    }, [steps.length, disableBackOnClickStep, currentStep, maxVisitedStep]);
+    /* ---------------- navigation ---------------- */
+    const navigateTo = useCallback(
+      (index: number, force = false) => {
+        if (index < 0 || index >= steps.length) return;
+        if (!force && disableBackOnClickStep && index > currentStep) return;
+        if (!force && index > maxVisitedStep) return;
+        cursor.goTo(index);
+      },
+      [steps.length, disableBackOnClickStep, currentStep, maxVisitedStep, cursor]
+    );
 
-    const handleNext = React.useCallback(() => {
+    const handleNext = useCallback(() => {
       if (currentStep >= steps.length - 1) return;
       if (!canMoveToNext) {
         triggerValidationError();
         return;
       }
-      setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
-    }, [currentStep, steps.length, canMoveToNext, triggerValidationError]);
+      cursor.next();
+    }, [currentStep, steps.length, canMoveToNext, triggerValidationError, cursor]);
 
-    const handlePrevious = React.useCallback(() => {
-      setCurrentStep((prev) => Math.max(prev - 1, 0));
-    }, []);
+    const handlePrevious = useCallback(() => {
+      cursor.previous();
+    }, [cursor]);
 
-    const handleSubmit = React.useCallback(() => {
+    const handleSubmit = useCallback(() => {
       if (!canMoveToNext) {
         triggerValidationError();
         return;
@@ -233,118 +257,201 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
       onComplete?.(wizardData);
     }, [canMoveToNext, triggerValidationError, onComplete, wizardData]);
 
+    /* ---------------- tab checked sync ---------------- */
+    const tabRefs = useRef<Array<WizardTabRef | null>>([]);
+    const registerTab = useCallback(
+      (index: number) => (instance: WizardTabRef | null) => {
+        tabRefs.current[index] = instance;
+      },
+      []
+    );
+
     useEffect(() => {
-      const prevIndex = Math.max(0, currentStep - 1);
-      onTabChange?.({
-        prevIndex,
-        nextIndex: currentStep,
-        stepId: steps[currentStep]?.id,
+      tabRefs.current.length = steps.length;
+      tabRefs.current.forEach((tab, index) => {
+        tab?.setChecked(index <= maxVisitedStep);
       });
-    }, [currentStep, onTabChange, steps]);
+    }, [maxVisitedStep, steps.length]);
 
-    useImperativeHandle(ref, () => ({
-      nextTab: handleNext,
-      prevTab: handlePrevious,
-      reset: () => {
-        setCurrentStep(safeStartIndex);
-        setMaxVisitedStep(safeStartIndex);
-      },
-      activeAll: () => {
-        setMaxVisitedStep(Math.max(0, steps.length - 1));
-      },
-      goToTab: (index: number) => navigateTo(index, true),
-      goToTabById: (id: string) => {
-        const index = steps.findIndex((step) => step.id === id);
-        if (index !== -1) navigateTo(index, true);
-      },
-      setData: (nextData: WizardData) => {
-        setWizardData(nextData);
-        onDataChange?.(nextData);
-      },
-      getData: () => wizardData,
-    }));
+    /* ---------------- imperative API ---------------- */
+    useImperativeHandle(
+      ref,
+      () => ({
+        nextTab: handleNext,
+        prevTab: handlePrevious,
+        reset: () => {
+          cursor.reset();
+          clearPersisted();
+        },
+        activeAll: cursor.activateAll,
+        goToTab: (index: number) => navigateTo(index, true),
+        goToTabById: (id: string) => cursor.goToId(id),
+        setData,
+        getData: () => wizardData,
+        updateData,
+        getCurrentStep: () => currentStep,
+      }),
+      [
+        handleNext,
+        handlePrevious,
+        cursor,
+        clearPersisted,
+        navigateTo,
+        setData,
+        wizardData,
+        updateData,
+        currentStep,
+      ]
+    );
 
+    /* ---------------- keyboard navigation ---------------- */
     useEffect(() => {
+      if (!keyboardNavigation || typeof document === "undefined") return;
+
       const onKeyDown = (event: KeyboardEvent) => {
-        if (!document.activeElement?.closest(".react-form-wizard")) return;
-        if (event.key === "ArrowRight") {
-          event.preventDefault();
-          handleNext();
-        }
-        if (event.key === "ArrowLeft") {
-          event.preventDefault();
-          handlePrevious();
-        }
-        if (event.key === "Home") {
-          event.preventDefault();
-          navigateTo(0, true);
-        }
-        if (event.key === "End") {
-          event.preventDefault();
-          navigateTo(steps.length - 1, true);
+        const root = rootRef.current;
+        const active = document.activeElement;
+        // Only the wizard actually containing focus reacts, so several
+        // wizards on one page never fight over the arrow keys.
+        if (!root || !active || !root.contains(active)) return;
+
+        switch (event.key) {
+          case "ArrowRight":
+            event.preventDefault();
+            handleNext();
+            break;
+          case "ArrowLeft":
+            event.preventDefault();
+            handlePrevious();
+            break;
+          case "Home":
+            event.preventDefault();
+            navigateTo(0, true);
+            break;
+          case "End":
+            event.preventDefault();
+            navigateTo(steps.length - 1, true);
+            break;
+          default:
+            break;
         }
       };
+
       document.addEventListener("keydown", onKeyDown);
       return () => document.removeEventListener("keydown", onKeyDown);
-    }, [steps.length, handleNext, handlePrevious, navigateTo]);
+    }, [keyboardNavigation, steps.length, handleNext, handlePrevious, navigateTo]);
 
+    /* ---------------- focus management ---------------- */
+    // Move focus to the freshly revealed panel so keyboard and screen-reader
+    // users land on the new content instead of staying on a button that may
+    // have just been replaced. Skipped on first paint.
+    const hasRendered = useRef(false);
+    useEffect(() => {
+      if (!announceStepChanges) return;
+      if (!hasRendered.current) {
+        hasRendered.current = true;
+        return;
+      }
+      panelRef.current?.focus?.();
+    }, [currentStep, announceStepChanges]);
+
+    /* ---------------- touch ---------------- */
     const touchStartX = useRef(0);
     const touchStartY = useRef(0);
+
     const handleTouchStart = (event: React.TouchEvent) => {
-      touchStartX.current = event.touches[0].clientX;
-      touchStartY.current = event.touches[0].clientY;
+      if (!swipeNavigation) return;
+      const touch = event.touches[0];
+      if (!touch) return;
+      touchStartX.current = touch.clientX;
+      touchStartY.current = touch.clientY;
     };
+
     const handleTouchEnd = (event: React.TouchEvent) => {
-      const endX = event.changedTouches[0].clientX;
-      const endY = event.changedTouches[0].clientY;
-      const diffX = touchStartX.current - endX;
-      const diffY = touchStartY.current - endY;
+      if (!swipeNavigation) return;
+      const touch = event.changedTouches[0];
+      if (!touch) return;
+      const diffX = touchStartX.current - touch.clientX;
+      const diffY = touchStartY.current - touch.clientY;
       if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
         if (diffX > 0) handleNext();
         else handlePrevious();
       }
     };
 
-    const fillButtonStyle = {
-      backgroundColor:
-        prefersDarkMode && customDarkModeColor?.buttons
-          ? customDarkModeColor.buttons
-          : color,
-      borderColor:
-        prefersDarkMode && customDarkModeColor?.buttons
-          ? customDarkModeColor.buttons
-          : color,
-      color:
-        prefersDarkMode && customDarkModeColor?.buttonsText
-          ? customDarkModeColor.buttonsText
-          : "unset",
-      borderRadius: "4px",
+    /* ---------------- styling ---------------- */
+    const cx = useCallback(
+      (base: string, key: keyof WizardClassNames) => {
+        const override = classNames?.[key];
+        if (unstyled) return override ?? "";
+        return [base, override].filter(Boolean).join(" ");
+      },
+      [classNames, unstyled]
+    );
+
+    const rootStyle: React.CSSProperties = {
+      ...themeToCssVars(theme),
+      ...style,
     };
+
+    const fillButtonStyle: React.CSSProperties = unstyled
+      ? {}
+      : {
+          backgroundColor:
+            darkMode && customDarkModeColor?.buttons
+              ? customDarkModeColor.buttons
+              : color,
+          borderColor:
+            darkMode && customDarkModeColor?.buttons
+              ? customDarkModeColor.buttons
+              : color,
+          color:
+            darkMode && customDarkModeColor?.buttonsText
+              ? customDarkModeColor.buttonsText
+              : "unset",
+          borderRadius: "4px",
+        };
 
     const isVertical = layout === "vertical" ? "vertical" : "horizontal";
     const isInline = inlineStep ? "inline" : "";
     const shouldShowProgressBar = inlineStep ? false : showProgressBar;
-    const activeStep = steps[currentStep];
+    const panelId = `${activeStep?.id ?? `step-${currentStep}`}-panel`;
+
+    const rootClass = unstyled
+      ? classNames?.root ?? ""
+      : [
+          "react-form-wizard",
+          stepSize,
+          isVertical,
+          isInline,
+          classNames?.root,
+        ]
+          .filter(Boolean)
+          .join(" ");
 
     return (
       <div
-        className={`react-form-wizard ${stepSize} ${isVertical} ${isInline}`}
+        ref={rootRef}
+        className={rootClass}
+        style={rootStyle}
         role="region"
-        aria-label="Form Wizard"
+        aria-label={ariaLabel}
         aria-describedby="wizard-description"
+        data-rfw-root=""
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="wizard-header">
-          <div id="wizard-description" className="sr-only">
-            Form wizard with {steps.length} steps. Currently on step {currentStep + 1}.
+        <div className={cx("wizard-header", "header")}>
+          <div id="wizard-description" className="sr-only rfw-sr-only">
+            Form wizard with {steps.length} steps. Currently on step{" "}
+            {currentStep + 1}.
           </div>
           {typeof title === "string" ? (
             <>
               <h4
-                className="wizard-title"
+                className={cx("wizard-title", "title")}
                 style={
-                  prefersDarkMode && customDarkModeColor.title
+                  darkMode && customDarkModeColor.title
                     ? { color: customDarkModeColor.title }
                     : {}
                 }
@@ -352,9 +459,9 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
                 {title}
               </h4>
               <p
-                className="category"
+                className={cx("category", "subtitle")}
                 style={
-                  prefersDarkMode && customDarkModeColor.subtitle
+                  darkMode && customDarkModeColor.subtitle
                     ? { color: customDarkModeColor.subtitle }
                     : {}
                 }
@@ -367,17 +474,37 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
           )}
         </div>
 
-        <div className="wizard-navigation">
+        {/* Announce transitions to assistive tech without moving anything visually. */}
+        {announceStepChanges && (
+          <div className="sr-only rfw-sr-only" role="status" aria-live="polite">
+            {activeStep
+              ? `Step ${currentStep + 1} of ${steps.length}: ${activeStep.title}`
+              : ""}
+          </div>
+        )}
+
+        <div className={cx("wizard-navigation", "navigation")}>
           <ul
-            className={`form-wizard-steps wizard-nav wizard-nav-pills ${shape} ${stepSize}`}
-            style={{ borderColor: color }}
+            className={
+              unstyled
+                ? classNames?.stepList ?? ""
+                : [
+                    "form-wizard-steps wizard-nav wizard-nav-pills",
+                    shape,
+                    stepSize,
+                    classNames?.stepList,
+                  ]
+                    .filter(Boolean)
+                    .join(" ")
+            }
+            style={unstyled ? undefined : { borderColor: color }}
             role="tablist"
             aria-label="Form steps"
           >
             {steps.map((step, index) => (
               <WizardTab
                 key={step.id}
-                ref={wizardTabRef.current[index]}
+                ref={registerTab(index)}
                 id={step.id}
                 title={step.title}
                 icon={step.icon}
@@ -392,40 +519,61 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
                     ? index !== currentStep
                     : index > maxVisitedStep
                 }
-                hasValidationError={Boolean(step.showErrorOnTab && !step.isValid)}
+                hasValidationError={Boolean(
+                  step.showErrorOnTab && !step.isValid
+                )}
                 layout={layout}
                 showProgressBar={shouldShowProgressBar}
                 inlineStep={inlineStep}
-                darkColor={prefersDarkMode ? customDarkModeColor.tab : ""}
-                darkIconColor={prefersDarkMode ? customDarkModeColor.tabIconColor : ""}
+                darkColor={darkMode ? customDarkModeColor.tab : ""}
+                darkIconColor={darkMode ? customDarkModeColor.tabIconColor : ""}
                 removeBackgroundTab={removeBackgroundTab}
-                removeBackgroundTabTransparentColor={removeBackgroundTabTransparentColor}
+                removeBackgroundTabTransparentColor={
+                  removeBackgroundTabTransparentColor
+                }
                 showErrorOnTab={step.showErrorOnTab}
                 showErrorOnTabColor={step.showErrorOnTabColor}
+                unstyled={unstyled}
+                classNames={classNames}
                 onClick={() => navigateTo(index)}
               />
             ))}
           </ul>
 
           <div
-            className="wizard-tab-content"
+            ref={panelRef}
+            className={cx("wizard-tab-content", "content")}
             role="tabpanel"
-            aria-labelledby={steps[currentStep]?.id ?? `step-${currentStep}`}
-            id={`${steps[currentStep]?.id ?? `step-${currentStep}`}-panel`}
+            aria-labelledby={activeStep?.id ?? `step-${currentStep}`}
+            id={panelId}
+            tabIndex={-1}
           >
             {activeStep?.content}
           </div>
         </div>
 
-        <div className="wizard-card-footer clearfix">
+        <div
+          className={
+            unstyled
+              ? classNames?.footer ?? ""
+              : ["wizard-card-footer clearfix", classNames?.footer]
+                  .filter(Boolean)
+                  .join(" ")
+          }
+        >
           {currentStep > 0 &&
             (backButtonTemplate ? (
               backButtonTemplate(handlePrevious)
             ) : (
-              <div className="wizard-footer-left" style={fillButtonStyle}>
+              <div
+                className={unstyled ? "" : "wizard-footer-left"}
+                style={fillButtonStyle}
+              >
                 <WizardButton
-                  darkTextColor={prefersDarkMode ? customDarkModeColor?.buttonsText : ""}
-                  darkButtonColor={prefersDarkMode ? customDarkModeColor?.buttons : ""}
+                  className={classNames?.backButton}
+                  unstyled={unstyled}
+                  darkTextColor={darkMode ? customDarkModeColor?.buttonsText : ""}
+                  darkButtonColor={darkMode ? customDarkModeColor?.buttons : ""}
                   onClick={handlePrevious}
                 >
                   {backButtonText}
@@ -437,10 +585,15 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
             (nextButtonTemplate ? (
               nextButtonTemplate(handleNext)
             ) : (
-              <div className="wizard-footer-right" style={fillButtonStyle}>
+              <div
+                className={unstyled ? "" : "wizard-footer-right"}
+                style={fillButtonStyle}
+              >
                 <WizardButton
-                  darkTextColor={prefersDarkMode ? customDarkModeColor?.buttonsText : ""}
-                  darkButtonColor={prefersDarkMode ? customDarkModeColor?.buttons : ""}
+                  className={classNames?.nextButton}
+                  unstyled={unstyled}
+                  darkTextColor={darkMode ? customDarkModeColor?.buttonsText : ""}
+                  darkButtonColor={darkMode ? customDarkModeColor?.buttons : ""}
                   onClick={handleNext}
                 >
                   {nextButtonText}
@@ -448,16 +601,24 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
               </div>
             ))}
 
-          {currentStep === steps.length - 1 &&
+          {steps.length > 0 &&
+            currentStep === steps.length - 1 &&
             (finishButtonTemplate ? (
               finishButtonTemplate(handleSubmit)
             ) : (
-              <div className="wizard-footer-right" style={fillButtonStyle}>
+              <div
+                className={unstyled ? "" : "wizard-footer-right"}
+                style={fillButtonStyle}
+              >
                 <WizardButton
+                  className={classNames?.finishButton}
+                  unstyled={unstyled}
                   darkTextColor={
-                    prefersDarkMode ? customDarkModeColor?.finishButtonText : ""
+                    darkMode ? customDarkModeColor?.finishButtonText : ""
                   }
-                  darkButtonColor={prefersDarkMode ? customDarkModeColor?.finishButton : ""}
+                  darkButtonColor={
+                    darkMode ? customDarkModeColor?.finishButton : ""
+                  }
                   onClick={handleSubmit}
                 >
                   {finishButtonText}
@@ -470,13 +631,17 @@ const BaseFormWizard = React.forwardRef<FormWizardMethods, FormWizardProps>(
   }
 );
 
+BaseFormWizard.displayName = "FormWizard";
+
 const MemoizedFormWizard = React.memo(BaseFormWizard);
 
 const TabContent: React.FC<TabContentProps> = ({ children, isValid = true }) => (
   <>{isValid && children}</>
 );
+TabContent.displayName = "FormWizard.TabContent";
 
 const FormWizard = Object.assign(MemoizedFormWizard, { TabContent });
 
 export default FormWizard;
 export { TabContent };
+export type { WizardData };
